@@ -11,6 +11,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.api.workbench import router
 from app.core.config import get_settings
 from app.core.database import dispose_engine, init_db
 from app.core.llm_client import close_llm_clients
@@ -50,6 +51,8 @@ def create_workbench() -> FastAPI:
     async def session(request: Request, response: Response):
         app.state.identity.establish(request, response)
         return {"ready": True}
+
+    app.include_router(router)
 
     if WEB_BUILD.is_dir():
         app.mount("/", StaticFiles(directory=WEB_BUILD, html=True), name="workbench")

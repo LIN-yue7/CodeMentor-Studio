@@ -37,3 +37,5 @@ __all__ = [
     "UsageSession",
     "utc_now",
 ]
+
+from app.models import workbench as workbench  # Register the additive workspace tables.
