@@ -36,3 +36,12 @@ build/
 测试.docx
 *.docx.bak
 
+
+.env.*
+!.env.example
+密钥.txt
+node_modules/
+playwright-report/
+test-results/
+data/*.db-*
+
