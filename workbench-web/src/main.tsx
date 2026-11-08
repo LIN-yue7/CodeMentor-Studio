@@ -31,6 +31,7 @@ function App() {
   const [pending, setPending] = useState(false)
   const [action, setAction] = useState<string | null>(null)
   const request = useRef<AbortController | null>(null)
+  const session = useRef<Promise<unknown> | null>(null)
   const diagnosisKey = useRef<{ value: string; id: string } | null>(null)
   const attemptKey = useRef<{ value: string; id: string } | null>(null)
   const busyPractice = useRef(false)
@@ -46,11 +47,16 @@ function App() {
     }
   }
 
+  function ensureSession() {
+    session.current ??= post("/session").catch(error => { session.current = null; throw error })
+    return session.current
+  }
+
   useEffect(() => {
     let cancelled = false
     async function openSession() {
       try {
-        await post('/session')
+        await ensureSession()
         const capabilities = await get<{ mode: Mode }>('/capabilities')
         if (!cancelled) {
           setMode(capabilities.mode)
@@ -87,7 +93,8 @@ function App() {
     setStatus('请求已发送，等待诊断结果。')
     const timer = setTimeout(() => controller.abort('timeout'), 20000)
     try {
-      await post('/session', undefined, controller.signal)
+      await ensureSession()
+      if (request.current !== controller) return
       const result = await post<Diagnosis>('/diagnoses', { code: snapshot, request_id: requestId, goal: goal || null }, controller.signal)
       if (request.current !== controller) return
       diagnosisKey.current = null
@@ -126,7 +133,7 @@ function App() {
     setPracticeError('')
     const path = `/challenges/${challenge.id}/${type}`
     try {
-      if (type === 'hint') setHint(await post<Hint>(path))
+      if (type === 'hint') setHint(await post<Hint>(path, { tier: (hint?.used ?? 0) + 1 }))
       if (type === 'retry') resetPractice(await post<Challenge>(path))
       if (type === 'answer') {
         const value = answer.trim()
@@ -186,7 +193,7 @@ function App() {
             </div>
             <p className="status" role="status">{status}</p>
             {error && <p className="error" role="alert">{error}</p>}
-            {mode === 'live' && <p className="notice">真实模型模式可能把匹配样例的代码片段发送给配置的模型服务。请避免提交个人信息或密钥。</p>}
+            {mode === 'live' && <p className="notice">模型只接收课程标准例子、静态证据和练习计数。请避免在编辑器中粘贴个人信息或密钥。</p>}
           </div>
         </section>
         <DiagnosisPanel result={diagnosis} stale={stale} jump={() => setJump(value => value + 1)} />

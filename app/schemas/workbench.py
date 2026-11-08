@@ -16,6 +16,10 @@ class DiagnosisRequest(Input):
     request_id: UUID
 
 
+class HintRequest(Input):
+    tier: int = Field(ge=1, le=2, strict=True)
+
+
 class AnswerRequest(Input):
     answer: str = Field(min_length=1, max_length=80)
     attempt_id: UUID

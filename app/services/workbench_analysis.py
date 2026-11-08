@@ -61,6 +61,7 @@ def fingerprint(tree: ast.Module) -> str:
     return ast.dump(tree)
 
 
+REFERENCE_CODE = {rule.knowledge_id: rule.source for rule in RULES}
 FINGERPRINTS = {fingerprint(ast.parse(rule.source)): rule for rule in RULES}
 
 

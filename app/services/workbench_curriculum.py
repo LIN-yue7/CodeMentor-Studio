@@ -16,9 +16,9 @@ class Exercise:
 
 CURRICULUM = {
     "loop-boundary": (
-        Exercise("boundary-a-v1", "最后一站", "对 [2, 3] 的所有元素求和。遍历应包含最后一个元素。填写正确的和。",
-                 "5", ("先写出列表包含的两个下标。", "下标从 0 到 len(xs)-1，range 的上界不包含在内。"),
-                 "0 和 1 都应访问，结果是 2 + 3 = 5。"),
+        Exercise("boundary-a-v2", "最后一站", "对 [2, 4] 的所有元素求和。遍历应包含最后一个元素。填写正确的和。",
+                 "6", ("先写出列表包含的两个下标。", "下标从 0 到 len(xs)-1，range 的上界不包含在内。"),
+                 "0 和 1 都应访问，结果是 2 + 4 = 6。"),
         Exercise("boundary-b-v1", "单日库存", "对 [7] 的所有元素求和。填写正确的和。",
                  "7", ("检查长度为 1 时循环会运行几次。", "range(len(xs)) 在这个例子里产生下标 0。"),
                  "唯一的元素也需要被遍历，因此总和是 7。"),
@@ -50,4 +50,10 @@ CURRICULUM = {
     ),
 }
 EXERCISES = {item.id: item for items in CURRICULUM.values() for item in items}
+# Existing saved challenges retain their original grading contract.
+EXERCISES["boundary-a-v1"] = Exercise(
+    "boundary-a-v1", "最后一站", "对 [2, 3] 的所有元素求和。填写正确的和。",
+    "5", ("先写出列表包含的两个下标。", "下标从 0 到 len(xs)-1，range 的上界不包含在内。"),
+    "0 和 1 都应访问，结果是 2 + 3 = 5。",
+)
 LABELS = {"loop-boundary": "循环边界", "empty-list": "空列表", "accumulator": "累加状态"}

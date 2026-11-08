@@ -68,9 +68,9 @@ async def profile(db: AsyncSession, owner: str) -> dict:
 
 async def plan_initial(db: AsyncSession, owner: str, knowledge_id: str) -> Challenge:
     attempts = await history(db, owner, knowledge_id)
-    completed = {row.template_id for row in attempts if row.outcome == "independent"}
+    exposed = {row.template_id for row in attempts}
     templates = CURRICULUM[knowledge_id]
-    index = next((i for i, item in enumerate(templates) if item.id not in completed), 0)
+    index = next((i for i, item in enumerate(templates) if item.id not in exposed), 0)
     return new_challenge(owner, knowledge_id, index)
 
 
@@ -100,17 +100,19 @@ async def read_diagnosis(db: AsyncSession, owner: str, request_id: str, fingerpr
     return row.result
 
 
-async def reveal_hint(db: AsyncSession, challenge: Challenge) -> dict:
+async def reveal_hint(db: AsyncSession, challenge: Challenge, tier: int) -> dict:
     template = EXERCISES[challenge.template_id]
     count = await db.scalar(update(Challenge).where(
         Challenge.id == challenge.id, Challenge.owner == challenge.owner, Challenge.closed.is_(False),
-        Challenge.hints_used < len(template.hints),
-    ).values(hints_used=Challenge.hints_used + 1).returning(Challenge.hints_used))
+        Challenge.hints_used == tier - 1,
+    ).values(hints_used=tier).returning(Challenge.hints_used))
     if count is None:
         await db.refresh(challenge)
         if challenge.closed:
             raise HTTPException(409, "作答已结束。")
         count = challenge.hints_used
+        if tier > count:
+            raise HTTPException(409, "请按顺序查看提示。")
     await db.commit()
     return {"used": count, "hints": list(template.hints[:count])}
 
@@ -129,8 +131,9 @@ async def grade(db: AsyncSession, challenge: Challenge, request_id: str, answer:
 
     template = EXERCISES[challenge.template_id]
     correct = normalized == template.answer
-    outcome = "incorrect" if not correct else "assisted" if hints_used else "independent"
     prior = await history(db, challenge.owner, challenge.knowledge_id)
+    seen_answer = template.id == "boundary-a-v1" or any(row.template_id == template.id for row in prior)
+    outcome = "incorrect" if not correct else "assisted" if hints_used or seen_answer else "independent"
     independent = {row.template_id for row in prior if row.outcome == "independent"}
     if outcome == "independent":
         independent.add(template.id)
@@ -154,11 +157,11 @@ async def retry(db: AsyncSession, challenge: Challenge) -> dict:
         return challenge_view(existing)
     variants = CURRICULUM[challenge.knowledge_id]
     previous = EXERCISES[challenge.template_id]
-    current_index = variants.index(previous)
+    current_index = variants.index(previous) if previous in variants else len(variants) - 1
     attempts = await history(db, challenge.owner, challenge.knowledge_id)
-    completed = {row.template_id for row in attempts if row.outcome == "independent"}
+    exposed = {row.template_id for row in attempts}
     offsets = list(range(1, len(variants)))
-    offset = next((i for i in offsets if variants[(current_index + i) % len(variants)].id not in completed), 1)
+    offset = next((i for i in offsets if variants[(current_index + i) % len(variants)].id not in exposed), 1)
     new = new_challenge(challenge.owner, challenge.knowledge_id, current_index + offset, next_id)
     db.add(new)
     try:

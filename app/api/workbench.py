@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.workbench_security import require_owner
-from app.schemas.workbench import AnswerRequest, DiagnosisRequest
+from app.schemas.workbench import AnswerRequest, DiagnosisRequest, HintRequest
 from app.services import workbench_learning as learning
 from app.services.workbench_diagnosis import evaluate
 
@@ -53,9 +53,9 @@ async def profile(owner: Owner, db: DB):
 
 
 @router.post("/challenges/{challenge_id}/hint")
-async def hint(challenge_id: UUID, owner: Owner, db: DB):
+async def hint(challenge_id: UUID, payload: HintRequest, owner: Owner, db: DB):
     challenge = await learning.owned_challenge(db, owner, str(challenge_id))
-    return await learning.reveal_hint(db, challenge)
+    return await learning.reveal_hint(db, challenge, payload.tier)
 
 
 @router.post("/challenges/{challenge_id}/answer")

@@ -60,6 +60,10 @@ def create_workbench(*, model: LLMClient | None = None) -> FastAPI:
 
     app.include_router(router)
 
+    @app.api_route("/api/{unmatched:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"])
+    async def no_legacy_api(unmatched: str):
+        return JSONResponse({"detail": "接口不存在。"}, status_code=404)
+
     if WEB_BUILD.is_dir():
         app.mount("/", StaticFiles(directory=WEB_BUILD, html=True), name="workbench")
 

@@ -17,7 +17,7 @@ def test_concurrent_retries_create_one_diagnosis_and_one_attempt():
             assert all(response.status_code == 200 for response in diagnoses)
             assert len({response.json()["challenge"]["id"] for response in diagnoses}) == 1
             challenge_id = diagnoses[0].json()["challenge"]["id"]
-            answer = {"answer": "5", "attempt_id": str(uuid4())}
+            answer = {"answer": "6", "attempt_id": str(uuid4())}
             path = f"/api/challenges/{challenge_id}/answer"
             attempts = list(pool.map(lambda _: client.post(path, json=answer), range(4)))
             assert all(response.status_code == 200 for response in attempts)

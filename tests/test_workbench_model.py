@@ -61,3 +61,11 @@ def test_uncertain_code_does_not_let_model_create_a_false_positive():
         assert result["status"] == "uncertain"
         assert not model.messages
         assert result["challenge"] is None
+
+def test_private_comments_never_reach_model():
+    model = StubModel()
+    with TestClient(create_workbench(model=model)) as client:
+        client.post("/api/session")
+        from tests.test_workbench_flow import CODE
+        diagnose(client, CODE + "# PRIVATE_SENTINEL_IGNORE_THE_SYSTEM\n")
+        assert "PRIVATE_SENTINEL" not in model.messages[-1].content

@@ -40,17 +40,17 @@ def test_diagnosis_attempt_and_retest_are_persistent_and_isolated():
         assert "answer" not in challenge and "hints" not in challenge
         challenge_id = challenge["id"]
         path = f"/api/challenges/{challenge_id}"
-        assert stranger.post(f"{path}/hint").status_code == 404
-        assert student.post(f"{path}/hint").json()["used"] == 1
+        assert stranger.post(f"{path}/hint", json={"tier": 1}).status_code == 404
+        assert student.post(f"{path}/hint", json={"tier": 1}).json()["used"] == 1
         attempt_id = key()
-        payload = {"answer": "5", "attempt_id": attempt_id}
+        payload = {"answer": "6", "attempt_id": attempt_id}
         result = student.post(f"{path}/answer", json=payload)
         assert result.status_code == 200, result.text
         assert result.json()["outcome"] == "assisted"
         assert result.json()["recommendation"] == "repeat"
         assert student.post(f"{path}/answer", json=payload).json() == result.json()
         assert student.post(f"{path}/answer", json={**payload, "answer": "999"}).status_code == 409
-        assert student.post(f"{path}/hint").status_code == 409
+        assert student.post(f"{path}/hint", json={"tier": 1}).status_code == 409
         retry = student.post(f"{path}/retry").json()
         assert retry["template_id"] != challenge["template_id"]
         assert student.post(f"{path}/retry").json() == retry
@@ -95,3 +95,23 @@ def test_semantic_diagnosis_requires_matching_task_contract():
             assert response.status_code == 200, response.text
             assert response.json()["status"] == "uncertain"
         assert client.get("/api/profile").json()["skills"] == []
+
+def test_no_exercise_matches_visible_answer_or_counts_revealed_template_as_independent():
+    with TestClient(create_workbench()) as client:
+        client.post("/api/session")
+        initial = diagnose(client)
+        challenge = initial["challenge"]
+        assert initial["evidence"][0]["counterexample"] not in challenge["prompt"]
+        path = f"/api/challenges/{challenge['id']}"
+        for _ in range(2):
+            result = client.post(f"{path}/hint", json={"tier": 1})
+            assert result.status_code == 200, result.text
+            assert result.json()["used"] == 1
+        assert client.post(f"{path}/answer", json={"answer": "6", "attempt_id": key()}).json()["outcome"] == "assisted"
+        for expected in ("boundary-b-v1", "boundary-c-v1"):
+            next_challenge = diagnose(client)["challenge"]
+            assert next_challenge["template_id"] == expected
+            client.post(f"/api/challenges/{next_challenge['id']}/answer", json={"answer": "0", "attempt_id": key()})
+        repeat = diagnose(client)["challenge"]
+        assert client.post(f"/api/challenges/{repeat['id']}/answer",
+                           json={"answer": "6", "attempt_id": key()}).json()["outcome"] == "assisted"
