@@ -27,8 +27,12 @@ from app.models.comment import CommentRecord
 from app.models.error_log import StudentErrorLog
 from app.models.file_record import ClassifiedFileRecord
 from app.models.usage import UsageSession
+from app.models.workbench import Attempt, Challenge, Diagnosis
 
 __all__ = [
+    "Attempt",
+    "Challenge",
+    "Diagnosis",
     "ClassifiedFileRecord",
     "CodeCheckRecord",
     "CodeFixRecord",
@@ -37,5 +41,3 @@ __all__ = [
     "UsageSession",
     "utc_now",
 ]
-
-from app.models import workbench as workbench  # Register the additive workspace tables.

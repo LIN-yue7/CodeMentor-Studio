@@ -4,35 +4,48 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.workbench_security import require_owner
 from app.schemas.workbench import AnswerRequest, DiagnosisRequest
 from app.services import workbench_learning as learning
-from app.services.workbench_analysis import analyze
+from app.services.workbench_diagnosis import evaluate
 
 router = APIRouter(prefix="/api")
 Owner = Annotated[str, Depends(require_owner)]
 DB = Annotated[AsyncSession, Depends(get_db)]
 
 
+@router.get("/capabilities")
+async def capabilities(request: Request):
+    return {"mode": request.app.state.tutor.mode, "tool_calling": False}
+
+
 @router.post("/diagnoses")
-async def diagnose(payload: DiagnosisRequest, owner: Owner, db: DB):
+async def diagnose(payload: DiagnosisRequest, request: Request, owner: Owner, db: DB):
     request_id = str(payload.request_id)
     fingerprint = learning.digest(f"{payload.language}\n{payload.code}")
-    previous = await learning.read_diagnosis(db, owner, request_id, fingerprint)
-    if previous is not None:
-        return previous
-    status, evidence = analyze(payload.code, payload.language)
-    challenge = None
-    if status == "confirmed":
-        challenge = await learning.plan_initial(db, owner, evidence[0]["knowledge_id"])
-    result = {"id": request_id, "status": status, "evidence": evidence, "mode": "local",
-              "challenge": learning.challenge_view(challenge) if challenge else None}
-    return await learning.save_diagnosis(db, owner, request_id, fingerprint, result, challenge)
+    lock = request.app.state.diagnosis_locks[hash((owner, request_id)) % 32]
+    async with lock:
+        previous = await learning.read_diagnosis(db, owner, request_id, fingerprint)
+        if previous is not None:
+            return previous
 
+        async def learning_context(knowledge_id: str):
+            rows = await learning.history(db, owner, knowledge_id)
+            return {status: sum(row.outcome == status for row in rows)
+                    for status in ("independent", "assisted", "incorrect")}
+
+        result = await evaluate(payload.code, payload.language, owner, request.app.state.tutor,
+                                learning=learning_context)
+        challenge = None
+        if result["status"] == "confirmed":
+            challenge = await learning.plan_initial(db, owner, result["evidence"][0]["knowledge_id"])
+            result["events"].append({"stage": "practice", "status": "selected"})
+        result.update(id=request_id, challenge=learning.challenge_view(challenge) if challenge else None)
+        return await learning.save_diagnosis(db, owner, request_id, fingerprint, result, challenge)
 
 @router.get("/profile")
 async def profile(owner: Owner, db: DB):

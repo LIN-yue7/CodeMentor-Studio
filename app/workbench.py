@@ -3,7 +3,9 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -14,8 +16,10 @@ from fastapi.staticfiles import StaticFiles
 from app.api.workbench import router
 from app.core.config import get_settings
 from app.core.database import dispose_engine, init_db
-from app.core.llm_client import close_llm_clients
+from app.core.llm_client import LLMClient, close_llm_clients
 from app.core.workbench_security import RequestBoundary, SessionIdentity
+
+from app.services.workbench_tutor import Tutor
 
 WEB_BUILD = Path(__file__).resolve().parents[1] / "workbench-web" / "dist"
 logger = logging.getLogger(__name__)
@@ -32,10 +36,12 @@ async def lifespan(_app: FastAPI):
         await dispose_engine()
 
 
-def create_workbench() -> FastAPI:
+def create_workbench(*, model: LLMClient | None = None) -> FastAPI:
     app = FastAPI(title="CodeMentor AI 2.0", docs_url=None, redoc_url=None,
                   openapi_url=None, lifespan=lifespan)
     app.state.identity = SessionIdentity()
+    app.state.tutor = Tutor(model, live=os.getenv("CODEMENTOR_AI_MODE") == "live")
+    app.state.diagnosis_locks = tuple(asyncio.Lock() for _ in range(32))
     app.add_middleware(RequestBoundary)
 
     @app.exception_handler(Exception)
