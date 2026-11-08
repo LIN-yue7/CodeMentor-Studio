@@ -18,8 +18,8 @@ def key():
     return str(uuid4())
 
 
-def diagnose(client, code=CODE, request_id=None):
-    response = client.post("/api/diagnoses", json={"code": code, "request_id": request_id or key()})
+def diagnose(client, code=CODE, request_id=None, goal="sum-all"):
+    response = client.post("/api/diagnoses", json={"code": code, "request_id": request_id or key(), "goal": goal})
     assert response.status_code == 200, response.text
     return response.json()
 
@@ -80,7 +80,18 @@ def test_supported_concepts_have_concrete_counterexamples():
             ("def first(xs):\n    return xs[0]\n", "empty-list"),
             ("def total(xs):\n    for x in xs:\n        result = 0\n        result += x\n    return result\n", "accumulator"),
         ):
-            result = diagnose(client, code)
+            result = diagnose(client, code, goal="first-or-empty" if concept == "empty-list" else "sum-all")
             item = result["evidence"][0]
             assert item["knowledge_id"] == concept
             assert item["observed"] != item["expected"]
+
+def test_semantic_diagnosis_requires_matching_task_contract():
+    with TestClient(create_workbench()) as client:
+        client.post("/api/session")
+        for goal in (None, "first-or-empty"):
+            response = client.post("/api/diagnoses", json={
+                "code": CODE, "request_id": key(), "goal": goal,
+            })
+            assert response.status_code == 200, response.text
+            assert response.json()["status"] == "uncertain"
+        assert client.get("/api/profile").json()["skills"] == []

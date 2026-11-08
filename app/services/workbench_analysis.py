@@ -64,7 +64,7 @@ def fingerprint(tree: ast.Module) -> str:
 FINGERPRINTS = {fingerprint(ast.parse(rule.source)): rule for rule in RULES}
 
 
-def analyze(code: str, language: str = "python") -> tuple[str, list[dict]]:
+def analyze(code: str, language: str = "python", goal: str | None = None) -> tuple[str, list[dict]]:
     if language != "python":
         parsed = parse_source(code.encode(), f"submission.{language}", language)
         if parsed.parse_error:
@@ -82,6 +82,9 @@ def analyze(code: str, language: str = "python") -> tuple[str, list[dict]]:
     except (ValueError, RecursionError):
         return "uncertain", []
     if rule is None:
+        return "uncertain", []
+    expected_goal = "first-or-empty" if rule.knowledge_id == "empty-list" else "sum-all"
+    if goal != expected_goal:
         return "uncertain", []
 
     node = tree.body[0]

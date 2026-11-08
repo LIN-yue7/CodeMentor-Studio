@@ -26,7 +26,7 @@ async def capabilities(request: Request):
 @router.post("/diagnoses")
 async def diagnose(payload: DiagnosisRequest, request: Request, owner: Owner, db: DB):
     request_id = str(payload.request_id)
-    fingerprint = learning.digest(f"{payload.language}\n{payload.code}")
+    fingerprint = learning.digest(f"{payload.language}\n{payload.goal}\n{payload.code}")
     lock = request.app.state.diagnosis_locks[hash((owner, request_id)) % 32]
     async with lock:
         previous = await learning.read_diagnosis(db, owner, request_id, fingerprint)
@@ -39,7 +39,7 @@ async def diagnose(payload: DiagnosisRequest, request: Request, owner: Owner, db
                     for status in ("independent", "assisted", "incorrect")}
 
         result = await evaluate(payload.code, payload.language, owner, request.app.state.tutor,
-                                learning=learning_context)
+                                goal=payload.goal, learning=learning_context)
         challenge = None
         if result["status"] == "confirmed":
             challenge = await learning.plan_initial(db, owner, result["evidence"][0]["knowledge_id"])

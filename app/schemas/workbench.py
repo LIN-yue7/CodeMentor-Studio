@@ -12,6 +12,7 @@ class Input(BaseModel):
 class DiagnosisRequest(Input):
     code: str = Field(min_length=1, max_length=16_000)
     language: Literal["python", "c", "java", "javascript", "go"] = "python"
+    goal: Literal["sum-all", "first-or-empty"] | None = None
     request_id: UUID
 
 

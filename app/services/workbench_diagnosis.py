@@ -9,7 +9,7 @@ from app.services.workbench_tutor import Tutor
 
 
 async def evaluate(code: str, language: str, owner: str, tutor: Tutor, *,
-                   with_retrieval: bool = True, learning=None) -> dict:
+                   with_retrieval: bool = True, goal: str | None = None, learning=None) -> dict:
     started = perf_counter()
     events: list[dict] = []
 
@@ -17,7 +17,7 @@ async def evaluate(code: str, language: str, owner: str, tutor: Tutor, *,
         events.append({"stage": stage, "status": status,
                        "elapsed_ms": round((perf_counter() - started) * 1000, 2)})
 
-    status, evidence = analyze(code, language)
+    status, evidence = analyze(code, language, goal)
     event("analysis", status)
     cards = []
     annotation = None
