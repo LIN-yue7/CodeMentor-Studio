@@ -5,10 +5,10 @@ Python 入门实验面向三个错因。用户先指定函数的预期行为。�
 
 ## 本机启动
 
-使用 Python 3.12 和 Node.js 24。Windows 上从仓库根目录执行：
+使用 Python 3.12 和 Node.js 24。Windows 上从仓库根目录执行。先确认 python --version 显示 3.12。若系统默认版本不同，用 Python 3.12 可执行文件的完整路径替代第一条命令的 python。
 
 ```powershell
-py -3.12 -m venv .venv
+python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
 npm --prefix workbench-web ci
 npm --prefix workbench-web run build
