@@ -45,3 +45,4 @@ playwright-report/
 test-results/
 data/*.db-*
 
+evaluation/live-*.json

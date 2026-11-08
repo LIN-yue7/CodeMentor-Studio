@@ -1,0 +1,242 @@
+[
+  {
+    "id": "L01",
+    "code": "def total(xs):\n    result = 0\n    for i in range(len(xs) - 1):\n        result += xs[i]\n    return result\n",
+    "status": "confirmed",
+    "concept": "loop-boundary",
+    "line": 3,
+    "goal": "sum-all",
+    "source": "loop-boundary-range-v1",
+    "language": "python"
+  },
+  {
+    "id": "L02",
+    "code": "def calculate(values):\n    out = 0\n    for index in range(len(values) - 1):\n        out += values[index]\n    return out\n",
+    "status": "confirmed",
+    "concept": "loop-boundary",
+    "line": 3,
+    "goal": "sum-all",
+    "source": "loop-boundary-range-v1",
+    "language": "python"
+  },
+  {
+    "id": "L03",
+    "code": "# synthetic case\n\ndef calculate(values):\n    out = 0\n    for index in range(len(values) - 1):\n        out += values[index]\n    return out\n",
+    "status": "confirmed",
+    "concept": "loop-boundary",
+    "line": 5,
+    "goal": "sum-all",
+    "source": "loop-boundary-range-v1",
+    "language": "python"
+  },
+  {
+    "id": "L04",
+    "code": "def total(xs):\n\tresult = 0\n\tfor i in range(len(xs) - 1):\n\t\tresult += xs[i]\n\treturn result\n",
+    "status": "confirmed",
+    "concept": "loop-boundary",
+    "line": 3,
+    "goal": "sum-all",
+    "source": "loop-boundary-range-v1",
+    "language": "python"
+  },
+  {
+    "id": "E01",
+    "code": "def first(xs):\n    return xs[0]\n",
+    "status": "confirmed",
+    "concept": "empty-list",
+    "line": 2,
+    "goal": "first-or-empty",
+    "source": "empty-list-index-v1",
+    "language": "python"
+  },
+  {
+    "id": "E02",
+    "code": "def take_first(items):\n    return items[0]\n",
+    "status": "confirmed",
+    "concept": "empty-list",
+    "line": 2,
+    "goal": "first-or-empty",
+    "source": "empty-list-index-v1",
+    "language": "python"
+  },
+  {
+    "id": "E03",
+    "code": "# synthetic case\n\ndef take_first(items):\n    return items[0]\n",
+    "status": "confirmed",
+    "concept": "empty-list",
+    "line": 4,
+    "goal": "first-or-empty",
+    "source": "empty-list-index-v1",
+    "language": "python"
+  },
+  {
+    "id": "E04",
+    "code": "def first(xs):\n\treturn xs[0]\n",
+    "status": "confirmed",
+    "concept": "empty-list",
+    "line": 2,
+    "goal": "first-or-empty",
+    "source": "empty-list-index-v1",
+    "language": "python"
+  },
+  {
+    "id": "A01",
+    "code": "def total(xs):\n    for x in xs:\n        result = 0\n        result += x\n    return result\n",
+    "status": "confirmed",
+    "concept": "accumulator",
+    "line": 3,
+    "goal": "sum-all",
+    "source": "accumulator-order-v1",
+    "language": "python"
+  },
+  {
+    "id": "A02",
+    "code": "def sum_points(values):\n    for value in values:\n        out = 0\n        out += value\n    return out\n",
+    "status": "confirmed",
+    "concept": "accumulator",
+    "line": 3,
+    "goal": "sum-all",
+    "source": "accumulator-order-v1",
+    "language": "python"
+  },
+  {
+    "id": "A03",
+    "code": "# synthetic case\n\ndef sum_points(values):\n    for value in values:\n        out = 0\n        out += value\n    return out\n",
+    "status": "confirmed",
+    "concept": "accumulator",
+    "line": 5,
+    "goal": "sum-all",
+    "source": "accumulator-order-v1",
+    "language": "python"
+  },
+  {
+    "id": "A04",
+    "code": "def total(xs):\n\tfor x in xs:\n\t\tresult = 0\n\t\tresult += x\n\treturn result\n",
+    "status": "confirmed",
+    "concept": "accumulator",
+    "line": 3,
+    "goal": "sum-all",
+    "source": "accumulator-order-v1",
+    "language": "python"
+  },
+  {
+    "id": "N01",
+    "code": "def total(xs):\n    return sum(xs)\n",
+    "status": "clear",
+    "concept": null,
+    "line": null,
+    "goal": "sum-all",
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "N02",
+    "code": "def first(xs):\n    return xs[0] if xs else None\n",
+    "status": "clear",
+    "concept": null,
+    "line": null,
+    "goal": "first-or-empty",
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "N03",
+    "code": "def total(xs):\n    result = 0\n    for x in xs:\n        result += x\n    return result\n",
+    "status": "clear",
+    "concept": null,
+    "line": null,
+    "goal": "sum-all",
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "N04",
+    "code": "def drop_tail(xs):\n    return xs[:-1]\n",
+    "status": "clear",
+    "concept": null,
+    "line": null,
+    "goal": null,
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "N05",
+    "code": "def total(xs):\n    result = 0\n    for i in range(len(xs) - 1):\n        result += xs[i]\n    return result\n",
+    "status": "clear",
+    "concept": null,
+    "line": null,
+    "goal": null,
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "N06",
+    "code": "def first(xs):\n    return xs[0]\n",
+    "status": "clear",
+    "concept": null,
+    "line": null,
+    "goal": "sum-all",
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "S01",
+    "code": "def bad(:\n    pass\n",
+    "status": "syntax-error",
+    "concept": null,
+    "line": 1,
+    "goal": "sum-all",
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "S02",
+    "code": "return 1\n",
+    "status": "syntax-error",
+    "concept": null,
+    "line": 1,
+    "goal": "sum-all",
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "U01",
+    "code": "def total(xs):\n    return sum(xs[1:])\n",
+    "status": "unsupported-error",
+    "concept": null,
+    "line": null,
+    "goal": "sum-all",
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "U02",
+    "code": "import os\nos.system('echo synthetic')\n",
+    "status": "untrusted",
+    "concept": null,
+    "line": null,
+    "goal": "sum-all",
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "U03",
+    "code": "def identity(x):\n    return (lambda y: y)(x)\n",
+    "status": "clear",
+    "concept": null,
+    "line": null,
+    "goal": "sum-all",
+    "source": null,
+    "language": "python"
+  },
+  {
+    "id": "S03",
+    "code": "int main( { return 0; }",
+    "status": "syntax-error",
+    "concept": null,
+    "line": null,
+    "goal": null,
+    "source": null,
+    "language": "c"
+  }
+]

@@ -1,3 +1,7 @@
+# CodeMentor AI 2.0
+
+新工作台面向高校 Python 入门实验，连接可定位诊断、课程证据、变式作答和独立复测。开始体验请打开 [工作台运行与部署说明](docs/workbench.md)。技术验证见 [固定数据与评测结果](evaluation/README.md)。另见 [系统架构和教学工作流](docs/architecture.md)、[浏览器与回归验证](docs/verification-record.md)、[演示分镜与解说词](docs/demo-storyboard.md) 和 [赛项提交清单](docs/submission-checklist.md)。旧版单机入口、功能和说明如下。
+
 # AI 代码导师
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

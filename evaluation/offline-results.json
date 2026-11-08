@@ -1,0 +1,1923 @@
+{
+  "mode": "offline-local",
+  "case_count": 24,
+  "dataset_distribution": {
+    "confirmed": 12,
+    "clear": 7,
+    "syntax-error": 3,
+    "unsupported-error": 1,
+    "untrusted": 1
+  },
+  "summary": {
+    "A": {
+      "status": "not-run"
+    },
+    "B": {
+      "status": "measured",
+      "cases": 24,
+      "mode": "local",
+      "model_accepted": 0,
+      "confirmed": 12,
+      "supported_faults": 12,
+      "concept_matches": 12,
+      "line_targets": 14,
+      "line_matches": 14,
+      "clean_cases": 7,
+      "clean_false_positive": 0,
+      "abstentions": 9,
+      "unavailable": 0,
+      "retrieval_targets": 12,
+      "retrieval_expected_hit": 0,
+      "citations_present": 0,
+      "p50_ms": 0.072,
+      "p95_ms": 0.215
+    },
+    "C": {
+      "status": "measured",
+      "cases": 24,
+      "mode": "local",
+      "model_accepted": 0,
+      "confirmed": 12,
+      "supported_faults": 12,
+      "concept_matches": 12,
+      "line_targets": 14,
+      "line_matches": 14,
+      "clean_cases": 7,
+      "clean_false_positive": 0,
+      "abstentions": 9,
+      "unavailable": 0,
+      "retrieval_targets": 12,
+      "retrieval_expected_hit": 12,
+      "citations_present": 0,
+      "p50_ms": 0.058,
+      "p95_ms": 0.123
+    }
+  },
+  "exercise_review": {
+    "templates": 9,
+    "complete": 9,
+    "method": "结构完整性检查。内容复核和学习成效另计。"
+  },
+  "rows": [
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:loop-boundary",
+          "knowledge_id": "loop-boundary",
+          "line": 3,
+          "condition": "任务要求遍历整数列表全部元素，但 range 上界排除了最后一个下标。",
+          "counterexample": "[2, 3]",
+          "observed": "2",
+          "expected": "5",
+          "correction": "使用 range(len(xs))，或直接遍历元素。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.2
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.21
+        }
+      ],
+      "case": "L01",
+      "variant": "B",
+      "duration_ms": 0.215,
+      "expected_status": "confirmed",
+      "expected_concept": "loop-boundary",
+      "expected_line": 3,
+      "expected_source": "loop-boundary-range-v1",
+      "actual_concept": "loop-boundary",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:loop-boundary",
+          "knowledge_id": "loop-boundary",
+          "line": 3,
+          "condition": "任务要求遍历整数列表全部元素，但 range 上界排除了最后一个下标。",
+          "counterexample": "[2, 3]",
+          "observed": "2",
+          "expected": "5",
+          "correction": "使用 range(len(xs))，或直接遍历元素。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "loop-boundary-range-v1",
+          "knowledge_id": "loop-boundary",
+          "version": 1,
+          "title": "range 的停止位置",
+          "content": "range(start, stop) 从 start 生成整数，正步长下生成的值始终小于 stop。用 len(xs) 作为 stop 可覆盖全部下标。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#ranges"
+        },
+        {
+          "id": "loop-boundary-iteration-v1",
+          "knowledge_id": "loop-boundary",
+          "version": 1,
+          "title": "直接遍历列表元素",
+          "content": "只需要值时使用 for item in xs；同时需要位置和值时可用 enumerate(xs)。用单元素输入核对循环是否漏掉末项。",
+          "source": "https://docs.python.org/3/tutorial/controlflow.html#the-range-function"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.14
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.15
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.15
+        }
+      ],
+      "case": "L01",
+      "variant": "C",
+      "duration_ms": 0.157,
+      "expected_status": "confirmed",
+      "expected_concept": "loop-boundary",
+      "expected_line": 3,
+      "expected_source": "loop-boundary-range-v1",
+      "actual_concept": "loop-boundary",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:loop-boundary",
+          "knowledge_id": "loop-boundary",
+          "line": 3,
+          "condition": "任务要求遍历整数列表全部元素，但 range 上界排除了最后一个下标。",
+          "counterexample": "[2, 3]",
+          "observed": "2",
+          "expected": "5",
+          "correction": "使用 range(len(xs))，或直接遍历元素。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.12
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.12
+        }
+      ],
+      "case": "L02",
+      "variant": "B",
+      "duration_ms": 0.127,
+      "expected_status": "confirmed",
+      "expected_concept": "loop-boundary",
+      "expected_line": 3,
+      "expected_source": "loop-boundary-range-v1",
+      "actual_concept": "loop-boundary",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:loop-boundary",
+          "knowledge_id": "loop-boundary",
+          "line": 3,
+          "condition": "任务要求遍历整数列表全部元素，但 range 上界排除了最后一个下标。",
+          "counterexample": "[2, 3]",
+          "observed": "2",
+          "expected": "5",
+          "correction": "使用 range(len(xs))，或直接遍历元素。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "loop-boundary-range-v1",
+          "knowledge_id": "loop-boundary",
+          "version": 1,
+          "title": "range 的停止位置",
+          "content": "range(start, stop) 从 start 生成整数，正步长下生成的值始终小于 stop。用 len(xs) 作为 stop 可覆盖全部下标。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#ranges"
+        },
+        {
+          "id": "loop-boundary-iteration-v1",
+          "knowledge_id": "loop-boundary",
+          "version": 1,
+          "title": "直接遍历列表元素",
+          "content": "只需要值时使用 for item in xs；同时需要位置和值时可用 enumerate(xs)。用单元素输入核对循环是否漏掉末项。",
+          "source": "https://docs.python.org/3/tutorial/controlflow.html#the-range-function"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.11
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.12
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.12
+        }
+      ],
+      "case": "L02",
+      "variant": "C",
+      "duration_ms": 0.123,
+      "expected_status": "confirmed",
+      "expected_concept": "loop-boundary",
+      "expected_line": 3,
+      "expected_source": "loop-boundary-range-v1",
+      "actual_concept": "loop-boundary",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:loop-boundary",
+          "knowledge_id": "loop-boundary",
+          "line": 5,
+          "condition": "任务要求遍历整数列表全部元素，但 range 上界排除了最后一个下标。",
+          "counterexample": "[2, 3]",
+          "observed": "2",
+          "expected": "5",
+          "correction": "使用 range(len(xs))，或直接遍历元素。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.1
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.1
+        }
+      ],
+      "case": "L03",
+      "variant": "B",
+      "duration_ms": 0.106,
+      "expected_status": "confirmed",
+      "expected_concept": "loop-boundary",
+      "expected_line": 5,
+      "expected_source": "loop-boundary-range-v1",
+      "actual_concept": "loop-boundary",
+      "actual_line": 5
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:loop-boundary",
+          "knowledge_id": "loop-boundary",
+          "line": 5,
+          "condition": "任务要求遍历整数列表全部元素，但 range 上界排除了最后一个下标。",
+          "counterexample": "[2, 3]",
+          "observed": "2",
+          "expected": "5",
+          "correction": "使用 range(len(xs))，或直接遍历元素。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "loop-boundary-range-v1",
+          "knowledge_id": "loop-boundary",
+          "version": 1,
+          "title": "range 的停止位置",
+          "content": "range(start, stop) 从 start 生成整数，正步长下生成的值始终小于 stop。用 len(xs) 作为 stop 可覆盖全部下标。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#ranges"
+        },
+        {
+          "id": "loop-boundary-iteration-v1",
+          "knowledge_id": "loop-boundary",
+          "version": 1,
+          "title": "直接遍历列表元素",
+          "content": "只需要值时使用 for item in xs；同时需要位置和值时可用 enumerate(xs)。用单元素输入核对循环是否漏掉末项。",
+          "source": "https://docs.python.org/3/tutorial/controlflow.html#the-range-function"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.1
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.1
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.1
+        }
+      ],
+      "case": "L03",
+      "variant": "C",
+      "duration_ms": 0.105,
+      "expected_status": "confirmed",
+      "expected_concept": "loop-boundary",
+      "expected_line": 5,
+      "expected_source": "loop-boundary-range-v1",
+      "actual_concept": "loop-boundary",
+      "actual_line": 5
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:loop-boundary",
+          "knowledge_id": "loop-boundary",
+          "line": 3,
+          "condition": "任务要求遍历整数列表全部元素，但 range 上界排除了最后一个下标。",
+          "counterexample": "[2, 3]",
+          "observed": "2",
+          "expected": "5",
+          "correction": "使用 range(len(xs))，或直接遍历元素。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.1
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.1
+        }
+      ],
+      "case": "L04",
+      "variant": "B",
+      "duration_ms": 0.1,
+      "expected_status": "confirmed",
+      "expected_concept": "loop-boundary",
+      "expected_line": 3,
+      "expected_source": "loop-boundary-range-v1",
+      "actual_concept": "loop-boundary",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:loop-boundary",
+          "knowledge_id": "loop-boundary",
+          "line": 3,
+          "condition": "任务要求遍历整数列表全部元素，但 range 上界排除了最后一个下标。",
+          "counterexample": "[2, 3]",
+          "observed": "2",
+          "expected": "5",
+          "correction": "使用 range(len(xs))，或直接遍历元素。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "loop-boundary-range-v1",
+          "knowledge_id": "loop-boundary",
+          "version": 1,
+          "title": "range 的停止位置",
+          "content": "range(start, stop) 从 start 生成整数，正步长下生成的值始终小于 stop。用 len(xs) 作为 stop 可覆盖全部下标。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#ranges"
+        },
+        {
+          "id": "loop-boundary-iteration-v1",
+          "knowledge_id": "loop-boundary",
+          "version": 1,
+          "title": "直接遍历列表元素",
+          "content": "只需要值时使用 for item in xs；同时需要位置和值时可用 enumerate(xs)。用单元素输入核对循环是否漏掉末项。",
+          "source": "https://docs.python.org/3/tutorial/controlflow.html#the-range-function"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.09
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.1
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.1
+        }
+      ],
+      "case": "L04",
+      "variant": "C",
+      "duration_ms": 0.101,
+      "expected_status": "confirmed",
+      "expected_concept": "loop-boundary",
+      "expected_line": 3,
+      "expected_source": "loop-boundary-range-v1",
+      "actual_concept": "loop-boundary",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:empty-list",
+          "knowledge_id": "empty-list",
+          "line": 2,
+          "condition": "当任务允许空列表时，下标 0 不存在。此检查不推断业务默认值。",
+          "counterexample": "[]",
+          "observed": "IndexError",
+          "expected": "走显式空列表分支",
+          "correction": "先判断列表是否为空，按题意选择默认值或明确报错。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.05
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.05
+        }
+      ],
+      "case": "E01",
+      "variant": "B",
+      "duration_ms": 0.051,
+      "expected_status": "confirmed",
+      "expected_concept": "empty-list",
+      "expected_line": 2,
+      "expected_source": "empty-list-index-v1",
+      "actual_concept": "empty-list",
+      "actual_line": 2
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:empty-list",
+          "knowledge_id": "empty-list",
+          "line": 2,
+          "condition": "当任务允许空列表时，下标 0 不存在。此检查不推断业务默认值。",
+          "counterexample": "[]",
+          "observed": "IndexError",
+          "expected": "走显式空列表分支",
+          "correction": "先判断列表是否为空，按题意选择默认值或明确报错。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "empty-list-index-v1",
+          "knowledge_id": "empty-list",
+          "version": 1,
+          "title": "空列表没有下标 0",
+          "content": "访问序列元素前保证下标有效。空列表没有首项；应按题意走默认值或显式错误分支。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#common-sequence-operations"
+        },
+        {
+          "id": "empty-list-truth-v1",
+          "knowledge_id": "empty-list",
+          "version": 1,
+          "title": "用真值判断空列表",
+          "content": "空列表的真值为 False。if not xs 可处理空输入，但默认值需符合题目契约。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#truth-value-testing"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.04
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.05
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.05
+        }
+      ],
+      "case": "E01",
+      "variant": "C",
+      "duration_ms": 0.05,
+      "expected_status": "confirmed",
+      "expected_concept": "empty-list",
+      "expected_line": 2,
+      "expected_source": "empty-list-index-v1",
+      "actual_concept": "empty-list",
+      "actual_line": 2
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:empty-list",
+          "knowledge_id": "empty-list",
+          "line": 2,
+          "condition": "当任务允许空列表时，下标 0 不存在。此检查不推断业务默认值。",
+          "counterexample": "[]",
+          "observed": "IndexError",
+          "expected": "走显式空列表分支",
+          "correction": "先判断列表是否为空，按题意选择默认值或明确报错。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.05
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.05
+        }
+      ],
+      "case": "E02",
+      "variant": "B",
+      "duration_ms": 0.048,
+      "expected_status": "confirmed",
+      "expected_concept": "empty-list",
+      "expected_line": 2,
+      "expected_source": "empty-list-index-v1",
+      "actual_concept": "empty-list",
+      "actual_line": 2
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:empty-list",
+          "knowledge_id": "empty-list",
+          "line": 2,
+          "condition": "当任务允许空列表时，下标 0 不存在。此检查不推断业务默认值。",
+          "counterexample": "[]",
+          "observed": "IndexError",
+          "expected": "走显式空列表分支",
+          "correction": "先判断列表是否为空，按题意选择默认值或明确报错。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "empty-list-index-v1",
+          "knowledge_id": "empty-list",
+          "version": 1,
+          "title": "空列表没有下标 0",
+          "content": "访问序列元素前保证下标有效。空列表没有首项；应按题意走默认值或显式错误分支。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#common-sequence-operations"
+        },
+        {
+          "id": "empty-list-truth-v1",
+          "knowledge_id": "empty-list",
+          "version": 1,
+          "title": "用真值判断空列表",
+          "content": "空列表的真值为 False。if not xs 可处理空输入，但默认值需符合题目契约。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#truth-value-testing"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.04
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.05
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.05
+        }
+      ],
+      "case": "E02",
+      "variant": "C",
+      "duration_ms": 0.048,
+      "expected_status": "confirmed",
+      "expected_concept": "empty-list",
+      "expected_line": 2,
+      "expected_source": "empty-list-index-v1",
+      "actual_concept": "empty-list",
+      "actual_line": 2
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:empty-list",
+          "knowledge_id": "empty-list",
+          "line": 4,
+          "condition": "当任务允许空列表时，下标 0 不存在。此检查不推断业务默认值。",
+          "counterexample": "[]",
+          "observed": "IndexError",
+          "expected": "走显式空列表分支",
+          "correction": "先判断列表是否为空，按题意选择默认值或明确报错。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.04
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.04
+        }
+      ],
+      "case": "E03",
+      "variant": "B",
+      "duration_ms": 0.044,
+      "expected_status": "confirmed",
+      "expected_concept": "empty-list",
+      "expected_line": 4,
+      "expected_source": "empty-list-index-v1",
+      "actual_concept": "empty-list",
+      "actual_line": 4
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:empty-list",
+          "knowledge_id": "empty-list",
+          "line": 4,
+          "condition": "当任务允许空列表时，下标 0 不存在。此检查不推断业务默认值。",
+          "counterexample": "[]",
+          "observed": "IndexError",
+          "expected": "走显式空列表分支",
+          "correction": "先判断列表是否为空，按题意选择默认值或明确报错。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "empty-list-index-v1",
+          "knowledge_id": "empty-list",
+          "version": 1,
+          "title": "空列表没有下标 0",
+          "content": "访问序列元素前保证下标有效。空列表没有首项；应按题意走默认值或显式错误分支。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#common-sequence-operations"
+        },
+        {
+          "id": "empty-list-truth-v1",
+          "knowledge_id": "empty-list",
+          "version": 1,
+          "title": "用真值判断空列表",
+          "content": "空列表的真值为 False。if not xs 可处理空输入，但默认值需符合题目契约。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#truth-value-testing"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.04
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.04
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.04
+        }
+      ],
+      "case": "E03",
+      "variant": "C",
+      "duration_ms": 0.046,
+      "expected_status": "confirmed",
+      "expected_concept": "empty-list",
+      "expected_line": 4,
+      "expected_source": "empty-list-index-v1",
+      "actual_concept": "empty-list",
+      "actual_line": 4
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:empty-list",
+          "knowledge_id": "empty-list",
+          "line": 2,
+          "condition": "当任务允许空列表时，下标 0 不存在。此检查不推断业务默认值。",
+          "counterexample": "[]",
+          "observed": "IndexError",
+          "expected": "走显式空列表分支",
+          "correction": "先判断列表是否为空，按题意选择默认值或明确报错。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.04
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.04
+        }
+      ],
+      "case": "E04",
+      "variant": "B",
+      "duration_ms": 0.044,
+      "expected_status": "confirmed",
+      "expected_concept": "empty-list",
+      "expected_line": 2,
+      "expected_source": "empty-list-index-v1",
+      "actual_concept": "empty-list",
+      "actual_line": 2
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:empty-list",
+          "knowledge_id": "empty-list",
+          "line": 2,
+          "condition": "当任务允许空列表时，下标 0 不存在。此检查不推断业务默认值。",
+          "counterexample": "[]",
+          "observed": "IndexError",
+          "expected": "走显式空列表分支",
+          "correction": "先判断列表是否为空，按题意选择默认值或明确报错。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "empty-list-index-v1",
+          "knowledge_id": "empty-list",
+          "version": 1,
+          "title": "空列表没有下标 0",
+          "content": "访问序列元素前保证下标有效。空列表没有首项；应按题意走默认值或显式错误分支。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#common-sequence-operations"
+        },
+        {
+          "id": "empty-list-truth-v1",
+          "knowledge_id": "empty-list",
+          "version": 1,
+          "title": "用真值判断空列表",
+          "content": "空列表的真值为 False。if not xs 可处理空输入，但默认值需符合题目契约。",
+          "source": "https://docs.python.org/3/library/stdtypes.html#truth-value-testing"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.04
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.04
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.05
+        }
+      ],
+      "case": "E04",
+      "variant": "C",
+      "duration_ms": 0.047,
+      "expected_status": "confirmed",
+      "expected_concept": "empty-list",
+      "expected_line": 2,
+      "expected_source": "empty-list-index-v1",
+      "actual_concept": "empty-list",
+      "actual_line": 2
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:accumulator",
+          "knowledge_id": "accumulator",
+          "line": 3,
+          "condition": "任务要求求和，但每轮循环都会重置累加器。",
+          "counterexample": "[2, 3]",
+          "observed": "3",
+          "expected": "5",
+          "correction": "将 result = 0 放在循环之前。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.08
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.08
+        }
+      ],
+      "case": "A01",
+      "variant": "B",
+      "duration_ms": 0.082,
+      "expected_status": "confirmed",
+      "expected_concept": "accumulator",
+      "expected_line": 3,
+      "expected_source": "accumulator-order-v1",
+      "actual_concept": "accumulator",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:accumulator",
+          "knowledge_id": "accumulator",
+          "line": 3,
+          "condition": "任务要求求和，但每轮循环都会重置累加器。",
+          "counterexample": "[2, 3]",
+          "observed": "3",
+          "expected": "5",
+          "correction": "将 result = 0 放在循环之前。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "accumulator-order-v1",
+          "knowledge_id": "accumulator",
+          "version": 1,
+          "title": "初始化与更新的顺序",
+          "content": "加法累加器在循环之前初始化为 0。循环体只做更新。试着写出每轮前后的值，检查是否丢失历史。",
+          "source": "https://docs.python.org/3/tutorial/controlflow.html#for-statements"
+        },
+        {
+          "id": "accumulator-sum-v1",
+          "knowledge_id": "accumulator",
+          "version": 1,
+          "title": "用 sum 复核累计结果",
+          "content": "对整数序列可使用 sum(xs) 作为结果参考。空输入时 sum([]) 为默认初值 0。",
+          "source": "https://docs.python.org/3/library/functions.html#sum"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.07
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.08
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.08
+        }
+      ],
+      "case": "A01",
+      "variant": "C",
+      "duration_ms": 0.078,
+      "expected_status": "confirmed",
+      "expected_concept": "accumulator",
+      "expected_line": 3,
+      "expected_source": "accumulator-order-v1",
+      "actual_concept": "accumulator",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:accumulator",
+          "knowledge_id": "accumulator",
+          "line": 3,
+          "condition": "任务要求求和，但每轮循环都会重置累加器。",
+          "counterexample": "[2, 3]",
+          "observed": "3",
+          "expected": "5",
+          "correction": "将 result = 0 放在循环之前。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.12
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.13
+        }
+      ],
+      "case": "A02",
+      "variant": "B",
+      "duration_ms": 0.127,
+      "expected_status": "confirmed",
+      "expected_concept": "accumulator",
+      "expected_line": 3,
+      "expected_source": "accumulator-order-v1",
+      "actual_concept": "accumulator",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:accumulator",
+          "knowledge_id": "accumulator",
+          "line": 3,
+          "condition": "任务要求求和，但每轮循环都会重置累加器。",
+          "counterexample": "[2, 3]",
+          "observed": "3",
+          "expected": "5",
+          "correction": "将 result = 0 放在循环之前。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "accumulator-order-v1",
+          "knowledge_id": "accumulator",
+          "version": 1,
+          "title": "初始化与更新的顺序",
+          "content": "加法累加器在循环之前初始化为 0。循环体只做更新。试着写出每轮前后的值，检查是否丢失历史。",
+          "source": "https://docs.python.org/3/tutorial/controlflow.html#for-statements"
+        },
+        {
+          "id": "accumulator-sum-v1",
+          "knowledge_id": "accumulator",
+          "version": 1,
+          "title": "用 sum 复核累计结果",
+          "content": "对整数序列可使用 sum(xs) 作为结果参考。空输入时 sum([]) 为默认初值 0。",
+          "source": "https://docs.python.org/3/library/functions.html#sum"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.09
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.09
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.09
+        }
+      ],
+      "case": "A02",
+      "variant": "C",
+      "duration_ms": 0.096,
+      "expected_status": "confirmed",
+      "expected_concept": "accumulator",
+      "expected_line": 3,
+      "expected_source": "accumulator-order-v1",
+      "actual_concept": "accumulator",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:accumulator",
+          "knowledge_id": "accumulator",
+          "line": 5,
+          "condition": "任务要求求和，但每轮循环都会重置累加器。",
+          "counterexample": "[2, 3]",
+          "observed": "3",
+          "expected": "5",
+          "correction": "将 result = 0 放在循环之前。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.08
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.08
+        }
+      ],
+      "case": "A03",
+      "variant": "B",
+      "duration_ms": 0.08,
+      "expected_status": "confirmed",
+      "expected_concept": "accumulator",
+      "expected_line": 5,
+      "expected_source": "accumulator-order-v1",
+      "actual_concept": "accumulator",
+      "actual_line": 5
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:accumulator",
+          "knowledge_id": "accumulator",
+          "line": 5,
+          "condition": "任务要求求和，但每轮循环都会重置累加器。",
+          "counterexample": "[2, 3]",
+          "observed": "3",
+          "expected": "5",
+          "correction": "将 result = 0 放在循环之前。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "accumulator-order-v1",
+          "knowledge_id": "accumulator",
+          "version": 1,
+          "title": "初始化与更新的顺序",
+          "content": "加法累加器在循环之前初始化为 0。循环体只做更新。试着写出每轮前后的值，检查是否丢失历史。",
+          "source": "https://docs.python.org/3/tutorial/controlflow.html#for-statements"
+        },
+        {
+          "id": "accumulator-sum-v1",
+          "knowledge_id": "accumulator",
+          "version": 1,
+          "title": "用 sum 复核累计结果",
+          "content": "对整数序列可使用 sum(xs) 作为结果参考。空输入时 sum([]) 为默认初值 0。",
+          "source": "https://docs.python.org/3/library/functions.html#sum"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.07
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.07
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.07
+        }
+      ],
+      "case": "A03",
+      "variant": "C",
+      "duration_ms": 0.075,
+      "expected_status": "confirmed",
+      "expected_concept": "accumulator",
+      "expected_line": 5,
+      "expected_source": "accumulator-order-v1",
+      "actual_concept": "accumulator",
+      "actual_line": 5
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:accumulator",
+          "knowledge_id": "accumulator",
+          "line": 3,
+          "condition": "任务要求求和，但每轮循环都会重置累加器。",
+          "counterexample": "[2, 3]",
+          "observed": "3",
+          "expected": "5",
+          "correction": "将 result = 0 放在循环之前。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.07
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.07
+        }
+      ],
+      "case": "A04",
+      "variant": "B",
+      "duration_ms": 0.072,
+      "expected_status": "confirmed",
+      "expected_concept": "accumulator",
+      "expected_line": 3,
+      "expected_source": "accumulator-order-v1",
+      "actual_concept": "accumulator",
+      "actual_line": 3
+    },
+    {
+      "status": "confirmed",
+      "evidence": [
+        {
+          "id": "local:accumulator",
+          "knowledge_id": "accumulator",
+          "line": 3,
+          "condition": "任务要求求和，但每轮循环都会重置累加器。",
+          "counterexample": "[2, 3]",
+          "observed": "3",
+          "expected": "5",
+          "correction": "将 result = 0 放在循环之前。",
+          "method": "reviewed-static-pattern"
+        }
+      ],
+      "cards": [
+        {
+          "id": "accumulator-order-v1",
+          "knowledge_id": "accumulator",
+          "version": 1,
+          "title": "初始化与更新的顺序",
+          "content": "加法累加器在循环之前初始化为 0。循环体只做更新。试着写出每轮前后的值，检查是否丢失历史。",
+          "source": "https://docs.python.org/3/tutorial/controlflow.html#for-statements"
+        },
+        {
+          "id": "accumulator-sum-v1",
+          "knowledge_id": "accumulator",
+          "version": 1,
+          "title": "用 sum 复核累计结果",
+          "content": "对整数序列可使用 sum(xs) 作为结果参考。空输入时 sum([]) 为默认初值 0。",
+          "source": "https://docs.python.org/3/library/functions.html#sum"
+        }
+      ],
+      "annotation": null,
+      "model_status": "disabled",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "confirmed",
+          "elapsed_ms": 0.07
+        },
+        {
+          "stage": "retrieval",
+          "status": "matched",
+          "elapsed_ms": 0.07
+        },
+        {
+          "stage": "model",
+          "status": "disabled",
+          "elapsed_ms": 0.07
+        }
+      ],
+      "case": "A04",
+      "variant": "C",
+      "duration_ms": 0.075,
+      "expected_status": "confirmed",
+      "expected_concept": "accumulator",
+      "expected_line": 3,
+      "expected_source": "accumulator-order-v1",
+      "actual_concept": "accumulator",
+      "actual_line": 3
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.05
+        }
+      ],
+      "case": "N01",
+      "variant": "B",
+      "duration_ms": 0.055,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.04
+        }
+      ],
+      "case": "N01",
+      "variant": "C",
+      "duration_ms": 0.045,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.06
+        }
+      ],
+      "case": "N02",
+      "variant": "B",
+      "duration_ms": 0.063,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.05
+        }
+      ],
+      "case": "N02",
+      "variant": "C",
+      "duration_ms": 0.053,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.07
+        }
+      ],
+      "case": "N03",
+      "variant": "B",
+      "duration_ms": 0.071,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.07
+        }
+      ],
+      "case": "N03",
+      "variant": "C",
+      "duration_ms": 0.069,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.06
+        }
+      ],
+      "case": "N04",
+      "variant": "B",
+      "duration_ms": 0.061,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.05
+        }
+      ],
+      "case": "N04",
+      "variant": "C",
+      "duration_ms": 0.053,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.11
+        }
+      ],
+      "case": "N05",
+      "variant": "B",
+      "duration_ms": 0.11,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.1
+        }
+      ],
+      "case": "N05",
+      "variant": "C",
+      "duration_ms": 0.101,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.04
+        }
+      ],
+      "case": "N06",
+      "variant": "B",
+      "duration_ms": 0.046,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.04
+        }
+      ],
+      "case": "N06",
+      "variant": "C",
+      "duration_ms": 0.042,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "syntax-error",
+      "evidence": [
+        {
+          "id": "syntax",
+          "line": 1,
+          "condition": "invalid syntax"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "syntax-error",
+          "elapsed_ms": 0.1
+        }
+      ],
+      "case": "S01",
+      "variant": "B",
+      "duration_ms": 0.1,
+      "expected_status": "syntax-error",
+      "expected_concept": null,
+      "expected_line": 1,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": 1
+    },
+    {
+      "status": "syntax-error",
+      "evidence": [
+        {
+          "id": "syntax",
+          "line": 1,
+          "condition": "invalid syntax"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "syntax-error",
+          "elapsed_ms": 0.05
+        }
+      ],
+      "case": "S01",
+      "variant": "C",
+      "duration_ms": 0.053,
+      "expected_status": "syntax-error",
+      "expected_concept": null,
+      "expected_line": 1,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": 1
+    },
+    {
+      "status": "syntax-error",
+      "evidence": [
+        {
+          "id": "syntax",
+          "line": 1,
+          "condition": "'return' outside function"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "syntax-error",
+          "elapsed_ms": 0.05
+        }
+      ],
+      "case": "S02",
+      "variant": "B",
+      "duration_ms": 0.055,
+      "expected_status": "syntax-error",
+      "expected_concept": null,
+      "expected_line": 1,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": 1
+    },
+    {
+      "status": "syntax-error",
+      "evidence": [
+        {
+          "id": "syntax",
+          "line": 1,
+          "condition": "'return' outside function"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "syntax-error",
+          "elapsed_ms": 0.04
+        }
+      ],
+      "case": "S02",
+      "variant": "C",
+      "duration_ms": 0.044,
+      "expected_status": "syntax-error",
+      "expected_concept": null,
+      "expected_line": 1,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": 1
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.08
+        }
+      ],
+      "case": "U01",
+      "variant": "B",
+      "duration_ms": 0.081,
+      "expected_status": "unsupported-error",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.06
+        }
+      ],
+      "case": "U01",
+      "variant": "C",
+      "duration_ms": 0.061,
+      "expected_status": "unsupported-error",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.03
+        }
+      ],
+      "case": "U02",
+      "variant": "B",
+      "duration_ms": 0.03,
+      "expected_status": "untrusted",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.01
+        }
+      ],
+      "case": "U02",
+      "variant": "C",
+      "duration_ms": 0.016,
+      "expected_status": "untrusted",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.07
+        }
+      ],
+      "case": "U03",
+      "variant": "B",
+      "duration_ms": 0.069,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "uncertain",
+      "evidence": [],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "uncertain",
+          "elapsed_ms": 0.06
+        }
+      ],
+      "case": "U03",
+      "variant": "C",
+      "duration_ms": 0.058,
+      "expected_status": "clear",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "syntax-error",
+      "evidence": [
+        {
+          "id": "syntax",
+          "line": null,
+          "condition": "SyntaxError: 语法树包含错误节点，符号可能不完整"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "syntax-error",
+          "elapsed_ms": 5.4
+        }
+      ],
+      "case": "S03",
+      "variant": "B",
+      "duration_ms": 5.411,
+      "expected_status": "syntax-error",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    },
+    {
+      "status": "syntax-error",
+      "evidence": [
+        {
+          "id": "syntax",
+          "line": null,
+          "condition": "SyntaxError: 语法树包含错误节点，符号可能不完整"
+        }
+      ],
+      "cards": [],
+      "annotation": null,
+      "model_status": "skipped",
+      "mode": "local",
+      "events": [
+        {
+          "stage": "analysis",
+          "status": "syntax-error",
+          "elapsed_ms": 0.02
+        }
+      ],
+      "case": "S03",
+      "variant": "C",
+      "duration_ms": 0.024,
+      "expected_status": "syntax-error",
+      "expected_concept": null,
+      "expected_line": null,
+      "expected_source": null,
+      "actual_concept": null,
+      "actual_line": null
+    }
+  ]
+}
