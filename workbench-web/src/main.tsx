@@ -1,10 +1,11 @@
 
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { get, post } from './api'
 import type { Attempt, Challenge, Diagnosis, Hint, Mode, Skill } from './api'
 import { examples } from './examples'
 import { DiagnosisPanel, PracticePanel, ProfilePanel } from './panels'
+import { Icon } from './icons'
 import './styles.css'
 
 const Editor = lazy(() => import('./Editor'))
@@ -22,7 +23,8 @@ function App() {
   const [hint, setHint] = useState<Hint | null>(null)
   const [attempt, setAttempt] = useState<Attempt | null>(null)
   const [answer, setAnswer] = useState('')
-  const [skills, setSkills] = useState<Skill[]>([])
+  const [skills, setSkills] = useState<Skill[] | null>(null)
+  const [profileLoading, setProfileLoading] = useState(true)
   const [jump, setJump] = useState(0)
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
@@ -39,11 +41,15 @@ function App() {
   const currentFingerprint = JSON.stringify([goal, code])
 
   async function loadProfile() {
+    setProfileLoading(true)
     try {
+      await ensureSession()
       setSkills((await get<{ skills: Skill[] }>('/profile')).skills)
       setProfileError('')
     } catch {
       setProfileError('学习记录暂时无法刷新。')
+    } finally {
+      setProfileLoading(false)
     }
   }
 
@@ -63,12 +69,25 @@ function App() {
           await loadProfile()
         }
       } catch {
-        if (!cancelled) setError('工作台暂时无法连接。可重新加载页面，或直接重试诊断。')
+        if (!cancelled) {
+          setError('工作台暂时无法连接。可重新加载页面，或直接重试诊断。')
+          setProfileError('学习记录暂时无法刷新。')
+          setProfileLoading(false)
+        }
       }
     }
     void openSession()
     return () => { cancelled = true; request.current?.abort() }
   }, [])
+
+  // Preserve a section jump made while its async content was still loading.
+  // Only follow the currently focused heading; never pull an editing user away.
+  useLayoutEffect(() => {
+    const heading = document.activeElement
+    if (heading instanceof HTMLElement && ['practice-title', 'evidence-title', 'profile-title'].includes(heading.id)) {
+      heading.scrollIntoView({ block: 'start' })
+    }
+  }, [diagnosis, challenge, skills])
 
   function resetPractice(next: Challenge | null) {
     setChallenge(next)
@@ -152,25 +171,42 @@ function App() {
   }
 
   return <>
+    <a className="skip-link" href="#code-title">跳到代码编辑器</a>
     <header className="site-header"><div className="site-header-inner">
-      <a href="/" className="brand"><span className="brand-icon" aria-hidden="true">›_</span>CodeMentor <span>AI 2.0</span></a>
-      <span className="mode"><span aria-hidden="true" />{mode ? modeNames[mode] : '连接工作台'}</span>
+      <a href="/" className="brand"><span className="brand-icon" aria-hidden="true">c<span>m</span></span>CodeMentor<span className="version">2.0</span></a>
+      <div className="workspace-name"><span>学习空间</span><span className="slash">/</span><h1>编程复测工作台</h1></div>
+      <span className={`mode ${mode ?? 'connecting'}`}><span aria-hidden="true" />{mode ? modeNames[mode] : '连接工作台'}</span>
     </div></header>
-    <main>
-      <div className="intro"><div>
-        <p className="eyebrow">PYTHON LAB <span> / </span> 01</p>
-        <h1>编程复测工作台</h1>
-        <p>沿着具体反例找到错因，再用一道变式检验自己的理解。</p>
-      </div><a className="profile-link" href="#profile-title">查看学习记录 ↓</a></div>
+    <main className="app-main">
+      <nav className="section-nav" aria-label="工作区导航">
+        <span className="lab-label">PYTHON LAB</span>
+        <a href="#code-title"><Icon name="code" />代码</a>
+        <a href="#evidence-title"><Icon name="scan" />诊断</a>
+        <a href="#practice-title"><Icon name="terminal" />复测</a>
+        <a href="#profile-title"><Icon name="chart" />记录</a>
+        <span className="nav-caption">从具体反例，走到独立解题。</span>
+      </nav>
       <div className="workspace">
-        <section className="panel code-panel" aria-labelledby="code-title">
-          <div className="panel-head"><span className="step">01</span><div>
-            <h2 id="code-title">代码实验台</h2><p>编辑 Python 函数或选一个练习样例</p>
-          </div></div>
-          <div className="panel-content">
-            <div className="examples" aria-label="实验样例">{examples.map(example =>
-              <button className={code === example.code ? 'example selected' : 'example'} key={example.id}
-                onClick={() => { setCode(example.code); setGoal(example.goal) }}>{example.name}</button>)}</div>
+        <aside className="library" aria-label="实验目录">
+          <div className="library-heading"><Icon name="folder" /><span>基础实验</span><span className="count">03</span></div>
+          <div className="examples" aria-label="实验样例">{examples.map((example, index) =>
+            <button className={code === example.code ? 'example selected' : 'example'} key={example.id}
+              aria-pressed={code === example.code}
+              onClick={() => { setCode(example.code); setGoal(example.goal) }}>
+              <span className="example-number">0{index + 1}</span><span>{example.name}<small>{['Loop boundaries', 'Empty input', 'Accumulator'][index]}</small></span>
+              <span className="example-arrow" aria-hidden="true">↗</span>
+            </button>)}</div>
+          <div className="learning-route"><p className="eyebrow">本轮学习路径</p>
+            <ol>
+              <li className={!diagnosis ? 'current' : 'done'}><span>{diagnosis ? '✓' : '1'}</span><div>定位错因<small>{pending ? '等待结果' : diagnosis ? '已返回诊断' : '从代码出发'}</small></div></li>
+              <li className={challenge ? 'current' : ''}><span>2</span><div>验证理解<small>{attempt ? '已记录作答' : challenge ? '变式已就绪' : '等待匹配练习'}</small></div></li>
+              <li className={attempt ? 'current' : ''}><span>3</span><div>积累证据<small>{attempt ? '已更新学习记录' : '区分独立与辅助'}</small></div></li>
+            </ol>
+          </div>
+          <div className="library-note"><Icon name="shield" /><p>在证据范围内学习<small>本地分析不执行你的代码。<br />证据不足时，保留不确定性。</small></p></div>
+        </aside>
+          <section className="code-panel" aria-labelledby="code-title">
+            <div className="editor-title"><div><span className="eyebrow">01 / EXPERIMENT</span><h2 id="code-title" tabIndex={-1}>代码实验台</h2></div><span className="language-badge">Python</span></div>
             <label className="task-contract">题目要求
               <select value={goal} onChange={event => setGoal(event.target.value as Goal)}>
                 <option value="sum-all">返回全部整数元素的和</option>
@@ -179,31 +215,30 @@ function App() {
               </select>
             </label>
             <div className="editor-shell">
-              <div className="editor-bar"><span>submission.py</span><span>Python</span></div>
+              <div className="editor-bar"><span className="file-tab"><Icon name="code" />submission.py<span className={stale ? 'file-dot changed' : 'file-dot'} title={stale ? '相对上次提交有改动' : '当前编辑文件'} /></span><span className="editor-caption">{stale ? '有未诊断的改动' : '可直接编辑'}</span></div>
               <Suspense fallback={<label className="editor-fallback">正在加载编辑器…</label>}>
                 <Editor code={code} onChange={setCode} line={stale ? null : diagnosis?.evidence[0]?.line ?? null} jump={jump} />
               </Suspense>
+              <div className="editor-meta"><span>UTF-8 <span className="meta-separator">/</span> {code.split('\n').length} 行</span><span>{code.length.toLocaleString()} / 16,000 字符</span></div>
             </div>
             <div className="toolbar">
+              <p className="status" role="status">{status || '修改代码，检查你的思路。'}</p>
+              {pending && <button className="plain" onClick={cancel}>取消等待</button>}
               <button className="primary" disabled={pending || !!action || !code.trim() || code.length > 16000} onClick={() => void diagnose()}>
+                <Icon name="play" />
                 {pending ? '等待诊断…' : diagnosisKey.current?.value === currentFingerprint ? '重试诊断' : '开始诊断'}
               </button>
-              {pending && <button className="plain" onClick={cancel}>取消等待</button>}
-              <small>{code.length.toLocaleString()} / 16,000 字符</small>
             </div>
-            <p className="status" role="status">{status}</p>
             {error && <p className="error" role="alert">{error}</p>}
             {mode === 'live' && <p className="notice">模型只接收课程标准例子、静态证据和练习计数。请避免在编辑器中粘贴个人信息或密钥。</p>}
-          </div>
-        </section>
-        <DiagnosisPanel result={diagnosis} stale={stale} jump={() => setJump(value => value + 1)} />
-        <PracticePanel challenge={challenge} hint={hint} attempt={attempt} answer={answer} setAnswer={setAnswer}
-          action={pending ? 'diagnosis' : action} onHint={() => void practice('hint')}
-          onSubmit={() => void practice('answer')} onRetry={() => void practice('retry')} error={practiceError} />
-        <ProfilePanel skills={skills} />
+          </section>
+          <DiagnosisPanel result={diagnosis} stale={stale} pending={pending} jump={() => setJump(value => value + 1)} />
+          <PracticePanel challenge={challenge} hint={hint} attempt={attempt} answer={answer} setAnswer={setAnswer}
+            action={pending ? 'diagnosis' : action} onHint={() => void practice('hint')}
+            onSubmit={() => void practice('answer')} onRetry={() => void practice('retry')} error={practiceError} />
+          <ProfilePanel skills={skills} loading={profileLoading} error={profileError} onRetry={() => void loadProfile()} />
       </div>
-      {profileError && <p className="error" role="status">{profileError}</p>}
-      <footer><span>CodeMentor AI · Python 入门实验</span><span>静态检查 · 受控知识检索 · 确定性评分</span></footer>
+      <footer><span><span className="footer-dot" /> Python 入门实验 <span className="footer-separator">/</span> CodeMentor AI</span><span>静态证据 · 课程检索 · 变式复测</span></footer>
     </main>
   </>
 }

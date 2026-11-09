@@ -4,6 +4,31 @@ import { basicSetup } from 'codemirror'
 import { python } from '@codemirror/lang-python'
 import { StateEffect, StateField } from '@codemirror/state'
 import { Decoration, EditorView } from '@codemirror/view'
+import { HighlightStyle, syntaxHighlighting } from '@codemirror/language'
+import { tags } from '@lezer/highlight'
+
+const laboratoryTheme = EditorView.theme({
+  '&': { color: '#d8e3dc', backgroundColor: '#121619' },
+  '.cm-content': { caretColor: '#9bdfbd' },
+  '.cm-cursor, .cm-dropCursor': { borderLeftColor: '#9bdfbd' },
+  '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, ::selection': { backgroundColor: '#355044' },
+  '.cm-gutters': { backgroundColor: '#121619', color: '#7a8b81', border: 'none' },
+  '.cm-activeLineGutter': { backgroundColor: '#202a25', color: '#b6c9bd' },
+  '.cm-activeLine': { backgroundColor: '#ffffff04' },
+  '.cm-foldPlaceholder': { backgroundColor: '#27352d', color: '#b8cbbf', border: 'none' },
+  '.cm-panels, .cm-tooltip': { backgroundColor: '#20262a', color: '#e3e9e6', borderColor: '#45534b' },
+  '.cm-searchMatch': { backgroundColor: '#665332' },
+  '.cm-searchMatch.cm-searchMatch-selected': { backgroundColor: '#8c713e' },
+}, { dark: true })
+const laboratorySyntax = HighlightStyle.define([
+  { tag: tags.keyword, color: '#c6b2e5' },
+  { tag: [tags.function(tags.variableName), tags.definition(tags.variableName)], color: '#b4dfc7' },
+  { tag: tags.number, color: '#e5bb7b' },
+  { tag: tags.string, color: '#aecb98' },
+  { tag: [tags.comment, tags.meta], color: '#899b91' },
+  { tag: tags.operator, color: '#a4c5d8' },
+  { tag: tags.special(tags.variableName), color: '#8ecbd3' },
+])
 
 const mark = StateEffect.define<number | null>()
 const evidenceLine = StateField.define({
@@ -37,7 +62,7 @@ export default function Editor({ code, onChange, line, jump }: {
     const view = new EditorView({
       doc: initialCode.current,
       extensions: [
-        basicSetup, python(), evidenceLine, EditorView.lineWrapping,
+        basicSetup, python(), laboratoryTheme, syntaxHighlighting(laboratorySyntax), evidenceLine, EditorView.lineWrapping,
         EditorView.contentAttributes.of({ 'aria-label': 'Python 代码' }),
         EditorView.updateListener.of(update => {
           if (update.docChanged) onChangeRef.current(update.state.doc.toString())
