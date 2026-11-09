@@ -9,9 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.workbench_security import require_owner
-from app.schemas.workbench import AnswerRequest, DiagnosisRequest, HintRequest
+from app.schemas.workbench import AnswerRequest, DiagnosisRequest, HintRequest, ReflectionRequest
 from app.services import workbench_learning as learning
 from app.services.workbench_diagnosis import evaluate
+from app.services import workbench_reflection as reflection
 
 router = APIRouter(prefix="/api")
 Owner = Annotated[str, Depends(require_owner)]
@@ -40,6 +41,7 @@ async def diagnose(payload: DiagnosisRequest, request: Request, owner: Owner, db
 
         result = await evaluate(payload.code, payload.language, owner, request.app.state.tutor,
                                 goal=payload.goal, learning=learning_context)
+        result["coaching"] = await reflection.coaching(db, owner, result)
         challenge = None
         if result["status"] == "confirmed":
             challenge = await learning.plan_initial(db, owner, result["evidence"][0]["knowledge_id"])
@@ -68,3 +70,18 @@ async def answer(challenge_id: UUID, payload: AnswerRequest, owner: Owner, db: D
 async def retry(challenge_id: UUID, owner: Owner, db: DB):
     challenge = await learning.owned_challenge(db, owner, str(challenge_id))
     return await learning.retry(db, challenge)
+
+
+@router.get('/learning-memory')
+async def learning_memory(owner: Owner, db: DB):
+    return {'items': await reflection.memories(db, owner)}
+
+@router.post('/diagnoses/{diagnosis_id}/reflection')
+async def reflect(diagnosis_id: UUID, payload: ReflectionRequest, request: Request, owner: Owner, db: DB):
+    async with request.app.state.diagnosis_locks[hash((owner, str(diagnosis_id))) % 32]:
+        return await reflection.save_reflection(db, owner, str(diagnosis_id), payload)
+
+@router.post('/diagnoses/{diagnosis_id}/reflection/forget')
+async def forget_reflection(diagnosis_id: UUID, request: Request, owner: Owner, db: DB):
+    async with request.app.state.diagnosis_locks[hash((owner, str(diagnosis_id))) % 32]:
+        return await reflection.save_reflection(db, owner, str(diagnosis_id), None)

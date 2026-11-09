@@ -1,0 +1,23 @@
+import { expect, test } from '@playwright/test'
+
+test('reflect, correct, reuse and forget a learner self-report', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: '开始诊断' }).click()
+  await expect(page.getByRole('heading', { name: '这次为什么出错？' })).toBeVisible()
+  await page.getByText('记录我的原因与思路', {exact:true}).click()
+  await page.getByLabel('我认为更接近哪种原因').selectOption('typing')
+  await page.getByLabel('当时的思路与下次提醒').fill('我原本知道上界不包含；下次先手算两个下标。')
+  await page.getByRole('button', {name:'保存本次复盘'}).click()
+  await expect(page.getByText('查看学习记忆（1）')).toBeVisible()
+  await page.getByText('查看学习记忆（1）').click()
+  await page.getByRole('button',{name:'纠正这条记录'}).click()
+  await page.getByLabel('我认为更接近哪种原因').selectOption('concept')
+  await page.getByRole('button',{name:'保存本次复盘'}).click()
+  await expect(page.locator('.memory-item strong')).toHaveText('概念记得不牢')
+  await page.getByRole('button', { name: '开始诊断' }).click()
+  await expect(page.getByText('你上次自述概念不稳：', {exact:false})).toBeVisible()
+  await page.getByText('查看学习记忆（1）').click()
+  await page.getByRole('button',{name:'删除这条自述'}).click()
+  await expect(page.getByText('查看学习记忆（0）')).toBeVisible()
+  await expect(page.locator('.memory-item')).toHaveCount(0)
+})

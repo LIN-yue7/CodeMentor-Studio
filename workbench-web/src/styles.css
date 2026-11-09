@@ -289,3 +289,19 @@ button, a, input, select, summary { transition: color 120ms, background-color 12
   .editor-shell { display: flex; flex-direction: column; flex: 1; }
   .editor { flex: 1; min-height: 230px; }
 }
+.reflection-panel { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 12px; font-size: 13px; line-height: 1.8; }
+.reflection-panel h3 { font-size: 15px; color: var(--accent); }
+.reflection-panel h4 { margin: 0; font-size: 12px; color: var(--muted); }
+.reflection-panel small { color: var(--muted); font-size: 11px; display:block; }
+.self-check { border-left: 2px solid var(--amber); padding-left: 12px; }
+.reflection-form[open] { display: grid; gap: 12px; }
+.reflection-form label { display: grid; gap: 6px; }
+.reflection-form select,.reflection-form textarea { width:100%; min-width:0; border:1px solid var(--line); background:var(--editor); color:var(--ink); padding:10px; border-radius:5px; font:inherit; }
+.reflection-form textarea { resize:vertical; }
+.memory-item { border-top:1px solid var(--line); padding:12px 0; overflow-wrap:anywhere; }
+.memory-item button { margin:8px 6px 0 0; }
+@media(max-width:760px){.reflection-form select,.reflection-form textarea {font-size:16px}}
+@media (min-width:761px) {
+  .evidence > .panel-content { max-height:560px; overflow-y:auto; scrollbar-gutter:stable; }
+  .evidence > .panel-content:focus-visible { outline:2px solid var(--accent); outline-offset:-3px; }
+}

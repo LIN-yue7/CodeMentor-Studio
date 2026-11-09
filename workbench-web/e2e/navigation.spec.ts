@@ -25,6 +25,9 @@ test('keyboard moves from submitted code to its evidence before practice', async
   await expect(page.getByRole('button', { name: '第 3 行' })).toBeVisible()
   await start.focus()
   await page.keyboard.press('Tab')
+  // The reading region is focusable so keyboard users can scroll detailed evidence.
+  await expect(page.getByRole('region', { name: '诊断详情，可滚动阅读' })).toBeFocused()
+  await page.keyboard.press('Tab')
   await expect(page.getByRole('button', { name: '第 3 行' })).toBeFocused()
 })
 

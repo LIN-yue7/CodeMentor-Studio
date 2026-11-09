@@ -23,3 +23,7 @@ class HintRequest(Input):
 class AnswerRequest(Input):
     answer: str = Field(min_length=1, max_length=80)
     attempt_id: UUID
+
+class ReflectionRequest(Input):
+    reason: Literal['typing', 'concept', 'approach', 'requirement', 'unsure']
+    explanation: str = Field(default='', max_length=600)

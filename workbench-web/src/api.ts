@@ -15,6 +15,7 @@ export type Challenge = {
   id: string; knowledge_id: string; template_id: string; title: string; prompt: string; hint_count: number
 }
 export type Diagnosis = {
+  coaching?: { why:string; fix:string; question:string; next_action:string; caution:string; history:{count:number} }
   id: string
   status: 'confirmed' | 'syntax-error' | 'uncertain'
   mode: Mode

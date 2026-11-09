@@ -1,3 +1,4 @@
+import { ReflectionPanel } from './ReflectionPanel'
 import { useRef } from 'react'
 import type { FormEvent } from 'react'
 import type { Attempt, Challenge, Diagnosis, Hint, Skill } from './api'
@@ -32,7 +33,7 @@ export function DiagnosisPanel({ result, stale, pending, jump }: {
       <p>{pending ? '结果返回后显示实际完成的步骤。' : '提交左侧代码，查看触发条件、具体反例和修正依据。'}</p>
       <div className="evidence-outline"><span>定位代码</span><Icon name="arrow" /><span>检验反例</span><Icon name="arrow" /><span>关联知识</span></div>
     </div> :
-      <div className="panel-content">
+      <div className="panel-content" tabIndex={0} role="region" aria-label="诊断详情，可滚动阅读">
         <div className="result-summary"><span className={`tag ${result.status === 'confirmed' ? 'warm' : ''}`}>{statusNames[result.status]}</span><span className="subtle">{result.evidence.length} 条证据</span></div>
         {pending && <p className="notice">新诊断尚未返回，下方保留上一次结果。</p>}
         {stale && <p className="notice">当前代码已改动，以下证据属于上次提交。</p>}
@@ -47,6 +48,7 @@ export function DiagnosisPanel({ result, stale, pending, jump }: {
           </dl>}
           {item.correction && <div className="correction"><span className="eyebrow">修正依据</span><p>{item.correction}</p></div>}
         </article>)}
+        <ReflectionPanel key={result.id} diagnosis={result} />
         {result.annotation && <div className="model-note">
           <span className="eyebrow">模型解释</span><p>{result.annotation.explanation}</p>
           <div className="citation-links">{result.annotation.citations.map((id, index) =>

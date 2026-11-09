@@ -1,5 +1,7 @@
 # CodeMentor AI 2.0
 
+当前增量版本：详细诊断与可纠正的学习自述。见 [R2 验收记录](docs/reflection-release.md)。本轮使用离线规则，未验证真实模型；下文旧版报告中的模型效果和历史测试数字不代表本轮验证结果。
+
 新工作台面向高校 Python 入门实验，连接可定位诊断、课程证据、变式作答和独立复测。开始体验请打开 [工作台运行与部署说明](docs/workbench.md)。技术验证见 [固定数据与评测结果](evaluation/README.md)。另见 [系统架构和教学工作流](docs/architecture.md)、[浏览器与回归验证](docs/verification-record.md)、[演示分镜与解说词](docs/demo-storyboard.md) 和 [赛项提交清单](docs/submission-checklist.md)。旧版单机入口、功能和说明如下。
 
 # AI 代码导师
