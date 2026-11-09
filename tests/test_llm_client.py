@@ -293,3 +293,19 @@ async def test_close_is_idempotent() -> None:
     response = await client.chat(MESSAGES)
     assert response.content == "hello"
     await client.aclose()
+
+@pytest.mark.parametrize('mode', [None, 'disabled', 'enabled'])
+async def test_explicit_thinking_mode_reaches_wire_without_affecting_default(mode):
+    bodies = []
+    def handler(request):
+        bodies.append(json.loads(request.content))
+        return httpx.Response(200, json=_ok_payload())
+    client = _client(handler, thinking_mode=mode)
+    try:
+        await client.chat(MESSAGES)
+    finally:
+        await client.aclose()
+    if mode is None:
+        assert 'thinking' not in bodies[0]
+    else:
+        assert bodies[0]['thinking'] == {'type': mode}

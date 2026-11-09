@@ -272,6 +272,7 @@ class LLMSettings(BaseModel):
     max_retries: int = 2
     retry_backoff_seconds: float = 1.0
     # 单次请求附加头（部分网关需要）
+    thinking_mode: Literal["enabled", "disabled"] | None = None
     extra_headers: dict[str, str] = Field(default_factory=dict)
 
     # ------------------------------------------------------------------

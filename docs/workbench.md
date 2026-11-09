@@ -21,6 +21,8 @@ powershell -ExecutionPolicy Bypass -File tools/start_workbench.ps1 -Python .\.ve
 
 ## 模型开关
 
+DeepSeek 接入请先读 [分步操作与验收标准](deepseek-online.md)，使用 config/deepseek.env.example 最小模板。旧多模型表会影响默认模型解析，避免与单模型配置混用。
+
 用经授权的兼容服务配置本机 .env 中的 `LLM__BASE_URL`、`LLM__MODEL`、`LLM__API_KEY`。配置模型与真正启用是两个步骤。启动脚本加 `-Live` 才开启真实模型，其他平台可在启动前设置 `CODEMENTOR_AI_MODE=live`。仅发送课程标准例子、可信静态证据和学习次数。工作台不会把用户源码或注释发送给模型端点。评审只提交合成样例。
 
 模型成功且响应通过校验时，界面显示“模型解释”。如果未配置、限额、超时或校验失败，仍能使用本地证据、知识卡和练习。开发测试用注入模拟模型，页面能区分模拟模式。当前模型集成由服务端在调用前执行课程检索。只读课程检索与课程证据标注已接通，模型原生 Function Calling 和文本流式输出不在当前版本证据范围内。工作步骤是服务端完成后返回的记录。取消停止浏览器等待，诊断请求 ID 可用于安全重试。

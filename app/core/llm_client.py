@@ -233,6 +233,7 @@ class LLMClientConfig(BaseModel):
     temperature: float = Field(default=0.2, ge=0, le=2, description="采样温度")
     max_retries: int = Field(default=2, ge=0, description="可重试错误的重试次数")
     retry_backoff_seconds: float = Field(default=1.0, ge=0, description="退避基数（秒）")
+    thinking_mode: Literal["enabled", "disabled"] | None = None
     extra_headers: dict[str, str] = Field(default_factory=dict, description="额外请求头")
     requires_api_key: bool = Field(default=True, description="是否必须提供 Key")
     provider: str = Field(default="openai-compatible", description="提供商标识（仅用于提示）")
@@ -318,6 +319,7 @@ class LLMClientConfig(BaseModel):
             max_retries=settings.max_retries,
             retry_backoff_seconds=settings.retry_backoff_seconds,
             extra_headers=dict(settings.extra_headers),
+            thinking_mode=settings.thinking_mode,
             requires_api_key=bool(model.requires_api_key),
             provider=model.provider,
         )
@@ -551,6 +553,8 @@ class GenericLLMClient:
             ),
             "stream": False,
         }
+        if self._config.thinking_mode is not None:
+            payload["extra_body"] = {"thinking": {"type": self._config.thinking_mode}}
         if stop:
             payload["stop"] = stop
 
@@ -660,6 +664,8 @@ class GenericLLMClient:
             # 让服务端在最后一帧带上 usage（不支持该参数的网关会忽略它）
             "stream_options": {"include_usage": True},
         }
+        if self._config.thinking_mode is not None:
+            payload["extra_body"] = {"thinking": {"type": self._config.thinking_mode}}
         if stop:
             payload["stop"] = stop
 
