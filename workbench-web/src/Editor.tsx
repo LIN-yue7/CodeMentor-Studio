@@ -47,8 +47,8 @@ const evidenceLine = StateField.define({
   provide: field => EditorView.decorations.from(field),
 })
 
-export default function Editor({ code, onChange, line, jump }: {
-  code: string; onChange: (code: string) => void; line: number | null; jump: number
+export default function Editor({ code, onChange, line, jump, pythonMode = true }: {
+  code: string; onChange: (code: string) => void; line: number | null; jump: number; pythonMode?: boolean
 }) {
   const target = useRef<HTMLDivElement>(null)
   const editor = useRef<EditorView | null>(null)
@@ -62,8 +62,8 @@ export default function Editor({ code, onChange, line, jump }: {
     const view = new EditorView({
       doc: initialCode.current,
       extensions: [
-        basicSetup, python(), laboratoryTheme, syntaxHighlighting(laboratorySyntax), evidenceLine, EditorView.lineWrapping,
-        EditorView.contentAttributes.of({ 'aria-label': 'Python 代码' }),
+        basicSetup, ...(pythonMode ? [python()] : []), laboratoryTheme, syntaxHighlighting(laboratorySyntax), evidenceLine, EditorView.lineWrapping,
+        EditorView.contentAttributes.of({ 'aria-label': pythonMode ? 'Python 代码' : '文本代码' }),
         EditorView.updateListener.of(update => {
           if (update.docChanged) onChangeRef.current(update.state.doc.toString())
         }),

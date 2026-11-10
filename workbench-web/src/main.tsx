@@ -7,6 +7,7 @@ import { examples } from './examples'
 import { DiagnosisPanel, PracticePanel, ProfilePanel } from './panels'
 import { Icon } from './icons'
 import './styles.css'
+import { ProjectStation } from './ProjectStation'
 
 const Editor = lazy(() => import('./Editor'))
 type Goal = '' | 'sum-all' | 'first-or-empty'
@@ -243,4 +244,4 @@ function App() {
   </>
 }
 
-createRoot(document.getElementById('root')!).render(<App />)
+createRoot(document.getElementById('root')!).render(new URLSearchParams(location.search).get('view') === 'lessons' ? <App /> : <ProjectStation />)

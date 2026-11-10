@@ -310,3 +310,30 @@ button, a, input, select, summary { transition: color 120ms, background-color 12
 .selfcheck label { display:flex; align-items:center; gap:10px; min-height:44px; padding:6px 10px; border:1px solid var(--line); margin:6px 0; border-radius:4px; cursor:pointer; }
 .selfcheck input { flex:none; accent-color:var(--accent); }
 .selfcheck-result { border-left:2px solid var(--accent); padding-left:12px; margin-top:12px; }
+.station {min-height:100vh;background:var(--bg);color:var(--ink)}
+.station-header {padding:20px 28px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}
+.station-header span {font-size:10px;letter-spacing:2px;color:var(--muted);margin-left:14px}
+.station-header a {color:var(--accent);font-size:13px}
+.station-title {padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.station-title h1 {font-size:24px;margin-top:8px}
+.station-layout {display:grid;grid-template-columns:240px minmax(0,1fr) 310px;border-top:1px solid var(--line);min-height:calc(100vh - 180px)}
+.station-files {padding:20px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:18px;min-width:0}
+.station h2 {font-size:15px}.station h3 {font-size:13px}
+.station-files form,.station-files label {display:grid;gap:8px;font-size:12px}
+.station-files input,.station-files select {width:100%;min-width:0;padding:10px;border:1px solid var(--line);background:var(--editor);color:var(--ink);border-radius:4px;font:inherit}
+.station-files nav {display:grid;gap:4px}
+.station-files nav button {text-align:left;overflow-wrap:anywhere;padding:10px;background:transparent;border:0;color:var(--ink);cursor:pointer}
+.station-files nav .file-active {background:#263b31;color:var(--accent);border-left:2px solid var(--accent)}
+.station-code {min-width:0;background:var(--editor);display:flex;flex-direction:column}
+.station-filebar {padding:15px 20px;display:flex;justify-content:space-between;font-size:12px;border-bottom:1px solid var(--line);gap:10px;overflow-wrap:anywhere}
+.station-filebar span {color:var(--muted)}
+.station-code .editor {height:55vh;min-height:350px;flex:none}
+.station-actions {border-top:1px solid var(--line);padding:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:12px}
+.station-empty {padding:48px 32px;line-height:2;max-width:620px}
+.station-empty h2 {font-size:21px;margin-bottom:14px}
+.station-empty p {color:var(--muted)}
+.station-inspection {border-left:1px solid var(--line);min-width:0;line-height:1.8;font-size:13px}
+.station-inspection hr {width:100%;border:0;border-top:1px solid var(--line)}
+.station-error {padding:12px 28px;background:#442c2c;color:#ffd4cd;overflow-wrap:anywhere}
+@media(max-width:1100px){.station-layout {grid-template-columns:210px minmax(0,1fr)}.station-inspection {grid-column:1/-1;border-top:1px solid var(--line)}}
+@media(max-width:760px){.station-header,.station-title {padding:16px;flex-wrap:wrap}.station-header span {display:none}.station-layout {display:flex;flex-direction:column}.station-files {border-right:0}.station-files nav {grid-template-columns:repeat(2,minmax(0,1fr))}.station-code .editor {height:360px}.station-files input,.station-files select {font-size:16px}.station-inspection {border-left:0}.station-files .subtle {font-size:11px}}

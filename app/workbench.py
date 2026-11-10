@@ -14,6 +14,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.api.workbench import router
+from app.api.workbench_projects import router as project_router
 from app.core.config import get_settings
 from app.core.database import dispose_engine, init_db
 from app.core.llm_client import LLMClient, close_llm_clients
@@ -59,6 +60,7 @@ def create_workbench(*, model: LLMClient | None = None) -> FastAPI:
         return {"ready": True}
 
     app.include_router(router)
+    app.include_router(project_router)
 
     @app.api_route("/api/{unmatched:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"])
     async def no_legacy_api(unmatched: str):

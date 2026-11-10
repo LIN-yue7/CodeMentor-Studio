@@ -36,3 +36,11 @@ class Attempt(Base):
     answer_hash: Mapped[str] = mapped_column(String(64))
     outcome: Mapped[str] = mapped_column(String(16))
     result: Mapped[dict] = mapped_column(JSON)
+
+class Project(Base):
+    __tablename__ = 'cm_projects'
+    owner: Mapped[str] = mapped_column(String(32), primary_key=True)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    name: Mapped[str] = mapped_column(String(80))
+    revision: Mapped[int] = mapped_column(default=0)
+    files: Mapped[dict] = mapped_column(JSON)

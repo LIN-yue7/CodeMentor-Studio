@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('reflect, correct, reuse and forget a learner self-report', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   await page.getByRole('button', { name: '开始诊断' }).click()
   await expect(page.getByRole('heading', { name: '这次为什么出错？' })).toBeVisible()
   await page.getByText('记录我的原因与思路', {exact:true}).click()

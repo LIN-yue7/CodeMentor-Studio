@@ -2,7 +2,7 @@
 import { expect, test } from '@playwright/test'
 
 test('diagnose, request hint, grade, and pass a new variant', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   await expect(page.getByRole('heading', { name: '编程复测工作台' })).toBeVisible()
   await expect(page.getByText('本地证据模式')).toBeVisible()
   await page.getByRole('button', { name: '开始诊断' }).click()
@@ -23,7 +23,7 @@ test('diagnose, request hint, grade, and pass a new variant', async ({ page }) =
 })
 
 test('cancel a pending request and retry the same submission', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   let calls = 0
   const ids: string[] = []
   await page.route('**/api/diagnoses', async route => {
@@ -48,7 +48,7 @@ test('a diagnosis during slow initial session creation keeps its exercise owner'
     await new Promise(resolve => setTimeout(resolve, 400))
     await route.continue()
   })
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   await page.getByRole('button', { name: '开始诊断' }).click()
   await expect(page.getByText('第 3 行', { exact: true })).toBeVisible()
   await page.getByRole('button', { name: '查看下一条提示' }).click()
@@ -63,7 +63,7 @@ test('model output is rendered as text even if it contains markup', async ({ pag
     result.annotation = { explanation: '<img src=x onerror="document.title=\'injected\'">', citations: [] }
     await route.fulfill({ response, json: result })
   })
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   await page.getByRole('button', { name: '开始诊断' }).click()
   await expect(page.getByText('<img src=x', { exact: false })).toBeVisible()
   await expect(page.locator('.model-note img')).toHaveCount(0)

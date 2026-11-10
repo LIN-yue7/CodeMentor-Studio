@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 // Break caught: removing the mobile section navigation makes the answer form hard to reach.
 test('section navigation reaches practice and evidence link returns to editable code', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   await page.getByRole('button', { name: '开始诊断' }).click()
   const navigation = page.getByRole('navigation', { name: '工作区导航' })
   await navigation.getByRole('link', { name: '复测', exact: true }).click()
@@ -19,7 +19,7 @@ test('section navigation reaches practice and evidence link returns to editable 
 })
 
 test('keyboard moves from submitted code to its evidence before practice', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   const start = page.getByRole('button', { name: '开始诊断' })
   await start.click()
   await expect(page.getByRole('button', { name: '第 3 行' })).toBeVisible()
@@ -41,7 +41,7 @@ test('a model citation opens the actual retrieved source card', async ({ page })
     result.annotation = { explanation: '测试模型引用交互。', citations: [result.cards[0].id] }
     await route.fulfill({ response, json: result })
   })
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   await page.getByRole('button', { name: '开始诊断' }).click()
   await page.getByRole('link', { name: '证据 1', exact: true }).click()
   await expect(page.getByText(content, { exact: true })).toBeVisible()
@@ -53,7 +53,7 @@ test('profile failure stays unknown until a successful retry', async ({ page }) 
     if (!failed) { failed = true; await route.fulfill({ status: 503, json: { detail: 'test outage' } }) }
     else await route.continue()
   })
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   const profile = page.getByRole('region', { name: '学习记录', exact: true })
   await expect(profile.getByText('学习记录暂时无法刷新。')).toBeVisible()
   await expect(profile.locator('.profile-overview')).toHaveCount(0)
@@ -63,7 +63,7 @@ test('profile failure stays unknown until a successful retry', async ({ page }) 
 })
 
 test('a previously exposed answer is assisted without claiming a hint was used', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   await page.getByRole('button', { name: '开始诊断' }).click()
   // Complete the three current variants, then revisit the first one without hints.
   // The initial template is boundary-a-v2, not the legacy exposed boundary-a-v1.
@@ -83,7 +83,7 @@ test('a previously exposed answer is assisted without claiming a hint was used',
 
 test('narrow phone layout fits the usable width including scrollbar space', async ({ page }) => {
   await page.setViewportSize({ width: 305, height: 740 })
-  await page.goto('/')
+  await page.goto('/?view=lessons')
   await expect(page.getByRole('textbox', { name: 'Python 代码' })).toBeVisible()
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)
 })
