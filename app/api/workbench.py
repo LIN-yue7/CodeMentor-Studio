@@ -9,10 +9,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.workbench_security import require_owner
-from app.schemas.workbench import AnswerRequest, DiagnosisRequest, HintRequest, ReflectionRequest
+from app.schemas.workbench import AnswerRequest, DiagnosisRequest, HintRequest, ReflectionRequest, SelfCheckRequest
 from app.services import workbench_learning as learning
 from app.services.workbench_diagnosis import evaluate
 from app.services import workbench_reflection as reflection
+from app.services import workbench_selfcheck as selfcheck
 
 router = APIRouter(prefix="/api")
 Owner = Annotated[str, Depends(require_owner)]
@@ -85,3 +86,13 @@ async def reflect(diagnosis_id: UUID, payload: ReflectionRequest, request: Reque
 async def forget_reflection(diagnosis_id: UUID, request: Request, owner: Owner, db: DB):
     async with request.app.state.diagnosis_locks[hash((owner, str(diagnosis_id))) % 32]:
         return await reflection.save_reflection(db, owner, str(diagnosis_id), None)
+
+
+@router.get('/diagnoses/{diagnosis_id}/self-check')
+async def self_check_question(diagnosis_id: UUID, owner: Owner, db: DB):
+    return await selfcheck.question(db, owner, str(diagnosis_id))
+
+@router.post('/diagnoses/{diagnosis_id}/self-check')
+async def self_check_answer(diagnosis_id: UUID, payload: SelfCheckRequest, request: Request, owner: Owner, db: DB):
+    async with request.app.state.diagnosis_locks[hash((owner, str(diagnosis_id))) % 32]:
+        return await selfcheck.grade(db, owner, str(diagnosis_id), payload.choice)

@@ -27,3 +27,6 @@ class AnswerRequest(Input):
 class ReflectionRequest(Input):
     reason: Literal['typing', 'concept', 'approach', 'requirement', 'unsure']
     explanation: str = Field(default='', max_length=600)
+
+class SelfCheckRequest(Input):
+    choice: str = Field(min_length=1, max_length=40)

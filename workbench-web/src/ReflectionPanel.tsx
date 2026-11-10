@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { get, post } from './api'
+import { SelfCheck } from './SelfCheck'
 import type { Diagnosis } from './api'
 const labels = { typing: '敲错或漏写', concept: '概念记得不牢', approach: '解题思路偏差', requirement: '题意或输入假设偏差', unsure: '暂时不确定' }
 type Reason = keyof typeof labels
@@ -31,6 +32,7 @@ export function ReflectionPanel({ diagnosis }: { diagnosis: Diagnosis }) {
     {guide && <><h3>这次为什么出错？</h3><p>{guide.why}</p><h4>建议怎样改</h4><p>{guide.fix}</p>
       <h4>先问自己一个问题</h4><p className="self-check">{guide.question}</p><p>{guide.next_action}</p>
       <small>依据：本地审核指导 · 同知识点 {guide.history.count} 条自述。{guide.caution}</small></>}
+    {guide?.self_check_available && <SelfCheck key={diagnosis.id} id={diagnosis.id} />}
     <details className="reflection-form"><summary>记录我的原因与思路</summary>
       <p>只记录学习相关信息，请勿填写姓名、联系方式或密钥。自述不等于已证实的错因。</p>
       <label>我认为更接近哪种原因<select value={reason} onChange={e=>setReason(e.target.value as Reason)}>{Object.entries(labels).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>

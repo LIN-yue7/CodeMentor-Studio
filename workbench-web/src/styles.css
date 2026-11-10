@@ -305,3 +305,8 @@ button, a, input, select, summary { transition: color 120ms, background-color 12
   .evidence > .panel-content { max-height:560px; overflow-y:auto; scrollbar-gutter:stable; }
   .evidence > .panel-content:focus-visible { outline:2px solid var(--accent); outline-offset:-3px; }
 }
+.selfcheck fieldset { margin:12px 0; padding:0; border:0; min-width:0; }
+.selfcheck legend { font-weight:600; margin-bottom:10px; }
+.selfcheck label { display:flex; align-items:center; gap:10px; min-height:44px; padding:6px 10px; border:1px solid var(--line); margin:6px 0; border-radius:4px; cursor:pointer; }
+.selfcheck input { flex:none; accent-color:var(--accent); }
+.selfcheck-result { border-left:2px solid var(--accent); padding-left:12px; margin-top:12px; }
