@@ -337,3 +337,6 @@ button, a, input, select, summary { transition: color 120ms, background-color 12
 .station-error {padding:12px 28px;background:#442c2c;color:#ffd4cd;overflow-wrap:anywhere}
 @media(max-width:1100px){.station-layout {grid-template-columns:210px minmax(0,1fr)}.station-inspection {grid-column:1/-1;border-top:1px solid var(--line)}}
 @media(max-width:760px){.station-header,.station-title {padding:16px;flex-wrap:wrap}.station-header span {display:none}.station-layout {display:flex;flex-direction:column}.station-files {border-right:0}.station-files nav {grid-template-columns:repeat(2,minmax(0,1fr))}.station-code .editor {height:360px}.station-files input,.station-files select {font-size:16px}.station-inspection {border-left:0}.station-files .subtle {font-size:11px}}
+.project-review {display:grid;gap:12px;border-top:1px solid var(--line);padding-top:16px}
+.project-review label {display:block}.project-review select {display:block;width:100%;padding:9px;background:var(--editor);color:var(--ink);border:1px solid var(--line)}
+.project-review pre {max-height:220px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;padding:10px;background:var(--editor)}

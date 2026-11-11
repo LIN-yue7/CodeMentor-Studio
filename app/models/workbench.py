@@ -44,3 +44,9 @@ class Project(Base):
     name: Mapped[str] = mapped_column(String(80))
     revision: Mapped[int] = mapped_column(default=0)
     files: Mapped[dict] = mapped_column(JSON)
+
+class ProjectPrivacy(Base):
+    __tablename__ = 'cm_project_privacy'
+    owner: Mapped[str] = mapped_column(String(32), primary_key=True)
+    project_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    allow_external: Mapped[bool] = mapped_column(default=False)

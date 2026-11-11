@@ -1,0 +1,18 @@
+import {test,expect} from '@playwright/test'
+test('project code requires preview and explicit permission; local mode stays honest',async({page})=>{
+ let calls=0;page.on('request',r=>{if(r.url().endsWith('/review'))calls++})
+ await page.goto('/')
+ await page.getByLabel('项目名称',{exact:true}).fill('隐私验收')
+ await page.getByRole('button',{name:'新建项目',exact:true}).click()
+ await page.getByRole('textbox',{name:'Python 代码'}).fill('value = 3')
+ await page.getByRole('button',{name:'预览审查上下文'}).click()
+ await expect(page.getByText('main.py:1 value = 3',{exact:true})).toBeVisible()
+ await expect(page.getByRole('button',{name:'确认发送并请求 AI 指导'})).toBeDisabled()
+ expect(calls).toBe(0)
+ await page.getByRole('checkbox',{name:'允许本项目向已配置模型发送所选上下文'}).click()
+ await expect(page.getByRole('checkbox',{name:'允许本项目向已配置模型发送所选上下文'})).toBeChecked()
+ await page.getByRole('button',{name:'预览审查上下文'}).click()
+ await page.getByRole('button',{name:'确认发送并请求 AI 指导'}).click()
+ await expect(page.getByText('来源：本地模式 · 状态：disabled')).toBeVisible()
+ expect(calls).toBe(1)
+})

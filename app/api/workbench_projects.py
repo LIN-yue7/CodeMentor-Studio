@@ -2,12 +2,14 @@
 import ast
 import re
 from uuid import UUID, uuid4
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import Field, field_validator
 from sqlalchemy import select, update
 from app.api.workbench import Owner, DB
 from app.schemas.workbench import Input
-from app.models.workbench import Project
+from app.models.workbench import Project, ProjectPrivacy
+from app.services import project_review
+from typing import Literal
 
 router = APIRouter(prefix='/api')
 
@@ -115,3 +117,36 @@ async def project_context(id:UUID,payload:ProjectContext,owner:Owner,db:DB):
             'unsaved':payload.files!=saved.files,'saved_revision':saved.revision,
             'buffer_hash':hashlib.sha256(code.encode()).hexdigest()},
             'mentor':{'source':'local-reviewed-guidance','hints':hints,'attribution':'unconfirmed'}}
+
+
+class PrivacyInput(Input):
+    allow_external: bool = Field(strict=True)
+
+class ReviewInput(ProjectContext):
+    mode: Literal['mentor','collaborate','engineering']='mentor'
+
+@router.get('/projects/{id}/privacy')
+async def privacy_read(id:UUID,owner:Owner,db:DB):
+    await owned(db,owner,id)
+    row=await db.get(ProjectPrivacy,(owner,str(id)))
+    return {'allow_external':bool(row and row.allow_external)}
+
+@router.post('/projects/{id}/privacy')
+async def privacy_write(id:UUID,payload:PrivacyInput,owner:Owner,db:DB):
+    await owned(db,owner,id)
+    await db.merge(ProjectPrivacy(owner=owner,project_id=str(id),allow_external=payload.allow_external))
+    await db.commit()
+    return {'allow_external':payload.allow_external}
+
+@router.post('/projects/{id}/review-preview')
+async def review_preview(id:UUID,payload:ReviewInput,owner:Owner,db:DB):
+    context=await project_context(id,payload,owner,db)
+    return project_review.bundle(payload,context)
+
+@router.post('/projects/{id}/review')
+async def project_ai_review(id:UUID,payload:ReviewInput,request:Request,owner:Owner,db:DB):
+    permissions=await privacy_read(id,owner,db)
+    if not permissions['allow_external']: raise HTTPException(403,'项目未授权向外部模型发送代码。')
+    context=await project_context(id,payload,owner,db)
+    data=project_review.bundle(payload,context)
+    return await project_review.review(request.app.state.tutor,owner,data,payload.mode)
