@@ -72,3 +72,14 @@ test('phone uses panel switching without document scrolling',async({page})=>{
  await page.getByRole('button',{name:'代码面板',exact:true}).click()
  await expect(page.getByRole('textbox',{name:'Python 代码'})).toBeVisible()
 })
+
+test('valid directory names matching object properties cannot crash the editor',async({page})=>{
+ await page.locator('.new-file summary').click()
+ for(const name of ['constructor','__proto__','toString']){
+  await page.getByLabel('新文件路径').fill(name+'/main.py')
+  await page.getByRole('button',{name:'添加文件',exact:true}).click()
+  await expect(page.getByRole('textbox',{name:'Python 代码'})).toBeVisible()
+  await page.getByRole('textbox',{name:'Python 代码'}).fill('value = 1')
+ }
+ await expect(page.getByRole('button',{name:'constructor/main.py',exact:true})).toBeVisible()
+})

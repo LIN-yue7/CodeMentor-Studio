@@ -42,6 +42,11 @@ def explain_syntax(path: str, code: str, exc: SyntaxError) -> dict:
         why = '字符串需要相互匹配的起止引号。普通单引号或双引号字符串不能直接跨物理行；内容中的同类引号需要转义。'
         fix = '确认文字的结束位置，补齐对应引号；需要多行文本时选择三引号或显式换行转义。'
         prevention = '区分包围字符串的引号和字符串内容中的引号，避免复制时混入弯引号。'
+    elif 'outside' in message and any(word in message for word in ('await', 'async for', 'async with')):
+        concept, title = 'python-async', '异步语句需要异步函数上下文'
+        why = '在普通 Python 模块中，await、async for 和 async with 需要位于 async def 定义的异步函数内。普通函数或模块顶层不能直接使用这些语句。'
+        fix = '先确认调用目标是否是可等待对象，再将异步步骤放入 async def 函数，并通过适合当前应用的事件循环入口调用。不要只为消除报错而机械删除 await。'
+        prevention = '区分定义协程、创建协程对象和等待协程完成；交互式环境可能允许顶层 await，但普通 .py 文件不能直接照搬。'
     elif 'outside' in message or 'not properly in loop' in message:
         concept, title = 'python-scope', '语句出现在不允许的作用域'
         why = 'return 必须位于函数体内；break / continue 必须位于相应循环中。语句本身可能完整，但放置位置违反了 Python 的上下文规则。'

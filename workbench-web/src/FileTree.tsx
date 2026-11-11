@@ -1,9 +1,9 @@
 type Node={files:string[];folders:Record<string,Node>}
 export function FileTree({paths,active,onSelect}:{paths:string[];active:string;onSelect:(path:string)=>void}){
- const root:Node={files:[],folders:{}}
+ const root:Node={files:[],folders:Object.create(null)}
  for(const path of [...paths].sort()){
   const parts=path.split('/');let node=root
-  for(const part of parts.slice(0,-1))node=node.folders[part]??=( {files:[],folders:{}} )
+  for(const part of parts.slice(0,-1))node=node.folders[part]??=( {files:[],folders:Object.create(null)} )
   node.files.push(path)
  }
  function render(node:Node,prefix=''):React.ReactNode{return <>

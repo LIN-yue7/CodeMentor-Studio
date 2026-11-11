@@ -72,3 +72,13 @@ def test_natural_language_request_is_bounded_and_reaches_model():
         assert a.post(base+'/review',json=body).json()['status']=='accepted'
         body['request']='x'*1001
         assert a.post(base+'/review',json=body).status_code==422
+
+
+def test_skipped_long_source_cannot_leak_through_teaching_example():
+    with TestClient(create_workbench()) as a:
+        a.post('/api/session'); p=a.post('/api/projects',json={'name':'long line'}).json()
+        long_name='a'*8000
+        response=a.post('/api/projects/'+p['id']+'/review-preview',json={
+            'files':{'main.py':'if '+long_name+'\n    pass'},'revision':0,'path':'main.py'}).json()
+        assert long_name not in json.dumps(response)
+        assert 'example' not in response['local_issues'][0]

@@ -10,6 +10,7 @@ from app.workbench import create_workbench
     ('typedef int (*calc)(int, int);', 'language-mismatch', 'C'),
     ('return 1', 'python-scope', '函数'),
     ('x = "abc', 'python-string', '引号'),
+    ('await foo()', 'python-async', 'async def'),
 ])
 def test_diagnostic_explains_evidence_without_execution(code, concept, word):
     with TestClient(create_workbench()) as client:

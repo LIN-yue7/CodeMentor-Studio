@@ -44,8 +44,14 @@ def bundle(payload, context):
             if len(text)>500 or len(text)>remaining: continue
             snippets.append({'path':path,'line':index+1,'quote':text})
             remaining-=len(text)
+    # Teaching examples may contain source lines skipped by the snippet budget.
+    # Only fixed diagnostic metadata leaves the server alongside previewed source.
+    issues=[{key:issue[key] for key in ('path','line','column','message','title','why','fix','observed') if key in issue}
+            for issue in context['issues']]
+    for issue in issues:
+        issue['message']=issue.get('message','')[:300]
     return {'snippets':snippets,'buffer_hash':fingerprint,'request':payload.request,
-            'local_status':context['status'],'local_issues':context['issues'],'test_status':'not-run'}
+            'local_status':context['status'],'local_issues':issues,'test_status':'not-run'}
 
 async def review(tutor,owner,data,mode):
     if data.get('status')=='blocked':
