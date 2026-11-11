@@ -79,3 +79,39 @@ async def inspect_code(payload:InspectCode,owner:Owner):
     except (ValueError,RecursionError):
         return {'status':'uncertain','issues':[],'summary':'代码结构无法安全解析，请缩小文件。'}
     return {'status':'syntax-ok','issues':[],'summary':'Python 语法检查通过。业务逻辑、导入依赖和运行结果尚未验证。'}
+
+class ProjectContext(SaveProject):
+    path: str = Field(max_length=160)
+    cursor_line: int = Field(default=1,ge=1,le=16001)
+
+@router.post('/projects/{id}/context')
+async def project_context(id:UUID,payload:ProjectContext,owner:Owner,db:DB):
+    import hashlib
+    saved=await owned(db,owner,id)
+    if payload.path not in payload.files: raise HTTPException(422,'当前文件不在项目中。')
+    code=payload.files[payload.path]
+    result=await inspect_code(InspectCode(path=payload.path,code=code),owner)
+    function=None
+    related=set()
+    if result['status']=='syntax-ok':
+        tree=ast.parse(code)
+        for node in ast.walk(tree):
+            if isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef)) and node.lineno<=payload.cursor_line<=node.end_lineno:
+                function=node.name
+            modules=([node.module] if isinstance(node,ast.ImportFrom) and node.level==0 and node.module else
+                     [n.name for n in node.names] if isinstance(node,ast.Import) else [])
+            for module in modules:
+                path=module.replace('.','/')+'.py'
+                if path in payload.files: related.add(path)
+    if result['issues']:
+        hints=['先检查标记行及上一行：语句是否写完、括号是否配对？',
+               '若是函数、条件或循环的头部，检查末尾冒号和下一行缩进。解析器位置不一定就是根本原因。',
+               '一次只改一个位置，停止输入后查看检查结果；语法通过后仍需核对业务行为。']
+    else:
+        hints=['先用自己的话写出当前函数的输入、输出和边界条件。',
+               '检查引用模块的返回值约定是否与调用处一致；目前只定位引用，不证明调用正确。',
+               '选一个普通输入和一个边界输入，写下预期结果。当前系统没有执行项目测试，不能据此宣布逻辑正确。']
+    return {**result,'context':{'path':payload.path,'function':function,'related_files':sorted(related),
+            'unsaved':payload.files!=saved.files,'saved_revision':saved.revision,
+            'buffer_hash':hashlib.sha256(code.encode()).hexdigest()},
+            'mentor':{'source':'local-reviewed-guidance','hints':hints,'attribution':'unconfirmed'}}

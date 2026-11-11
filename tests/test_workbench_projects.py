@@ -26,3 +26,18 @@ def test_live_analysis_reports_arbitrary_python_without_execution():
         r=a.post('/api/code-inspection',json={'path':'any.py','code':'raise RuntimeError("must not execute")'}).json()
         assert r['status']=='syntax-ok'
         assert a.post('/api/code-inspection',json={'path':'style.css','code':'body {}'}).json()['status']=='unsupported'
+
+def test_project_context_uses_unsaved_buffer_and_real_imports():
+    with TestClient(create_workbench()) as a:
+        a.post('/api/session')
+        p=a.post('/api/projects',json={'name':'context'}).json()
+        body={'revision':0,'files':{'main.py':'from helper import f\n\ndef run():\n    return f()\n','helper.py':'def f():\n    return 1\n'},'path':'main.py','cursor_line':4}
+        r=a.post('/api/projects/'+p['id']+'/context',json=body)
+        assert r.status_code==200
+        result=r.json()
+        assert result['context']['function']=='run'
+        assert result['context']['related_files']==['helper.py']
+        assert result['context']['unsaved'] is True
+        assert result['mentor']['source']=='local-reviewed-guidance'
+        assert len(result['mentor']['hints'])==3
+        assert a.get('/api/projects/'+p['id']).json()['files']=={'main.py':''}

@@ -47,12 +47,14 @@ const evidenceLine = StateField.define({
   provide: field => EditorView.decorations.from(field),
 })
 
-export default function Editor({ code, onChange, line, jump, pythonMode = true }: {
-  code: string; onChange: (code: string) => void; line: number | null; jump: number; pythonMode?: boolean
+export default function Editor({ code, onChange, line, jump, pythonMode = true, onCursor }: {
+  code: string; onChange: (code: string) => void; line: number | null; jump: number; pythonMode?: boolean; onCursor?: (line:number)=>void
 }) {
   const target = useRef<HTMLDivElement>(null)
   const editor = useRef<EditorView | null>(null)
   const onChangeRef = useRef(onChange)
+  const cursorRef=useRef(onCursor)
+  useEffect(()=>{cursorRef.current=onCursor},[onCursor])
   const initialCode = useRef(code)
   const lastJump = useRef(jump)
   useEffect(() => { onChangeRef.current = onChange }, [onChange])
@@ -66,6 +68,7 @@ export default function Editor({ code, onChange, line, jump, pythonMode = true }
         EditorView.contentAttributes.of({ 'aria-label': pythonMode ? 'Python 代码' : '文本代码' }),
         EditorView.updateListener.of(update => {
           if (update.docChanged) onChangeRef.current(update.state.doc.toString())
+          if(update.selectionSet||update.docChanged) cursorRef.current?.(update.state.doc.lineAt(update.state.selection.main.head).number)
         }),
       ],
       parent: target.current,

@@ -2,7 +2,7 @@ import {lazy,Suspense,useEffect,useState} from 'react'
 import {get,post} from './api'
 const Editor=lazy(()=>import('./Editor'))
 type Project={id:string;name:string;revision:number;files:Record<string,string>}
-type Inspection={status:string;summary:string;issues:{line:number|null;message:string}[]}
+type Inspection={context?:{function:string|null;related_files:string[];unsaved:boolean};mentor?:{hints:string[]};status:string;summary:string;issues:{line:number|null;message:string}[]}
 export function ProjectStation(){
  const [projects,setProjects]=useState<{id:string;name:string}[]>([])
  const [project,setProject]=useState<Project|null>(null)
@@ -18,18 +18,20 @@ export function ProjectStation(){
  const [checking,setChecking]=useState(false)
  const [line,setLine]=useState<number|null>(null)
  const [jump,setJump]=useState(0)
+ const [cursor,setCursor]=useState(1)
+ const [hintTier,setHintTier]=useState(0)
  const [retry,setRetry]=useState(0)
  const dirty=!!project&&JSON.stringify(project.files)!==saved
  const code=project?.files[file]??''
  useEffect(()=>{let live=true;post('/session').then(()=>get<{items:{id:string;name:string}[]}>('/projects')).then(r=>{if(live){setProjects(r.items);setReady(true)}}).catch(()=>{if(live)setError('项目服务未就绪，请确认已启动新版后端并刷新。')});return()=>{live=false}},[])
  useEffect(()=>{const handler=(e:BeforeUnloadEvent)=>{if(dirty){e.preventDefault();e.returnValue=''}};window.addEventListener('beforeunload',handler);return()=>window.removeEventListener('beforeunload',handler)},[dirty])
  useEffect(()=>{
-  setInspection(null);setLine(null)
+  setInspection(null);setLine(null);setHintTier(0)
   if(!project){setChecking(false);return}
   let live=true;const controller=new AbortController();setChecking(true)
-  const timer=setTimeout(()=>{post<Inspection>('/code-inspection',{path:file,code},controller.signal).then(r=>{if(live){setInspection(r);setLine(r.issues[0]?.line??null)}}).catch(()=>{if(live)setInspection({status:'failed',issues:[],summary:'检查未完成，继续编辑或点击重新检查。'})}).finally(()=>{if(live)setChecking(false)})},650)
+  const timer=setTimeout(()=>{post<Inspection>('/projects/'+project.id+'/context',{path:file,files:project.files,revision:project.revision,cursor_line:cursor},controller.signal).then(r=>{if(live){setInspection(r);setLine(r.issues[0]?.line??null)}}).catch(()=>{if(live)setInspection({status:'failed',issues:[],summary:'检查未完成，继续编辑或点击重新检查。'})}).finally(()=>{if(live)setChecking(false)})},650)
   return()=>{live=false;clearTimeout(timer);controller.abort()}
- },[project?.id,file,code,retry])
+ },[project?.id,project?.files,project?.revision,file,code,cursor,retry])
  function open(p:Project){setProject(p);setSaved(JSON.stringify(p.files));setFile(Object.keys(p.files)[0]);setError('');setNotice('已读取服务端项目。')}
  async function create(){if(!name.trim()||busy)return;if(dirty){setError('请先保存当前项目，再新建。');return}setBusy(true);try{const p=await post<Project>('/projects',{name:name.trim()});setProjects(v=>[...v,{id:p.id,name:p.name}]);open(p);setName('')}catch(e){setError(String(e))}finally{setBusy(false)}}
  async function choose(id:string){if(dirty){setError('请先保存当前改动，再切换项目。');return}if(!id)return;setBusy(true);try{open(await get<Project>('/projects/'+id))}catch(e){setError(String(e))}finally{setBusy(false)}}
@@ -45,6 +47,6 @@ export function ProjectStation(){
  {project&&<><p className="eyebrow">文件 / {Object.keys(project.files).length}</p><nav aria-label="项目文件">{Object.keys(project.files).sort().map(p=><button className={p===file?'file-active':''} key={p} onClick={()=>setFile(p)} aria-current={p===file?'page':undefined}>{p}</button>)}</nav>
  <form onSubmit={e=>{e.preventDefault();add()}}><label>新文件路径<input value={path} onChange={e=>setPath(e.target.value)} placeholder="src/helper.py"/></label><button className="plain" disabled={!path.trim()}>添加文件</button></form></>}
  <p className="subtle">最多 30 个文件 / 50 KB。当前匿名浏览器身份保存项目，请导出备份；跨浏览器与重启恢复尚未完善。</p></aside>
- <main className="station-code">{project?<><div className="station-filebar"><strong>{file}</strong><span>{dirty?'有未保存改动':'已保存'}</span></div><Suspense fallback={<p>加载编辑器…</p>}><Editor key={file} code={code} pythonMode={file.endsWith('.py')} line={line} jump={jump} onChange={value=>setProject(p=>p?{...p,files:{...p.files,[file]:value}}:p)}/></Suspense><div className="station-actions"><button className="primary" disabled={busy||!dirty} onClick={()=>void save()}>{busy?'保存中…':'保存项目'}</button><button className="plain" onClick={exportProject}>导出项目 JSON</button><span role="status">{notice}</span></div></>:<div className="station-empty"><h2>创建项目，编写自己的代码</h2><p>从空白文件开始。支持多个文件与目录路径，Python 文件编辑停止后自动检查语法。</p><p>教学样例已移至独立入口，不再限制项目内容。</p></div>}</main>
- <aside className="station-inspection"><div className="panel-head"><h2>代码检查</h2></div><div className="panel-content"><span className="eyebrow">PYTHON AST · 当前文件</span><p role="status">{!project?'打开文件后开始检查。':checking?'正在检查当前改动…':inspection?.summary}</p>{inspection?.issues.map((issue,i)=><button key={i} className="plain" onClick={()=>{setLine(issue.line);setJump(v=>v+1)}}>第 {issue.line??'?'} 行 · {issue.message}</button>)}{project&&<button className="plain" onClick={()=>setRetry(v=>v+1)}>重新检查</button>}<hr/><h3>检查能力与边界</h3><p>Python 语法检查会自动运行，不执行代码。其他文本文件当前支持编辑和保存。</p><p>项目级 AI 审查、跨文件语义分析、运行与 Web 预览尚未接入此工作区。</p></div></aside></div></div>
+ <main className="station-code">{project?<><div className="station-filebar"><strong>{file}</strong><span>{dirty?'有未保存改动':'已保存'}</span></div><Suspense fallback={<p>加载编辑器…</p>}><Editor key={file} code={code} onCursor={setCursor} pythonMode={file.endsWith('.py')} line={line} jump={jump} onChange={value=>setProject(p=>p?{...p,files:{...p.files,[file]:value}}:p)}/></Suspense><div className="station-actions"><button className="primary" disabled={busy||!dirty} onClick={()=>void save()}>{busy?'保存中…':'保存项目'}</button><button className="plain" onClick={exportProject}>导出项目 JSON</button><span role="status">{notice}</span></div></>:<div className="station-empty"><h2>创建项目，编写自己的代码</h2><p>从空白文件开始。支持多个文件与目录路径，Python 文件编辑停止后自动检查语法。</p><p>教学样例已移至独立入口，不再限制项目内容。</p></div>}</main>
+ <aside className="station-inspection"><div className="panel-head"><h2>项目导师</h2></div><div className="panel-content"><span className="eyebrow">PYTHON AST · 当前文件</span><p role="status">{!project?'打开文件后开始检查。':checking?'正在检查当前改动…':inspection?.summary}</p>{inspection?.issues.map((issue,i)=><button key={i} className="plain" onClick={()=>{setLine(issue.line);setJump(v=>v+1)}}>第 {issue.line??'?'} 行 · {issue.message}</button>)}{project&&<button className="plain" onClick={()=>setRetry(v=>v+1)}>重新检查</button>}{inspection?.context&&<><h3>当前项目上下文</h3><p>函数：{inspection.context.function??'模块区域'} · {inspection.context.unsaved?'含未保存改动':'已保存版本'}</p><p>项目内直接引用：{inspection.context.related_files.join('、')||'未定位到支持的直接引用'}</p></>}{inspection?.mentor&&<><h3>导师引导 · 本地审核规则</h3><button className="plain" disabled={hintTier>=3} onClick={()=>setHintTier(v=>v+1)}>查看下一步引导（{hintTier}/3）</button>{inspection.mentor.hints.slice(0,hintTier).map((hint,i)=><p key={i}>{i+1}. {hint}</p>)}</>}<hr/><h3>检查能力与边界</h3><p>Python 语法检查会自动运行，不执行代码。其他文本文件当前支持编辑和保存。</p><p>项目级 AI 审查、跨文件语义分析、运行与 Web 预览尚未接入此工作区。</p></div></aside></div></div>
 }
