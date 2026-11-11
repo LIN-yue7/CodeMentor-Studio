@@ -9,6 +9,7 @@ from app.api.workbench import Owner, DB
 from app.schemas.workbench import Input
 from app.models.workbench import Project, ProjectPrivacy
 from app.services import project_review
+from app.services.project_diagnostics import inspect_python
 from typing import Literal
 
 router = APIRouter(prefix='/api')
@@ -35,7 +36,7 @@ class SaveProject(Input):
 
 class InspectCode(Input):
     path: str = Field(min_length=1,max_length=160)
-    code: str = Field(max_length=16000)
+    code: str = Field(max_length=50000)
 
 def public(p):
     return {'id':p.id,'name':p.name,'revision':p.revision,'files':p.files}
@@ -70,17 +71,7 @@ async def save_project(id:UUID,payload:SaveProject,owner:Owner,db:DB):
 
 @router.post('/code-inspection')
 async def inspect_code(payload:InspectCode,owner:Owner):
-    if not payload.path.endswith('.py'):
-        return {'status':'unsupported','issues':[],'summary':'此文件可编辑保存，暂未接入该语言的自动检查。'}
-    try:
-        tree=ast.parse(payload.code)
-        compile(tree,'submission.py','exec')  # Validate contextual syntax; NEVER execute.
-    except SyntaxError as exc:
-        return {'status':'syntax-error','issues':[{'line':exc.lineno,'message':exc.msg}],
-                'summary':'发现 Python 语法错误；不代表已检查全部逻辑。'}
-    except (ValueError,RecursionError):
-        return {'status':'uncertain','issues':[],'summary':'代码结构无法安全解析，请缩小文件。'}
-    return {'status':'syntax-ok','issues':[],'summary':'Python 语法检查通过。业务逻辑、导入依赖和运行结果尚未验证。'}
+    return inspect_python(payload.path,payload.code)
 
 class ProjectContext(SaveProject):
     path: str = Field(max_length=160)
@@ -124,6 +115,7 @@ class PrivacyInput(Input):
 
 class ReviewInput(ProjectContext):
     mode: Literal['mentor','collaborate','engineering']='mentor'
+    request: str = Field(default='',max_length=1000)
 
 @router.get('/projects/{id}/privacy')
 async def privacy_read(id:UUID,owner:Owner,db:DB):
