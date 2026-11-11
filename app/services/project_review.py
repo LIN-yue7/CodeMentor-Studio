@@ -31,7 +31,7 @@ def bundle(payload, context):
             snippets.append({'path':path,'line':index+1,'quote':text})
             remaining-=len(text)
     return {'snippets':snippets,'buffer_hash':hashlib.sha256(json.dumps(payload.files,sort_keys=True).encode()).hexdigest(),
-            'local_status':context['status'],'test_status':'not-run'}
+            'local_status':context['status'],'local_issues':context['issues'],'test_status':'not-run'}
 
 async def review(tutor,owner,data,mode):
     if tutor.mode=='local': return {'status':'disabled','mode':'local','review':None}

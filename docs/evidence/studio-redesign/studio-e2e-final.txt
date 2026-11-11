@@ -1,0 +1,69 @@
+
+> codementor-workbench@2.0.0 test:e2e
+> playwright test
+
+[WebServer] INFO:     Started server process [14372]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8766 (Press CTRL+C to quit)
+
+Running 30 tests using 12 workers
+
+(node:40596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45336) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37436) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22380) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38572) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38928) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop] › e2e\navigation.spec.ts:4:1 › section navigation reaches practice and evidence link returns to editable code (3.3s)
+  ok 11 [mobile] › e2e\navigation.spec.ts:4:1 › section navigation reaches practice and evidence link returns to editable code (2.7s)
+  ok  5 [desktop] › e2e\reflection.spec.ts:3:1 › reflect, correct, reuse and forget a learner self-report (3.4s)
+  ok  8 [mobile] › e2e\selfcheck.spec.ts:2:1 › self-check records first response and changes next diagnosis advice (3.6s)
+  ok 14 [mobile] › e2e\navigation.spec.ts:21:1 › keyboard moves from submitted code to its evidence before practice (860ms)
+  ok 12 [desktop] › e2e\workbench.spec.ts:4:1 › diagnose, request hint, grade, and pass a new variant (3.8s)
+  ok  9 [desktop] › e2e\selfcheck.spec.ts:2:1 › self-check records first response and changes next diagnosis advice (4.0s)
+  ok  3 [mobile] › e2e\reflection.spec.ts:3:1 › reflect, correct, reuse and forget a learner self-report (4.6s)
+  ok  6 [desktop] › e2e\project-review.spec.ts:2:1 › project code requires preview and explicit permission; local mode stays honest (4.6s)
+  ok 10 [mobile] › e2e\project-review.spec.ts:2:1 › project code requires preview and explicit permission; local mode stays honest (4.4s)
+  ok 13 [desktop] › e2e\navigation.spec.ts:21:1 › keyboard moves from submitted code to its evidence before practice (1.7s)
+  ok 16 [mobile] › e2e\navigation.spec.ts:34:1 › a model citation opens the actual retrieved source card (779ms)
+  ok 15 [mobile] › e2e\workbench.spec.ts:4:1 › diagnose, request hint, grade, and pass a new variant (1.3s)
+  ok 17 [desktop] › e2e\workbench.spec.ts:25:1 › cancel a pending request and retry the same submission (834ms)
+  ok  7 [desktop] › e2e\studio-shell.spec.ts:2:1 › desktop shell keeps editor and mentor inside one viewport (5.4s)
+  ok 18 [desktop] › e2e\navigation.spec.ts:34:1 › a model citation opens the actual retrieved source card (831ms)
+  ok 19 [mobile] › e2e\navigation.spec.ts:50:1 › profile failure stays unknown until a successful retry (784ms)
+  ok 20 [mobile] › e2e\workbench.spec.ts:25:1 › cancel a pending request and retry the same submission (697ms)
+  ok  2 [desktop] › e2e\projects.spec.ts:2:1 › create real project, edit files, inspect syntax and persist (5.9s)
+  ok  4 [mobile] › e2e\projects.spec.ts:2:1 › create real project, edit files, inspect syntax and persist (5.9s)
+  ok 21 [desktop] › e2e\workbench.spec.ts:44:1 › a diagnosis during slow initial session creation keeps its exercise owner (1.1s)
+  ok 22 [desktop] › e2e\navigation.spec.ts:50:1 › profile failure stays unknown until a successful retry (758ms)
+  ok 25 [desktop] › e2e\workbench.spec.ts:59:1 › model output is rendered as text even if it contains markup (603ms)
+  ok 23 [mobile] › e2e\navigation.spec.ts:65:1 › a previously exposed answer is assisted without claiming a hint was used (1.3s)
+  ok 24 [mobile] › e2e\workbench.spec.ts:44:1 › a diagnosis during slow initial session creation keeps its exercise owner (1.5s)
+  ok 26 [desktop] › e2e\navigation.spec.ts:65:1 › a previously exposed answer is assisted without claiming a hint was used (989ms)
+  ok 27 [mobile] › e2e\navigation.spec.ts:84:1 › narrow phone layout fits the usable width including scrollbar space (450ms)
+  ok 28 [mobile] › e2e\workbench.spec.ts:59:1 › model output is rendered as text even if it contains markup (503ms)
+(node:50740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 29 [desktop] › e2e\navigation.spec.ts:84:1 › narrow phone layout fits the usable width including scrollbar space (418ms)
+  ok 30 [mobile] › e2e\studio-shell.spec.ts:2:1 › desktop shell keeps editor and mentor inside one viewport (2.8s)
+
+  30 passed (15.8s)

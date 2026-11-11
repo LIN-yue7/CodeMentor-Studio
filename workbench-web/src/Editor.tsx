@@ -47,13 +47,15 @@ const evidenceLine = StateField.define({
   provide: field => EditorView.decorations.from(field),
 })
 
-export default function Editor({ code, onChange, line, jump, pythonMode = true, onCursor }: {
-  code: string; onChange: (code: string) => void; line: number | null; jump: number; pythonMode?: boolean; onCursor?: (line:number)=>void
+export default function Editor({ code, onChange, line, jump, pythonMode = true, onCursor, onSelection }: {
+  code: string; onChange: (code: string) => void; line: number | null; jump: number; pythonMode?: boolean; onCursor?: (line:number)=>void; onSelection?: (text:string)=>void
 }) {
   const target = useRef<HTMLDivElement>(null)
   const editor = useRef<EditorView | null>(null)
   const onChangeRef = useRef(onChange)
   const cursorRef=useRef(onCursor)
+  const selectionRef=useRef(onSelection)
+  useEffect(()=>{selectionRef.current=onSelection},[onSelection])
   useEffect(()=>{cursorRef.current=onCursor},[onCursor])
   const initialCode = useRef(code)
   const lastJump = useRef(jump)
@@ -68,7 +70,7 @@ export default function Editor({ code, onChange, line, jump, pythonMode = true, 
         EditorView.contentAttributes.of({ 'aria-label': pythonMode ? 'Python 代码' : '文本代码' }),
         EditorView.updateListener.of(update => {
           if (update.docChanged) onChangeRef.current(update.state.doc.toString())
-          if(update.selectionSet||update.docChanged) cursorRef.current?.(update.state.doc.lineAt(update.state.selection.main.head).number)
+          if(update.selectionSet||update.docChanged){cursorRef.current?.(update.state.doc.lineAt(update.state.selection.main.head).number); selectionRef.current?.(update.state.sliceDoc(update.state.selection.main.from,update.state.selection.main.to))}
         }),
       ],
       parent: target.current,

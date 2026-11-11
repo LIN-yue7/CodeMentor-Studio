@@ -8,7 +8,7 @@ export function ProjectReview({id,payload}:{id:string;payload:Payload}){
  const [preview,setPreview]=useState<Preview|null>(null),[result,setResult]=useState<Result|null>(null)
  const [error,setError]=useState(''),[mode,setMode]=useState('mentor')
  const request=useRef<AbortController|null>(null)
- const fingerprint=JSON.stringify(payload)
+ const fingerprint=JSON.stringify({files:payload.files,path:payload.path,revision:payload.revision})
  useEffect(()=>{let live=true;get<{allow_external:boolean}>('/projects/'+id+'/privacy').then(r=>{if(live){setAllowed(r.allow_external);setReady(true)}}).catch(()=>{if(live)setError('无法读取项目隐私设置。')});return()=>{live=false}},[id])
  useEffect(()=>{request.current?.abort();setPreview(null);setResult(null);setBusy(false);return()=>request.current?.abort()},[fingerprint,mode])
  async function privacy(value:boolean){request.current?.abort();setPreview(null);setResult(null);setBusy(false);setReady(false);try{await post('/projects/'+id+'/privacy',{allow_external:value});setAllowed(value)}catch{setError('隐私设置未保存。')}finally{setReady(true)}}
@@ -20,9 +20,9 @@ export function ProjectReview({id,payload}:{id:string;payload:Payload}){
  <p>只在你确认后发送下方片段。可能产生模型费用；当前不自动应用修改。代码和注释也可能包含秘密，请先检查预览。</p>
  <label><input type="checkbox" checked={allowed} disabled={!ready} onChange={e=>void privacy(e.target.checked)}/>允许本项目向已配置模型发送所选上下文</label>
  <button className="plain" disabled={!ready||busy} onClick={()=>void run(false)}>预览审查上下文</button>
- {preview&&<details open><summary>待发送片段 · {preview.snippets.length} 行</summary><pre>{preview.snippets.map(s=>s.path+':'+s.line+' '+s.quote).join('\n')}</pre><button className="primary" disabled={!allowed||busy} onClick={()=>void run(true)}>确认发送并请求 AI 指导</button></details>}
+ {preview&&<details open={!result}><summary>待发送片段 · {preview.snippets.length} 行</summary><pre>{preview.snippets.map(s=>s.path+':'+s.line+' '+s.quote).join('\n')}</pre><button className="primary" disabled={!allowed||busy} onClick={()=>void run(true)}>确认发送并请求 AI 指导</button></details>}
  {busy&&<p role="status">请求处理中…<button className="plain" onClick={()=>{request.current?.abort();setBusy(false)}}>取消等待</button></p>}
  {error&&<p role="alert">{error}</p>}
- {result&&<div role="status"><p>来源：{result.mode==='simulated'?'模拟模型':result.mode==='live'?'真实模型调用':'本地模式'} · 状态：{result.status}</p>{result.review&&<><p>模型建议 · 尚未通过运行验证</p><p>{result.review.explanation}</p>{result.review.hints.map((h,i)=><details key={i}><summary>提示 {i+1}</summary><p>{h}</p></details>)}{result.review.citations.map((c,i)=><p key={i}>{c.path}:{c.line} <code>{c.quote}</code></p>)}</>}</div>}
+ {result&&<div role="status"><p>来源：{result.mode==='simulated'?'模拟模型':result.mode==='live'?'真实模型调用':'本地模式'} · 状态：{result.status}</p>{!result.review&&<p>{result.status==='disabled'?'模型功能未启用：当前仅提供本地静态分析。':result.status==='limited'?'已达到调用限额，请稍后重试。':result.status==='timeout'?'模型响应超时，本地编辑仍可继续。':'模型结果未通过校验或服务异常，没有生成可用建议。'}</p>}{result.review&&<><p>模型建议 · 尚未通过运行验证</p><p>{result.review.explanation}</p>{result.review.hints.map((h,i)=><details key={i}><summary>提示 {i+1}</summary><p>{h}</p></details>)}{result.review.citations.map((c,i)=><p key={i}>{c.path}:{c.line} <code>{c.quote}</code></p>)}</>}</div>}
  </section>
 }
