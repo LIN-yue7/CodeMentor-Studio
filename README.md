@@ -1,3 +1,46 @@
+# CodeMentor Studio · R6阶段版本
+
+面向真实项目的AI编程学习工作台。当前正式入口是 `app.workbench:app`；下面保留的 AI 2.0 / 旧单机说明仅作历史记录，不能替代当前能力与验证状态。
+
+- [当前基线、验证结果与后续缺口](docs/studio-r6-status.md)
+- [100分评分证据矩阵](docs/studio-score-matrix.md)
+- [演示脚本阶段稿](docs/studio-demo-script.md) / [提交检查表](docs/studio-submission-checklist.md)
+
+## 新工作台启动（Windows PowerShell）
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
+npm --prefix workbench-web ci
+npm --prefix workbench-web run build
+.\tools\start_workbench.ps1 -Python .\.venv\Scripts\python.exe -Port 8780
+```
+
+打开 http://127.0.0.1:8780/ 。默认本地模式，不调用模型。不要用旧 `start.bat` 启动新Studio。
+真实模型需另行配置环境变量并用启动脚本 `-Live`，项目内许可默认关闭；自动分析还需本次打开单独开启。
+不要把 `.env`、私密交接目录、真实数据库或本地依赖放进公开仓库。
+
+## 当前边界
+
+多文件编辑保存、Python实时语法检查、中文根因与修复方向、语法复查、受控模型分析已接入。其他文件仅编辑保存；不执行任意代码。
+3次授权真实模型小样本中2次通过结构/引用校验，1次失败；不能据此宣称诊断准确率或教学效果。当前还不是自主Agent或完整项目RAG，长期项目学习画像、可审阅补丁、Function Calling、多模态均未完成。
+匿名浏览器身份有效期7天；未配置固定 `CODEMENTOR_SESSION_SECRET` 时重启会产生新身份签名，旧项目不会自动归属新会话。请导出备份，账号与恢复流程待实现。生产部署前需专门完善。
+
+## 开发验证
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q -o addopts=''
+$env:CODEMENTOR_TEST_PYTHON=(Resolve-Path '.venv/Scripts/python.exe').Path
+npm --prefix workbench-web run test:e2e
+```
+
+浏览器测试默认使用本机Microsoft Edge；测试数据与数据库隔离。测试中的模拟模型必须与真实模型记录区分。
+本副本的origin仅指向本地交接目录，尚未配置正式托管地址。旧文档中的原项目仓库不是本轮参赛提交仓库。
+
+---
+
+## 历史说明（保留溯源，下列数字与入口不代表当前版本）
+
 # CodeMentor AI 2.0
 
 当前增量版本：详细诊断与可纠正的学习自述。见 [R2 验收记录](docs/reflection-release.md)。本轮使用离线规则，未验证真实模型；下文旧版报告中的模型效果和历史测试数字不代表本轮验证结果。

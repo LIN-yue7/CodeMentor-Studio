@@ -1,0 +1,15 @@
+
+> codementor-workbench@2.0.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.6 building client environment for production...
+transforming...
+✓ 45 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.57 kB │ gzip:   0.41 kB
+dist/assets/index-D7Pq6Hle.css   33.24 kB │ gzip:   7.59 kB
+dist/assets/index-Cm543BaT.js   269.97 kB │ gzip:  85.41 kB
+dist/assets/Editor-DwjTi0oE.js  463.05 kB │ gzip: 154.45 kB
+
+✓ built in 268ms
