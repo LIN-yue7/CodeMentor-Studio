@@ -34,6 +34,19 @@ def test_model_cannot_invent_project_citations():
         a.post(base+'/privacy',json={'allow_external':True})
         r=a.post(base+'/review',json={'files':{'main.py':'x = 1'},'revision':0,'path':'main.py','cursor_line':1}).json()
         assert r['status']=='failed' and r['review'] is None
+        assert r['failure_kind']=='invalid-citation'
+
+
+def test_invalid_model_json_has_safe_failure_reason():
+    class BrokenModel(Model):
+        async def chat(self,messages,**kwargs):
+            return LLMResponse(content='not JSON: private model output',model='stub')
+    with TestClient(create_workbench(model=BrokenModel())) as a:
+        a.post('/api/session'); p=a.post('/api/projects',json={'name':'invalid'}).json(); base='/api/projects/'+p['id']
+        a.post(base+'/privacy',json={'allow_external':True})
+        response=a.post(base+'/review',json={'files':{'main.py':'x = 1'},'revision':0,'path':'main.py'})
+        assert response.json()['failure_kind']=='invalid-output'
+        assert 'private model output' not in response.text
 
 
 def test_preview_prioritizes_error_outside_cursor_window():

@@ -62,11 +62,14 @@ async def review(tutor,owner,data,mode):
         model=tutor.model if tutor.model is not None else get_llm_client()
         async with asyncio.timeout(20):
             response=await model.chat([LLMMessage('system',SYSTEM),LLMMessage('user',json.dumps({**data,'mode':mode},ensure_ascii=False))],temperature=0,max_tokens=1200)
-        if response.truncated: raise ValueError('truncated')
+        if response.truncated:
+            return {'status':'failed','mode':tutor.mode,'review':None,'failure_kind':'truncated'}
         value=Review.model_validate_json(response.content)
         available={(x['path'],x['line'],x['quote']) for x in data['snippets']}
-        if any((c.path,c.line,c.quote) not in available for c in value.citations): raise ValueError('invalid citation')
+        if any((c.path,c.line,c.quote) not in available for c in value.citations):
+            return {'status':'failed','mode':tutor.mode,'review':None,'failure_kind':'invalid-citation'}
         return {'status':'accepted','mode':tutor.mode,'review':value.model_dump(),'claim_status':'unverified','buffer_hash':data['buffer_hash']}
     except TimeoutError: return {'status':'timeout','mode':tutor.mode,'review':None}
-    except (ValueError,LLMError,OSError): return {'status':'failed','mode':tutor.mode,'review':None}
+    except ValueError: return {'status':'failed','mode':tutor.mode,'review':None,'failure_kind':'invalid-output'}
+    except (LLMError,OSError): return {'status':'failed','mode':tutor.mode,'review':None,'failure_kind':'provider-error'}
     finally: tutor.active-=1
