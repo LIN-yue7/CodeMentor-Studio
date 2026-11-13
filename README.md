@@ -1,8 +1,8 @@
-# CodeMentor Studio · R6阶段版本
+# CodeMentor Studio · R7阶段版本
 
 面向真实项目的AI编程学习工作台。当前正式入口是 `app.workbench:app`；下面保留的 AI 2.0 / 旧单机说明仅作历史记录，不能替代当前能力与验证状态。
 
-- [当前基线、验证结果与后续缺口](docs/studio-r6-status.md)
+- [当前基线、验证结果与后续缺口](docs/studio-r7-status.md)
 - [100分评分证据矩阵](docs/studio-score-matrix.md)
 - [演示脚本阶段稿](docs/studio-demo-script.md) / [提交检查表](docs/studio-submission-checklist.md)
 
@@ -22,9 +22,9 @@ npm --prefix workbench-web run build
 
 ## 当前边界
 
-多文件编辑保存、Python实时语法检查、中文根因与修复方向、语法复查、受控模型分析已接入。其他文件仅编辑保存；不执行任意代码。
-3次授权真实模型小样本中2次通过结构/引用校验，1次失败；不能据此宣称诊断准确率或教学效果。当前还不是自主Agent或完整项目RAG，长期项目学习画像、可审阅补丁、Function Calling、多模态均未完成。
-匿名浏览器身份有效期7天；未配置固定 `CODEMENTOR_SESSION_SECRET` 时重启会产生新身份签名，旧项目不会自动归属新会话。请导出备份，账号与恢复流程待实现。生产部署前需专门完善。
+项目菜单与文件树、多标签/语言切换、实时中文诊断、项目检索、Diff审批、持久化学习事件和受限Python执行已接入。仅执行明确支持的子集，超出范围诚实降级。
+本轮4次授权真实模型调用3次通过、1次格式失败；定位并修复引用数量协议不一致，最后真实浏览器调用通过。不是准确率统计。自主Agent、Function Calling、多模态、自适应长期画像仍未完成。
+匿名浏览器身份有效期7天；未配置固定 `CODEMENTOR_SESSION_SECRET` 时重启会产生新身份签名，旧项目不会自动归属新会话。可导出/导入JSON备份，长期账号与自动恢复流程待实现。生产部署前需专门完善。
 
 ## 开发验证
 
