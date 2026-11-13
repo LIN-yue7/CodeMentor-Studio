@@ -50,3 +50,19 @@ class ProjectPrivacy(Base):
     owner: Mapped[str] = mapped_column(String(32), primary_key=True)
     project_id: Mapped[str] = mapped_column(String(36), primary_key=True)
     allow_external: Mapped[bool] = mapped_column(default=False)
+
+class ProjectLearningEvent(Base):
+    __tablename__ = 'cm_project_learning_events'
+    owner: Mapped[str] = mapped_column(String(32), primary_key=True)
+    project_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    key: Mapped[str] = mapped_column(String(64), primary_key=True)
+    data: Mapped[dict] = mapped_column(JSON)
+
+
+class ProjectLearningState(Base):
+    __tablename__ = 'cm_project_learning_state'
+    owner: Mapped[str] = mapped_column(String(32), primary_key=True)
+    project_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    path: Mapped[str] = mapped_column(String(160), primary_key=True)
+    revision: Mapped[int] = mapped_column(default=0)
+    issues: Mapped[list] = mapped_column(JSON)

@@ -1,0 +1,136 @@
+
+[WebServer] INFO:     Started server process [22760]
+
+[WebServer] INFO:     Waiting for application startup.
+
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8766 (Press CTRL+C to quit)
+
+
+Running 62 tests using 2 workers
+
+
+(node:8212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+(node:24752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/62] [desktop] › e2e\project-review.spec.ts:2:1 › project code requires preview and explicit permission; local mode stays honest
+[2/62] [desktop] › e2e\navigation.spec.ts:4:1 › section navigation reaches practice and evidence link returns to editable code
+[3/62] [desktop] › e2e\navigation.spec.ts:21:1 › keyboard moves from submitted code to its evidence before practice
+[4/62] [desktop] › e2e\projects.spec.ts:2:1 › create real project, edit files, inspect syntax and persist
+[5/62] [desktop] › e2e\navigation.spec.ts:34:1 › a model citation opens the actual retrieved source card
+[6/62] [desktop] › e2e\navigation.spec.ts:50:1 › profile failure stays unknown until a successful retry
+[7/62] [desktop] › e2e\navigation.spec.ts:65:1 › a previously exposed answer is assisted without claiming a hint was used
+[8/62] [desktop] › e2e\navigation.spec.ts:84:1 › narrow phone layout fits the usable width including scrollbar space
+[9/62] [desktop] › e2e\r7-navigation.spec.ts:3:1 › project menu creates through a closing dialog and restores the last opened file
+[10/62] [desktop] › e2e\r7-navigation.spec.ts:22:1 › language override changes the actual inspection without replacing editor selection
+[11/62] [desktop] › e2e\r7-visual.spec.ts:6:2 › visual and interaction 1440
+[12/62] [desktop] › e2e\r7-navigation.spec.ts:38:1 › delete confirms unsaved draft and cancellation preserves contents
+[13/62] [desktop] › e2e\r7-visual.spec.ts:6:2 › visual and interaction 1366
+[14/62] [desktop] › e2e\r7-navigation.spec.ts:51:1 › 900px keeps editor usable while feedback is in a drawer
+[15/62] [desktop] › e2e\r7-navigation.spec.ts:60:1 › JSON import preserves both files and rename keeps the edited contents
+[16/62] [desktop] › e2e\r7-navigation.spec.ts:77:1 › patch preview requires approval and stale patches are removed
+[17/62] [desktop] › e2e\r7-visual.spec.ts:6:2 › visual and interaction 900
+[18/62] [desktop] › e2e\r7-navigation.spec.ts:93:1 › folder context menu renames the subtree without changing contents
+[19/62] [desktop] › e2e\realtime-review.spec.ts:11:1 › root cause is visible immediately and editor stays primary
+[20/62] [desktop] › e2e\realtime-review.spec.ts:24:1 › automatic analysis needs opt in, debounces edits, and discards late responses
+[21/62] [desktop] › e2e\r7-visual.spec.ts:6:2 › visual and interaction 390
+[22/62] [desktop] › e2e\reflection.spec.ts:3:1 › reflect, correct, reuse and forget a learner self-report
+[23/62] [desktop] › e2e\selfcheck.spec.ts:2:1 › self-check records first response and changes next diagnosis advice
+[24/62] [desktop] › e2e\studio-shell.spec.ts:2:1 › desktop shell keeps editor and mentor inside one viewport
+[25/62] [desktop] › e2e\workbench.spec.ts:4:1 › diagnose, request hint, grade, and pass a new variant
+[26/62] [desktop] › e2e\realtime-review.spec.ts:51:1 › failed automatic analysis stops until deliberate retry
+[27/62] [desktop] › e2e\workbench.spec.ts:25:1 › cancel a pending request and retry the same submission
+[28/62] [desktop] › e2e\workbench.spec.ts:44:1 › a diagnosis during slow initial session creation keeps its exercise owner
+[29/62] [desktop] › e2e\workbench.spec.ts:59:1 › model output is rendered as text even if it contains markup
+(node:36776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[30/62] [mobile] › e2e\navigation.spec.ts:4:1 › section navigation reaches practice and evidence link returns to editable code
+[31/62] [mobile] › e2e\navigation.spec.ts:21:1 › keyboard moves from submitted code to its evidence before practice
+[32/62] [mobile] › e2e\navigation.spec.ts:34:1 › a model citation opens the actual retrieved source card
+[33/62] [mobile] › e2e\navigation.spec.ts:50:1 › profile failure stays unknown until a successful retry
+[34/62] [mobile] › e2e\navigation.spec.ts:65:1 › a previously exposed answer is assisted without claiming a hint was used
+[35/62] [desktop] › e2e\realtime-review.spec.ts:66:1 › phone uses panel switching without document scrolling
+[36/62] [mobile] › e2e\navigation.spec.ts:84:1 › narrow phone layout fits the usable width including scrollbar space
+[37/62] [mobile] › e2e\project-review.spec.ts:2:1 › project code requires preview and explicit permission; local mode stays honest
+[38/62] [desktop] › e2e\realtime-review.spec.ts:77:1 › valid directory names matching object properties cannot crash the editor
+[39/62] [mobile] › e2e\projects.spec.ts:2:1 › create real project, edit files, inspect syntax and persist
+(node:35200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[40/62] [mobile] › e2e\r7-navigation.spec.ts:3:1 › project menu creates through a closing dialog and restores the last opened file
+[41/62] [mobile] › e2e\r7-navigation.spec.ts:22:1 › language override changes the actual inspection without replacing editor selection
+[42/62] [mobile] › e2e\r7-visual.spec.ts:6:2 › visual and interaction 1440
+[43/62] [mobile] › e2e\r7-navigation.spec.ts:38:1 › delete confirms unsaved draft and cancellation preserves contents
+[44/62] [mobile] › e2e\r7-navigation.spec.ts:51:1 › 900px keeps editor usable while feedback is in a drawer
+[45/62] [mobile] › e2e\r7-navigation.spec.ts:60:1 › JSON import preserves both files and rename keeps the edited contents
+[46/62] [mobile] › e2e\r7-navigation.spec.ts:77:1 › patch preview requires approval and stale patches are removed
+[47/62] [mobile] › e2e\r7-visual.spec.ts:6:2 › visual and interaction 1366
+[48/62] [mobile] › e2e\r7-navigation.spec.ts:93:1 › folder context menu renames the subtree without changing contents
+[49/62] [mobile] › e2e\realtime-review.spec.ts:11:1 › root cause is visible immediately and editor stays primary
+[50/62] [mobile] › e2e\r7-visual.spec.ts:6:2 › visual and interaction 900
+[51/62] [mobile] › e2e\realtime-review.spec.ts:24:1 › automatic analysis needs opt in, debounces edits, and discards late responses
+  1) [mobile] › e2e\r7-visual.spec.ts:6:2 › visual and interaction 900 ─────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "passed"
+    Received: "runtime-error"
+
+      31 |   const passed=page.waitForResponse(r=>r.url().endsWith('/verify'))
+      32 |   await page.getByRole('button',{name:'验证当前入口'}).click()
+    > 33 |   const result=await (await passed).json();expect(result.status).toBe('passed');expect(result.stdout).toBe('1\n')
+         |                                                                  ^
+      34 |   writeFileSync(`${out}/${round}/${width}-execution.json`,JSON.stringify(result,null,2))
+      35 |   await panel('诊断');await expect(page.getByText('当前输入验证通过',{exact:true})).toBeVisible()
+      36 |   await page.screenshot({path:`${out}/${round}/${width}-verified.png`})
+        at D:\codex\2026-11-11\codementor-studio-ai-web-2026-ai\outputs\CodeMentor-Studio\workbench-web\e2e\r7-visual.spec.ts:33:66
+
+    Error Context: test-results\r7-visual-visual-and-interaction-900-mobile\error-context.md
+
+
+
+(node:24028) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[52/62] [mobile] › e2e\r7-visual.spec.ts:6:2 › visual and interaction 390
+[53/62] [mobile] › e2e\reflection.spec.ts:3:1 › reflect, correct, reuse and forget a learner self-report
+[54/62] [mobile] › e2e\realtime-review.spec.ts:51:1 › failed automatic analysis stops until deliberate retry
+[55/62] [mobile] › e2e\selfcheck.spec.ts:2:1 › self-check records first response and changes next diagnosis advice
+[56/62] [mobile] › e2e\studio-shell.spec.ts:2:1 › desktop shell keeps editor and mentor inside one viewport
+[57/62] [mobile] › e2e\realtime-review.spec.ts:66:1 › phone uses panel switching without document scrolling
+[58/62] [mobile] › e2e\realtime-review.spec.ts:77:1 › valid directory names matching object properties cannot crash the editor
+[59/62] [mobile] › e2e\workbench.spec.ts:4:1 › diagnose, request hint, grade, and pass a new variant
+[60/62] [mobile] › e2e\workbench.spec.ts:25:1 › cancel a pending request and retry the same submission
+[61/62] [mobile] › e2e\workbench.spec.ts:44:1 › a diagnosis during slow initial session creation keeps its exercise owner
+  2) [mobile] › e2e\studio-shell.spec.ts:2:1 › desktop shell keeps editor and mentor inside one viewport 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('本次语法问题已通过复查')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('本次语法问题已通过复查') with timeout 5000ms
+      - waiting for getByText('本次语法问题已通过复查')
+
+
+      10 |  await expect(page.getByText('发现 Python 语法错误；',{exact:false})).toBeVisible()
+      11 |  await page.getByRole('textbox',{name:'Python 代码'}).fill('def demo():\n    pass')
+    > 12 |  await expect(page.getByText('本次语法问题已通过复查',{exact:false})).toBeVisible()
+         |                                                            ^
+      13 | })
+      14 |
+        at D:\codex\2026-11-11\codementor-studio-ai-web-2026-ai\outputs\CodeMentor-Studio\workbench-web\e2e\studio-shell.spec.ts:12:60
+
+    Error Context: test-results\studio-shell-desktop-shell-337e8--mentor-inside-one-viewport-mobile\error-context.md
+
+
+[62/62] [mobile] › e2e\workbench.spec.ts:59:1 › model output is rendered as text even if it contains markup
+  2 failed
+    [mobile] › e2e\r7-visual.spec.ts:6:2 › visual and interaction 900 ──────────────────────────────
+    [mobile] › e2e\studio-shell.spec.ts:2:1 › desktop shell keeps editor and mentor inside one viewport 
+  60 passed (46.8s)

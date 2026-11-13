@@ -1,10 +1,12 @@
+import {editCode} from './editor-input'
 import {test,expect} from '@playwright/test'
 test('project code requires preview and explicit permission; local mode stays honest',async({page})=>{
  let calls=0;page.on('request',r=>{if(r.url().endsWith('/review'))calls++})
  await page.goto('/')
- await page.getByLabel('项目名称',{exact:true}).fill('隐私验收')
  await page.getByRole('button',{name:'新建项目',exact:true}).click()
- await page.getByRole('textbox',{name:'Python 代码'}).fill('value = 3')
+ await page.getByLabel('项目名称',{exact:true}).fill('隐私验收')
+ await page.getByRole('button',{name:'创建项目',exact:true}).click()
+ await editCode(page,'value = 3')
  if(await page.getByRole('button',{name:'诊断面板',exact:true}).isVisible())await page.getByRole('button',{name:'诊断面板',exact:true}).click()
  await page.getByRole('button',{name:'预览审查上下文'}).click()
  await expect(page.getByText('main.py:1 value = 3',{exact:true})).toBeVisible()

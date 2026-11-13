@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "stdout": "1\n",
+  "error": null,
+  "trace": [
+    {
+      "path": "main.py",
+      "line": 1,
+      "event": "ImportFrom"
+    },
+    {
+      "path": "helper.py",
+      "line": 1,
+      "event": "FunctionDef"
+    },
+    {
+      "path": "main.py",
+      "line": 2,
+      "event": "Expr"
+    },
+    {
+      "path": "helper.py",
+      "line": 2,
+      "event": "If"
+    },
+    {
+      "path": "helper.py",
+      "line": 4,
+      "event": "Return"
+    }
+  ],
+  "buffer_hash": "03c6eb83846e623145d47403591ef1854a6adba6900d8428bd46c75e877053ea",
+  "execution_kind": "restricted-ast-interpreter",
+  "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。"
+}

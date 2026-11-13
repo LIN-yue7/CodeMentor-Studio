@@ -1,22 +1,24 @@
 import {useEffect,useRef,useState} from 'react'
 import {get,post} from './api'
 
-type Payload={files:Record<string,string>;revision:number;path:string;cursor_line:number}
+type Payload={files:Record<string,string>;revision:number;path:string;cursor_line:number;language?:'auto'|'python'|'text'}
 type Preview={snippets:{path:string;line:number;quote:string}[];buffer_hash:string;status?:string;reason?:string}
-type Result={status:string;mode:string;reason?:string;review?:{explanation:string;hints:string[];citations:{path:string;line:number;quote:string}[]}|null}
+type Patch={path:string;line:number;before:string;after:string;reason:string}
+type Result={status:string;mode:string;reason?:string;review?:{patches?:Patch[];explanation:string;hints:string[];citations:{path:string;line:number;quote:string}[]}|null}
 const messages:Record<string,string>={disabled:'模型功能未启用：当前仅提供本地静态分析。',limited:'已达到调用限额，请稍后手动重试。',timeout:'模型响应超时，自动分析已暂停；可重新预览后重试。',failed:'模型结果未通过校验或服务异常，没有生成可用建议。',blocked:'检测到疑似敏感内容，已阻止发送。'}
 
-export function ProjectReview({id,payload}:{id:string;payload:Payload}){
+export function ProjectReview({id,payload,onApplyFiles}:{id:string;payload:Payload;onApplyFiles?:(files:Record<string,string>)=>void}){
  const [allowed,setAllowed]=useState(false),[ready,setReady]=useState(false),[busy,setBusy]=useState(false)
  const [automatic,setAutomatic]=useState(false),[queued,setQueued]=useState(false)
  const [preview,setPreview]=useState<Preview|null>(null),[result,setResult]=useState<Result|null>(null)
  const [error,setError]=useState(''),[question,setQuestion]=useState('')
+ const resultFingerprint=useRef('')
  const request=useRef<AbortController|null>(null)
  const previewPayload=useRef<(Payload&{request:string})|null>(null)
  const latest=useRef({...payload,request:question})
  latest.current={...payload,request:question}
  // Cursor movement and saving the identical buffer do not create a new code version.
- const fingerprint=JSON.stringify({files:payload.files,path:payload.path,question})
+ const fingerprint=JSON.stringify({files:payload.files,path:payload.path,language:payload.language,question})
  const currentFingerprint=useRef(fingerprint);currentFingerprint.current=fingerprint
  const attempted=useRef(new Set<string>()),lastCall=useRef(0)
 
@@ -42,7 +44,7 @@ export function ProjectReview({id,payload}:{id:string;payload:Payload}){
   try{
    const data=await post<Preview&Result>('/projects/'+id+(send?'/review':'/review-preview'),{...body,mode:'collaborate'},controller.signal)
    if(controller.signal.aborted||currentFingerprint.current!==token)return
-   if(send){setResult(data);if(data.status!=='accepted')setAutomatic(false)}
+   if(send){resultFingerprint.current=token;setResult(data);if(data.status!=='accepted')setAutomatic(false)}
    else {setPreview(data);previewPayload.current=body}
   }catch(e){if(!controller.signal.aborted&&currentFingerprint.current===token){setError(String(e));setAutomatic(false)}}
   finally{if(!controller.signal.aborted&&currentFingerprint.current===token)setBusy(false)}
@@ -54,9 +56,11 @@ export function ProjectReview({id,payload}:{id:string;payload:Payload}){
   return()=>{clearTimeout(timer)}
  },[fingerprint,allowed,automatic,ready])
 
+ function applyPatches(){if(resultFingerprint.current!==currentFingerprint.current){setError('代码已变化，请重新分析。');return}const patches=result?.review?.patches;if(!patches?.length)return;const files={...payload.files};for(const p of [...patches].sort((a,b)=>b.line-a.line)){const lines=files[p.path]?.split('\n');if(!lines||lines[p.line-1]!==p.before){setError('源代码已变化，请重新分析。');return}lines.splice(p.line-1,1,p.after);files[p.path]=lines.join('\n')}onApplyFiles?.(files);setResult(null)}
  return <section className="project-review" aria-label="模型分析">
   <div className="review-heading"><h3>深入分析</h3><span className="subtle">项目上下文 · AI</span></div>
   <label className="question-label">想进一步了解什么？<textarea maxLength={1000} value={question} onChange={e=>setQuestion(e.target.value)} placeholder="例如：详细解释参数与返回值，或请简洁说明修改方法" rows={2}/></label>
+  <div className="depth-actions">{['讲详细一点','给个例子','深入分析'].map(q=><button key={q} onClick={()=>setQuestion(q+'：请结合当前文件与关联文件说明，并区分推断和实际执行。')}>{q}</button>)}</div>
   <details className="privacy-settings"><summary>模型权限与自动分析 <span>{allowed?'已授权':'未授权'}</span></summary>
    <p>授权范围：当前项目的代码片段及你的问题。自动分析会在停止输入后发送更新；每次调用间隔至少 30 秒。可能产生模型费用。</p>
    <label><input type="checkbox" checked={allowed} disabled={!ready} onChange={e=>void privacy(e.target.checked)}/>允许本项目向已配置模型发送所选上下文</label>
@@ -70,7 +74,7 @@ export function ProjectReview({id,payload}:{id:string;payload:Payload}){
   {error&&<p role="alert">{error} 本地编辑和检查仍可继续。</p>}
   {result&&<div className="model-result" role="status"><p className="eyebrow">来源：{result.mode==='simulated'?'模拟模型':result.mode==='live'?'真实模型调用':'本地模式'} · 状态：{result.status}</p>
    {!result.review&&<p>{result.reason??messages[result.status]??messages.failed}</p>}
-   {result.review&&<><p className="subtle">模型建议 · 尚未通过运行验证</p><p className="model-explanation">{result.review.explanation}</p>{result.review.hints.map((h,i)=><details key={i} open={i===0}><summary>{['修改方向','如何验证','以后怎样避免'][i]??'进一步说明'}</summary><p className="model-explanation">{h}</p></details>)}<details><summary>引用的代码证据</summary>{result.review.citations.map((c,i)=><p key={i}>{c.path}:{c.line} <code>{c.quote}</code></p>)}</details></>}
+   {result.review&&<><p className="subtle">模型建议 · 尚未通过运行验证</p><p className="model-explanation">{result.review.explanation}</p>{result.review.hints.map((h,i)=><details key={i} open={i===0}><summary>{['修改方向','更多建议','进一步验证与提醒'][i]??'进一步说明'}</summary><p className="model-explanation">{h}</p></details>)}{!!result.review.patches?.length&&<details open><summary>审阅建议修改 · 尚未应用</summary>{result.review.patches.map((p,i)=><div key={i}><p>{p.path}:{p.line} · {p.reason}</p><pre className="patch-before">− {p.before}</pre><pre className="patch-after">+ {p.after}</pre></div>)}<button disabled={!onApplyFiles} onClick={applyPatches}>批准并应用到草稿</button></details>}<details><summary>引用的代码证据</summary>{result.review.citations.map((c,i)=><p key={i}>{c.path}:{c.line} <code>{c.quote}</code></p>)}</details></>}
   </div>}
  </section>
 }

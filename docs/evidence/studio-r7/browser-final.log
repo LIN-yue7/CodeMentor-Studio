@@ -1,0 +1,87 @@
+
+[WebServer] INFO:     Started server process [37580]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8766 (Press CTRL+C to quit)
+
+
+Running 64 tests using 2 workers
+
+(node:6832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+(node:34744) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/64] [desktop] › e2e\project-review.spec.ts:3:1 › project code requires preview and explicit permission; local mode stays honest
+[2/64] [desktop] › e2e\navigation.spec.ts:4:1 › section navigation reaches practice and evidence link returns to editable code
+[3/64] [desktop] › e2e\navigation.spec.ts:21:1 › keyboard moves from submitted code to its evidence before practice
+[4/64] [desktop] › e2e\navigation.spec.ts:34:1 › a model citation opens the actual retrieved source card
+[5/64] [desktop] › e2e\projects.spec.ts:3:1 › create real project, edit files, inspect syntax and persist
+[6/64] [desktop] › e2e\navigation.spec.ts:50:1 › profile failure stays unknown until a successful retry
+[7/64] [desktop] › e2e\navigation.spec.ts:65:1 › a previously exposed answer is assisted without claiming a hint was used
+[8/64] [desktop] › e2e\navigation.spec.ts:84:1 › narrow phone layout fits the usable width including scrollbar space
+[9/64] [desktop] › e2e\r7-navigation.spec.ts:4:1 › project menu creates through a closing dialog and restores the last opened file
+[10/64] [desktop] › e2e\r7-navigation.spec.ts:23:1 › language override changes the actual inspection without replacing editor selection
+[11/64] [desktop] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 1440
+[12/64] [desktop] › e2e\r7-navigation.spec.ts:39:1 › delete confirms unsaved draft and cancellation preserves contents
+[13/64] [desktop] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 1366
+[14/64] [desktop] › e2e\r7-navigation.spec.ts:52:1 › 900px keeps editor usable while feedback is in a drawer
+[15/64] [desktop] › e2e\r7-navigation.spec.ts:61:1 › JSON import preserves both files and rename keeps the edited contents
+[16/64] [desktop] › e2e\r7-navigation.spec.ts:78:1 › patch preview requires approval and stale patches are removed
+[17/64] [desktop] › e2e\r7-navigation.spec.ts:94:1 › folder context menu renames the subtree without changing contents
+[18/64] [desktop] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 900
+[19/64] [desktop] › e2e\r7-navigation.spec.ts:107:1 › late project settings save preserves code typed after submission
+[20/64] [desktop] › e2e\realtime-review.spec.ts:12:1 › root cause is visible immediately and editor stays primary
+[21/64] [desktop] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 390
+[22/64] [desktop] › e2e\realtime-review.spec.ts:25:1 › automatic analysis needs opt in, debounces edits, and discards late responses
+[23/64] [desktop] › e2e\reflection.spec.ts:3:1 › reflect, correct, reuse and forget a learner self-report
+[24/64] [desktop] › e2e\selfcheck.spec.ts:2:1 › self-check records first response and changes next diagnosis advice
+[25/64] [desktop] › e2e\studio-shell.spec.ts:3:1 › desktop shell keeps editor and mentor inside one viewport
+[26/64] [desktop] › e2e\workbench.spec.ts:4:1 › diagnose, request hint, grade, and pass a new variant
+[27/64] [desktop] › e2e\realtime-review.spec.ts:52:1 › failed automatic analysis stops until deliberate retry
+[28/64] [desktop] › e2e\workbench.spec.ts:25:1 › cancel a pending request and retry the same submission
+[29/64] [desktop] › e2e\workbench.spec.ts:44:1 › a diagnosis during slow initial session creation keeps its exercise owner
+[30/64] [desktop] › e2e\workbench.spec.ts:59:1 › model output is rendered as text even if it contains markup
+(node:4304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[31/64] [mobile] › e2e\navigation.spec.ts:4:1 › section navigation reaches practice and evidence link returns to editable code
+[32/64] [mobile] › e2e\navigation.spec.ts:21:1 › keyboard moves from submitted code to its evidence before practice
+[33/64] [mobile] › e2e\navigation.spec.ts:34:1 › a model citation opens the actual retrieved source card
+[34/64] [mobile] › e2e\navigation.spec.ts:50:1 › profile failure stays unknown until a successful retry
+[35/64] [desktop] › e2e\realtime-review.spec.ts:67:1 › phone uses panel switching without document scrolling
+[36/64] [mobile] › e2e\navigation.spec.ts:65:1 › a previously exposed answer is assisted without claiming a hint was used
+[37/64] [mobile] › e2e\navigation.spec.ts:84:1 › narrow phone layout fits the usable width including scrollbar space
+[38/64] [mobile] › e2e\project-review.spec.ts:3:1 › project code requires preview and explicit permission; local mode stays honest
+[39/64] [desktop] › e2e\realtime-review.spec.ts:78:1 › valid directory names matching object properties cannot crash the editor
+[40/64] [mobile] › e2e\r7-navigation.spec.ts:4:1 › project menu creates through a closing dialog and restores the last opened file
+(node:20308) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+[41/64] [mobile] › e2e\projects.spec.ts:3:1 › create real project, edit files, inspect syntax and persist
+[42/64] [mobile] › e2e\r7-navigation.spec.ts:23:1 › language override changes the actual inspection without replacing editor selection
+[43/64] [mobile] › e2e\r7-navigation.spec.ts:39:1 › delete confirms unsaved draft and cancellation preserves contents
+[44/64] [mobile] › e2e\r7-navigation.spec.ts:52:1 › 900px keeps editor usable while feedback is in a drawer
+[45/64] [mobile] › e2e\r7-navigation.spec.ts:61:1 › JSON import preserves both files and rename keeps the edited contents
+[46/64] [mobile] › e2e\r7-navigation.spec.ts:78:1 › patch preview requires approval and stale patches are removed
+[47/64] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 1440
+[48/64] [mobile] › e2e\r7-navigation.spec.ts:94:1 › folder context menu renames the subtree without changing contents
+[49/64] [mobile] › e2e\r7-navigation.spec.ts:107:1 › late project settings save preserves code typed after submission
+[50/64] [mobile] › e2e\realtime-review.spec.ts:12:1 › root cause is visible immediately and editor stays primary
+[51/64] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 1366
+[52/64] [mobile] › e2e\realtime-review.spec.ts:25:1 › automatic analysis needs opt in, debounces edits, and discards late responses
+[53/64] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 900
+[54/64] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 390
+[55/64] [mobile] › e2e\realtime-review.spec.ts:52:1 › failed automatic analysis stops until deliberate retry
+[56/64] [mobile] › e2e\reflection.spec.ts:3:1 › reflect, correct, reuse and forget a learner self-report
+[57/64] [mobile] › e2e\selfcheck.spec.ts:2:1 › self-check records first response and changes next diagnosis advice
+[58/64] [mobile] › e2e\studio-shell.spec.ts:3:1 › desktop shell keeps editor and mentor inside one viewport
+[59/64] [mobile] › e2e\realtime-review.spec.ts:67:1 › phone uses panel switching without document scrolling
+[60/64] [mobile] › e2e\workbench.spec.ts:4:1 › diagnose, request hint, grade, and pass a new variant
+[61/64] [mobile] › e2e\workbench.spec.ts:25:1 › cancel a pending request and retry the same submission
+[62/64] [mobile] › e2e\workbench.spec.ts:44:1 › a diagnosis during slow initial session creation keeps its exercise owner
+[63/64] [mobile] › e2e\realtime-review.spec.ts:78:1 › valid directory names matching object properties cannot crash the editor
+[64/64] [mobile] › e2e\workbench.spec.ts:59:1 › model output is rendered as text even if it contains markup
+  64 passed (45.1s)

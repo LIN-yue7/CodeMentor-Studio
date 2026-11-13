@@ -1,0 +1,18 @@
+{
+  "kind": "local-browser-input-to-visible-diagnostic",
+  "samples_ms": [
+    686,
+    679,
+    666,
+    667,
+    679,
+    666,
+    674,
+    680
+  ],
+  "p50_ms": 674,
+  "p95_ms": 686,
+  "viewport": "1440x900",
+  "includes": "650ms debounce, HTTP context retrieval and UI display",
+  "boundary": "8 local synthetic inputs; not production SLA or pure parser speed"
+}

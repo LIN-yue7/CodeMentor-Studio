@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react'
 import { basicSetup } from 'codemirror'
 import { python } from '@codemirror/lang-python'
-import { StateEffect, StateField } from '@codemirror/state'
+import { Compartment, StateEffect, StateField } from '@codemirror/state'
 import { Decoration, EditorView } from '@codemirror/view'
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language'
 import { tags } from '@lezer/highlight'
@@ -50,6 +50,7 @@ const evidenceLine = StateField.define({
 export default function Editor({ code, onChange, line, jump, pythonMode = true, onCursor, onSelection }: {
   code: string; onChange: (code: string) => void; line: number | null; jump: number; pythonMode?: boolean; onCursor?: (line:number)=>void; onSelection?: (text:string)=>void
 }) {
+  const language = useRef(new Compartment())
   const target = useRef<HTMLDivElement>(null)
   const editor = useRef<EditorView | null>(null)
   const onChangeRef = useRef(onChange)
@@ -66,8 +67,7 @@ export default function Editor({ code, onChange, line, jump, pythonMode = true, 
     const view = new EditorView({
       doc: initialCode.current,
       extensions: [
-        basicSetup, ...(pythonMode ? [python()] : []), laboratoryTheme, syntaxHighlighting(laboratorySyntax), evidenceLine, EditorView.lineWrapping,
-        EditorView.contentAttributes.of({ 'aria-label': pythonMode ? 'Python 代码' : '文本代码' }),
+        basicSetup, language.current.of([...(pythonMode ? [python()] : []), EditorView.contentAttributes.of({ 'aria-label': pythonMode ? 'Python 代码' : '文本代码' })]), laboratoryTheme, syntaxHighlighting(laboratorySyntax), evidenceLine, EditorView.lineWrapping,
         EditorView.updateListener.of(update => {
           if (update.docChanged) onChangeRef.current(update.state.doc.toString())
           if(update.selectionSet||update.docChanged){cursorRef.current?.(update.state.doc.lineAt(update.state.selection.main.head).number); selectionRef.current?.(update.state.sliceDoc(update.state.selection.main.from,update.state.selection.main.to))}
@@ -78,6 +78,8 @@ export default function Editor({ code, onChange, line, jump, pythonMode = true, 
     editor.current = view
     return () => { view.destroy(); editor.current = null }
   }, [])
+
+  useEffect(()=>{editor.current?.dispatch({effects:language.current.reconfigure([...(pythonMode?[python()]:[]),EditorView.contentAttributes.of({'aria-label':pythonMode?'Python 代码':'文本代码'})])})},[pythonMode])
 
   useEffect(() => {
     const view = editor.current

@@ -1,0 +1,44 @@
+
+[WebServer] INFO:     Started server process [36924]
+[WebServer] INFO:     Waiting for application startup.
+
+[WebServer] INFO:     Application startup complete.
+
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8766 (Press CTRL+C to quit)
+
+Running 15 tests using 2 workers
+
+(node:27760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+(node:17316) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[1/15] [mobile] › e2e\studio-shell.spec.ts:3:1 › desktop shell keeps editor and mentor inside one viewport
+[2/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 1440
+[3/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 1366
+(node:36224) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+[4/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 1440
+[5/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 900
+[6/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 1366
+[7/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 390
+[8/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 900
+
+(node:18836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[9/15] [mobile] › e2e\studio-shell.spec.ts:3:1 › desktop shell keeps editor and mentor inside one viewport
+[10/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 390
+(node:36612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[11/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 1440
+
+(node:16084) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[12/15] [mobile] › e2e\studio-shell.spec.ts:3:1 › desktop shell keeps editor and mentor inside one viewport
+[13/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 1366
+[14/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 900
+[15/15] [mobile] › e2e\r7-visual.spec.ts:7:2 › visual and interaction 390
+  15 passed (25.1s)
