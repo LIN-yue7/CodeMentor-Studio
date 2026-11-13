@@ -1,0 +1,179 @@
+[
+  {
+    "case_id": "syntax-colon",
+    "category": "Python syntax errors",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def greet(name)\n    return name\n"
+    },
+    "request": "检查语法问题，引用准确代码行并给出最小修复。",
+    "expected": {
+      "category": "Python syntax errors",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 1
+        }
+      ],
+      "key_concepts": [
+        "function header",
+        "missing colon"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Identify actual parser defect; do not invent a runtime execution result."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：第 1 行函数定义头部缺少冒号，解析器在第 16 列报 expected ':'，因此代码在解析阶段就被拒绝，尚未执行。第 2 行缩进本身与函数体形式一致，但只有补上第 1 行末尾的冒号后，解析器才会把第 2 行当作函数体。函数目前只返回 name，没有实际问候逻辑，这是否符合意图需确认，不属于已确定的语法错误。",
+        "hints": [
+          "在第 1 行末尾补冒号：def greet(name):，保持第 2 行四个空格缩进不变。",
+          "修改后可用 python -m py_compile main.py 或直接运行做语法验证；本次未执行，不能声称已通过。",
+          "若本意是输出问候语，需另行确认返回值或打印逻辑，不要仅凭语法修复推断语义正确。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def greet(name)"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return name"
+          }
+        ],
+        "teaching": {
+          "summary": "函数定义那一行结尾少了一个冒号，Python 读到行尾时无法判断函数体从哪里开始，于是直接报语法错误。",
+          "root_cause": "第 1 行 def greet(name) 末尾没有冒号，解析器在第 16 列期望 ':' 而未找到。",
+          "mechanism": "Python 用冒号标记 def、if、for 等复合语句头部的结束，随后依靠缩进确定属于该代码块的语句。缺少冒号时，解析器无法建立代码块结构，只能报 expected ':'。",
+          "example": "推断的最小反例：def greet(name): 配合下一行四个空格缩进的 return name 可满足该语法结构；此为静态推断，未实际运行。",
+          "alternatives": [
+            "仅补冒号，保留 return name，适用于当前函数只需返回名字的情况。",
+            "补冒号后改为返回问候字符串，如 return 'Hello, ' + name，适用于需要问候语义的情况，但需先确认需求。",
+            "补冒号后改为 print 输出，适用于需要直接打印的场景，需确认调用方是否依赖返回值。"
+          ],
+          "prevention": "修改后先做语法检查（如 python -m py_compile main.py），再运行针对性用例确认行为；注意复合语句头部冒号与下一行缩进配套。",
+          "uncertainty": "函数只返回 name 是否符合业务意图无法从这两行确定；本次没有执行证据，不能断言修复后运行通过。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "before": "def greet(name)",
+            "after": "def greet(name):",
+            "reason": "复合语句头部需以冒号结束，补上后解析器才能识别函数体。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "cfd68d2b021793a7eacb70bb69a1d08d419d6a98009f82f2c44cdf47ce268818",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 695,
+        "completion_tokens": 589,
+        "total_tokens": 1284
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "runtime-error",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 1,
+        "message": "SyntaxError: expected ':'"
+      },
+      "trace": [],
+      "buffer_hash": "cfd68d2b021793a7eacb70bb69a1d08d419d6a98009f82f2c44cdf47ce268818",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      1
+    ],
+    "elapsed_ms": 4780,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-arity",
+    "category": "cross-file dependencies",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "from helpers import add\nresult = add(1)\n",
+      "helpers.py": "def add(a, b):\n    return a + b\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 1
+        }
+      ],
+      "key_concepts": [
+        "required argument",
+        "import binding"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "failed",
+      "mode": "live",
+      "review": null,
+      "failure_kind": "invalid-output",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 616,
+        "completion_tokens": 940,
+        "total_tokens": 1556
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "runtime-error",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 2,
+        "message": "TypeError: 实参数量与形参数量不符"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "FunctionDef"
+        },
+        {
+          "path": "main.py",
+          "line": 2,
+          "event": "Assign"
+        }
+      ],
+      "buffer_hash": "1778bacc4e7d6efe7904b3bc83ea70c9c7b409e9f4a4f7cf860219fbf4133423",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      2
+    ],
+    "elapsed_ms": 5861,
+    "semantic_review": "pending-human-review"
+  }
+]

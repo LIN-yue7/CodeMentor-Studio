@@ -1,0 +1,628 @@
+{
+  "schema_version": 1,
+  "dataset_kind": "synthetic development evaluation; not held out",
+  "grading_policy": "Expected concepts are rubrics for evidence-based review, not substring scoring. A defect needs a valid path/line and compatible source evidence. Correct and recheck cases measure false positives. No model outcomes have been measured by this dataset.",
+  "cases": [
+    {
+      "id": "syntax-colon",
+      "category": "Python syntax errors",
+      "files": {
+        "main.py": "def greet(name)\n    return name\n"
+      },
+      "path": "main.py",
+      "cursor_line": 1,
+      "request": "检查语法问题，引用准确代码行并给出最小修复。",
+      "expected": {
+        "category": "Python syntax errors",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 1
+          }
+        ],
+        "key_concepts": [
+          "function header",
+          "missing colon"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Identify actual parser defect; do not invent a runtime execution result."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "syntax-indent",
+      "category": "Python syntax errors",
+      "files": {
+        "main.py": "if True:\nprint(1)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "检查语法问题，引用准确代码行并给出最小修复。",
+      "expected": {
+        "category": "Python syntax errors",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 2
+          }
+        ],
+        "key_concepts": [
+          "indentation",
+          "suite"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Identify actual parser defect; do not invent a runtime execution result."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "syntax-bracket",
+      "category": "Python syntax errors",
+      "files": {
+        "main.py": "values = [1, 2\nprint(values)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 1,
+      "request": "检查语法问题，引用准确代码行并给出最小修复。",
+      "expected": {
+        "category": "Python syntax errors",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 1
+          }
+        ],
+        "key_concepts": [
+          "unclosed bracket",
+          "parser location"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Identify actual parser defect; do not invent a runtime execution result."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "syntax-quote",
+      "category": "Python syntax errors",
+      "files": {
+        "main.py": "name = \"hello\nprint(name)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 1,
+      "request": "检查语法问题，引用准确代码行并给出最小修复。",
+      "expected": {
+        "category": "Python syntax errors",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 1
+          }
+        ],
+        "key_concepts": [
+          "unterminated string"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Identify actual parser defect; do not invent a runtime execution result."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "boundary-empty",
+      "category": "boundary-condition errors",
+      "files": {
+        "main.py": "def average(values):\n    return sum(values) / len(values)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "依据函数约定检查边界情况，说明触发条件。",
+      "expected": {
+        "category": "boundary-condition errors",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 2
+          }
+        ],
+        "key_concepts": [
+          "empty input",
+          "division by zero"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Describe a concrete failing input and source-grounded boundary condition, without claiming execution."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "boundary-last",
+      "category": "boundary-condition errors",
+      "files": {
+        "main.py": "def last(values):\n    return values[len(values)]\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "依据函数约定检查边界情况，说明触发条件。",
+      "expected": {
+        "category": "boundary-condition errors",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 2
+          }
+        ],
+        "key_concepts": [
+          "zero-based index",
+          "out of range"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Describe a concrete failing input and source-grounded boundary condition, without claiming execution."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "boundary-range",
+      "category": "boundary-condition errors",
+      "files": {
+        "main.py": "def inclusive_total(n):\n    \"\"\"Sum integers from 1 through n, including n.\"\"\"\n    return sum(range(1, n))\n"
+      },
+      "path": "main.py",
+      "cursor_line": 3,
+      "request": "依据函数约定检查边界情况，说明触发条件。",
+      "expected": {
+        "category": "boundary-condition errors",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 3
+          }
+        ],
+        "key_concepts": [
+          "exclusive range end",
+          "inclusive contract"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Describe a concrete failing input and source-grounded boundary condition, without claiming execution."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "boundary-single",
+      "category": "boundary-condition errors",
+      "files": {
+        "main.py": "def first_pair(values):\n    \"\"\"For fewer than two values return None.\"\"\"\n    if not values:\n        return None\n    return values[0] + values[1]\n"
+      },
+      "path": "main.py",
+      "cursor_line": 5,
+      "request": "依据函数约定检查边界情况，说明触发条件。",
+      "expected": {
+        "category": "boundary-condition errors",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 5
+          }
+        ],
+        "key_concepts": [
+          "singleton input",
+          "minimum length"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Describe a concrete failing input and source-grounded boundary condition, without claiming execution."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "scope-local",
+      "category": "variable scope",
+      "files": {
+        "main.py": "count = 0\ndef increment():\n    count += 1\n    return count\n"
+      },
+      "path": "main.py",
+      "cursor_line": 3,
+      "request": "检查变量作用域或绑定问题，并说明依据。",
+      "expected": {
+        "category": "variable scope",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 3
+          }
+        ],
+        "key_concepts": [
+          "local assignment",
+          "UnboundLocalError"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Identify binding or initialization issue with trigger; distinguish static reasoning from execution."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "scope-branch",
+      "category": "variable scope",
+      "files": {
+        "main.py": "def label(flag):\n    if flag:\n        result = \"yes\"\n    return result\n"
+      },
+      "path": "main.py",
+      "cursor_line": 4,
+      "request": "检查变量作用域或绑定问题，并说明依据。",
+      "expected": {
+        "category": "variable scope",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 4
+          }
+        ],
+        "key_concepts": [
+          "conditional initialization",
+          "false branch"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Identify binding or initialization issue with trigger; distinguish static reasoning from execution."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "scope-shadow",
+      "category": "variable scope",
+      "files": {
+        "main.py": "def total(values):\n    sum = 0\n    return sum(values)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 3,
+      "request": "检查变量作用域或绑定问题，并说明依据。",
+      "expected": {
+        "category": "variable scope",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 3
+          }
+        ],
+        "key_concepts": [
+          "builtin shadowing",
+          "noncallable integer"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Identify binding or initialization issue with trigger; distinguish static reasoning from execution."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "return-none",
+      "category": "function return contracts",
+      "files": {
+        "main.py": "def positive(x):\n    \"\"\"Return a bool for every integer x.\"\"\"\n    if x > 0:\n        return True\n"
+      },
+      "path": "main.py",
+      "cursor_line": 3,
+      "request": "对照函数文档检查返回值约定。",
+      "expected": {
+        "category": "function return contracts",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 3
+          }
+        ],
+        "key_concepts": [
+          "implicit None",
+          "all branches"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Explain the explicit source/documentation mismatch; avoid assuming undocumented caller requirements."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "return-mutator",
+      "category": "function return contracts",
+      "files": {
+        "main.py": "def sorted_values(values):\n    \"\"\"Return a new sorted list; preserve input.\"\"\"\n    return values.sort()\n"
+      },
+      "path": "main.py",
+      "cursor_line": 3,
+      "request": "对照函数文档检查返回值约定。",
+      "expected": {
+        "category": "function return contracts",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 3
+          }
+        ],
+        "key_concepts": [
+          "in-place mutation",
+          "None return"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Explain the explicit source/documentation mismatch; avoid assuming undocumented caller requirements."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "return-type",
+      "category": "function return contracts",
+      "files": {
+        "main.py": "def double(x):\n    \"\"\"Return twice x as an integer.\"\"\"\n    return str(x * 2)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 3,
+      "request": "对照函数文档检查返回值约定。",
+      "expected": {
+        "category": "function return contracts",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 3
+          }
+        ],
+        "key_concepts": [
+          "return type",
+          "documented contract"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Explain the explicit source/documentation mismatch; avoid assuming undocumented caller requirements."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "cross-arity",
+      "category": "cross-file dependencies",
+      "files": {
+        "main.py": "from helpers import add\nresult = add(1)\n",
+        "helpers.py": "def add(a, b):\n    return a + b\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+      "expected": {
+        "category": "cross-file dependencies",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 2
+          },
+          {
+            "path": "helpers.py",
+            "line": 1
+          }
+        ],
+        "key_concepts": [
+          "required argument",
+          "import binding"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "cross-alias",
+      "category": "cross-file dependencies",
+      "files": {
+        "main.py": "from helpers import normalize as clean\nprint(clean(2).strip())\n",
+        "helpers.py": "def normalize(value):\n    return value + 1\n",
+        "other.py": "def normalize(value):\n    return str(value)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+      "expected": {
+        "category": "cross-file dependencies",
+        "location": [
+          {
+            "path": "main.py",
+            "line": 2
+          },
+          {
+            "path": "helpers.py",
+            "line": 2
+          }
+        ],
+        "key_concepts": [
+          "import alias",
+          "integer return",
+          "duplicate symbol"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "cross-relative",
+      "category": "cross-file dependencies",
+      "files": {
+        "pkg/main.py": "from .helpers import score\nprint(score([]))\n",
+        "pkg/helpers.py": "def score(values):\n    return max(values)\n"
+      },
+      "path": "pkg/main.py",
+      "cursor_line": 2,
+      "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+      "expected": {
+        "category": "cross-file dependencies",
+        "location": [
+          {
+            "path": "pkg/main.py",
+            "line": 2
+          },
+          {
+            "path": "pkg/helpers.py",
+            "line": 2
+          }
+        ],
+        "key_concepts": [
+          "relative import",
+          "empty sequence"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "cross-docs",
+      "category": "cross-file dependencies",
+      "files": {
+        "main.py": "from helpers import offset\nprint(offset(3))\n",
+        "helpers.py": "def offset(x):\n    return x + 1\n",
+        "README.md": "offset returns its input minus one.\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+      "expected": {
+        "category": "cross-file dependencies",
+        "location": [
+          {
+            "path": "helpers.py",
+            "line": 2
+          },
+          {
+            "path": "README.md",
+            "line": 1
+          }
+        ],
+        "key_concepts": [
+          "source-documentation conflict",
+          "authority boundary"
+        ],
+        "valid_code": false,
+        "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "correct-empty",
+      "category": "correct-code false-positive control",
+      "files": {
+        "main.py": "def average(values):\n    if not values:\n        return None\n    return sum(values) / len(values)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 4,
+      "request": "检查这段代码；没有确定问题时明确说明，不要为了给建议编造错误。",
+      "expected": {
+        "category": "correct-code false-positive control",
+        "location": [],
+        "key_concepts": [
+          "empty guard",
+          "correct code"
+        ],
+        "valid_code": true,
+        "expected_valid_behavior": "Accept as correct under stated contract; optional style advice must not be reported as a demonstrated defect."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "correct-scope",
+      "category": "correct-code false-positive control",
+      "files": {
+        "main.py": "def total(values):\n    result = 0\n    for value in values:\n        result += value\n    return result\n"
+      },
+      "path": "main.py",
+      "cursor_line": 5,
+      "request": "检查这段代码；没有确定问题时明确说明，不要为了给建议编造错误。",
+      "expected": {
+        "category": "correct-code false-positive control",
+        "location": [],
+        "key_concepts": [
+          "initialized accumulator",
+          "correct code"
+        ],
+        "valid_code": true,
+        "expected_valid_behavior": "Accept as correct under stated contract; optional style advice must not be reported as a demonstrated defect."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "correct-return",
+      "category": "correct-code false-positive control",
+      "files": {
+        "main.py": "def positive(x):\n    \"\"\"Return a bool for every integer x.\"\"\"\n    return x > 0\n"
+      },
+      "path": "main.py",
+      "cursor_line": 3,
+      "request": "检查这段代码；没有确定问题时明确说明，不要为了给建议编造错误。",
+      "expected": {
+        "category": "correct-code false-positive control",
+        "location": [],
+        "key_concepts": [
+          "complete boolean contract",
+          "correct code"
+        ],
+        "valid_code": true,
+        "expected_valid_behavior": "Accept as correct under stated contract; optional style advice must not be reported as a demonstrated defect."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "recheck-colon",
+      "category": "after-fix recheck",
+      "files": {
+        "main.py": "def greet(name):\n    return name\n"
+      },
+      "path": "main.py",
+      "cursor_line": 1,
+      "request": "这是修改后的版本。只根据当前源码复查，不要沿用旧错误。",
+      "expected": {
+        "category": "after-fix recheck",
+        "location": [],
+        "key_concepts": [
+          "syntax fixed",
+          "no stale diagnosis"
+        ],
+        "valid_code": true,
+        "expected_valid_behavior": "Do not repeat former defect; assess only current supplied source and preserve uncertainty."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "recheck-boundary",
+      "category": "after-fix recheck",
+      "files": {
+        "main.py": "def last(values):\n    if not values:\n        return None\n    return values[-1]\n"
+      },
+      "path": "main.py",
+      "cursor_line": 4,
+      "request": "这是修改后的版本。只根据当前源码复查，不要沿用旧错误。",
+      "expected": {
+        "category": "after-fix recheck",
+        "location": [],
+        "key_concepts": [
+          "boundary fixed",
+          "empty guard"
+        ],
+        "valid_code": true,
+        "expected_valid_behavior": "Do not repeat former defect; assess only current supplied source and preserve uncertainty."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    },
+    {
+      "id": "recheck-return",
+      "category": "after-fix recheck",
+      "files": {
+        "main.py": "def positive(x):\n    return x > 0\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "这是修改后的版本。只根据当前源码复查，不要沿用旧错误。",
+      "expected": {
+        "category": "after-fix recheck",
+        "location": [],
+        "key_concepts": [
+          "return fixed",
+          "all branches"
+        ],
+        "valid_code": true,
+        "expected_valid_behavior": "Do not repeat former defect; assess only current supplied source and preserve uncertainty."
+      },
+      "provenance": "Synthetic authored source; expected labels are human-review rubrics, not answer-string matching."
+    }
+  ],
+  "native_tool_scenarios": [
+    "cross-arity",
+    "cross-alias",
+    "cross-relative"
+  ]
+}

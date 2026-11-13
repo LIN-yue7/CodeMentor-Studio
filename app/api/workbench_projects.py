@@ -1,5 +1,9 @@
 """Owner-scoped virtual files. Never map supplied paths to host filesystem."""
 import ast
+import asyncio
+import json
+from contextlib import suppress
+from fastapi.responses import StreamingResponse
 import re
 from uuid import UUID, uuid4
 from fastapi import APIRouter, HTTPException, Request
@@ -7,7 +11,7 @@ from pydantic import Field, field_validator
 from sqlalchemy import select, update
 from app.api.workbench import Owner, DB
 from app.schemas.workbench import Input
-from app.models.workbench import Project, ProjectPrivacy
+from app.models.workbench import Project, ProjectPrivacy, ProjectExecution
 from app.services import project_review, project_learning
 from app.services.project_retrieval import retrieve_project
 from app.services.project_diagnostics import inspect_python
@@ -172,6 +176,7 @@ class PrivacyInput(Input):
 class ReviewInput(ProjectContext):
     mode: Literal['mentor','collaborate','engineering']='mentor'
     request: str = Field(default='',max_length=1000)
+    use_tools: bool = Field(default=False,strict=True)
 
 @router.get('/projects/{id}/privacy')
 async def privacy_read(id:UUID,owner:Owner,db:DB):
@@ -191,20 +196,61 @@ async def review_preview(id:UUID,payload:ReviewInput,owner:Owner,db:DB):
     context=await build_context(id,payload,owner,db,record=False)
     return project_review.bundle(payload,context)
 
-@router.post('/projects/{id}/review')
-async def project_ai_review(id:UUID,payload:ReviewInput,request:Request,owner:Owner,db:DB):
+async def prepare_review(id,payload,owner,db):
     permissions=await privacy_read(id,owner,db)
-    if not permissions['allow_external']: raise HTTPException(403,'项目未授权向外部模型发送代码。')
+    if not permissions['allow_external']:raise HTTPException(403,'项目未授权向外部模型发送代码。')
     context=await build_context(id,payload,owner,db,record=False)
     data=project_review.bundle(payload,context)
-    return await project_review.review(request.app.state.tutor,owner,data,payload.mode)
+    executions=(await db.scalars(select(ProjectExecution).where(ProjectExecution.owner==owner,ProjectExecution.project_id==str(id)))).all()
+    matching=[e.result for e in executions if e.result.get('buffer_hash')==data['buffer_hash']]
+    execution=next((r for r in matching if r.get('entry_path')==payload.path),matching[0] if matching else None)
+    snapshot={'files':dict(payload.files),'path':payload.path,'buffer_hash':data['buffer_hash'],
+              'diagnostics':[issue for items in context['project_issues'].values() for issue in items],
+              'learning_history':context['learning']['items'],'execution_result':execution}
+    return data,snapshot
+
+@router.post('/projects/{id}/review')
+async def project_ai_review(id:UUID,payload:ReviewInput,request:Request,owner:Owner,db:DB):
+    from app.services.project_workflow import run_workflow
+    data,snapshot=await prepare_review(id,payload,owner,db)
+    return await run_workflow(request.app.state.tutor,owner,str(id),payload,data,snapshot)
+
+@router.post('/projects/{id}/review-stream')
+async def project_ai_review_stream(id:UUID,payload:ReviewInput,request:Request,owner:Owner,db:DB):
+    from app.services.project_workflow import run_workflow
+    # New workflow defaults to tools, while the legacy JSON endpoint stays compatible.
+    if 'use_tools' not in payload.model_fields_set:payload=payload.model_copy(update={'use_tools':True})
+    data,snapshot=await prepare_review(id,payload,owner,db)
+    async def stream():
+        queue=asyncio.Queue(maxsize=32)
+        async def emit(event,detail):await queue.put({'event':event,'data':detail})
+        async def produce():
+            try:
+                result=await run_workflow(request.app.state.tutor,owner,str(id),payload,data,snapshot,on_event=emit)
+                await emit('completed',result)
+            except asyncio.CancelledError:raise
+            except Exception:await emit('error',{'message':'工作流未完成，本地编辑与检查仍可继续。'})
+        yield json.dumps({'event':'started','data':{'buffer_hash':data['buffer_hash']}},ensure_ascii=False)+'\n'
+        task=asyncio.create_task(produce())
+        try:
+            while True:
+                try:event=await asyncio.wait_for(queue.get(),timeout=10)
+                except TimeoutError:
+                    yield json.dumps({'event':'heartbeat','data':{}})+'\n';continue
+                yield json.dumps(event,ensure_ascii=False)+'\n'
+                if event['event'] in {'completed','error'}:break
+        finally:
+            task.cancel()
+            with suppress(asyncio.CancelledError):await task
+    return StreamingResponse(stream(),media_type='application/x-ndjson',headers={'Cache-Control':'no-store','X-Accel-Buffering':'no'})
 
 @router.post('/projects/{id}/verify')
 async def project_verify(id:UUID,payload:ProjectContext,owner:Owner,db:DB):
     await owned(db,owner,id)
     if payload.path not in payload.files: raise HTTPException(422,'当前文件不在项目中。')
     from app.services.project_verification import verify
-    result=verify(payload.files,payload.path)
+    result={**verify(payload.files,payload.path),'entry_path':payload.path}
+    await db.merge(ProjectExecution(owner=owner,project_id=str(id),path=payload.path,result=result))
     await project_learning._event(db,owner,str(id),payload.path,'execution-'+result['status'],'restricted-execution',
         '受限 Python 执行：'+result['status']+'；'+result['boundary'],result['buffer_hash'],payload.revision,source='restricted-ast-interpreter')
     await db.commit()

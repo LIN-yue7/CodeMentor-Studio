@@ -1,0 +1,9 @@
+{
+  "kind": "real-model-synthetic",
+  "completed_cases": 2,
+  "actual_requests": 2,
+  "global_requests_used": 2,
+  "authorized_cap": 2,
+  "accepted": 1,
+  "note": "Protocol acceptance is not semantic accuracy; tokens recorded, monetary cost requires provider billing data."
+}

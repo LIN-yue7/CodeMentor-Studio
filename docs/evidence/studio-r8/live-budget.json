@@ -1,0 +1,5 @@
+{
+  "authorized_cap": 42,
+  "used": 42,
+  "authorization": "R8 user approved up to42 synthetic requests; max2400 output tokens; no retries"
+}

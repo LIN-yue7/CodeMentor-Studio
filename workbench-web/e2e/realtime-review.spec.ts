@@ -1,3 +1,4 @@
+import {simulatedStream} from './stream-fixture'
 import {editCode} from './editor-input'
 import {test,expect} from '@playwright/test'
 
@@ -24,10 +25,10 @@ test('root cause is visible immediately and editor stays primary',async({page})=
 
 test('automatic analysis needs opt in, debounces edits, and discards late responses',async({page})=>{
  let calls=0
- await page.route('**/api/projects/*/review',async route=>{
+ await page.route('**/api/projects/*/review-stream',async route=>{
    calls++
    await new Promise(r=>setTimeout(r,1200))
-   await route.fulfill({json:{status:'accepted',mode:'simulated',review:{explanation:'旧版本的模拟分析',hints:['模拟提示'],citations:[]}}})
+   await simulatedStream(route,{status:'accepted',mode:'simulated',review:{explanation:'旧版本的模拟分析',hints:['模拟提示'],citations:[]}})
  })
  const editor=page.getByRole('textbox',{name:'Python 代码'})
  await editCode(page,'value = 1')
@@ -51,7 +52,7 @@ test('automatic analysis needs opt in, debounces edits, and discards late respon
 
 test('failed automatic analysis stops until deliberate retry',async({page})=>{
  let calls=0
- await page.route('**/api/projects/*/review',async route=>{calls++;await route.fulfill({json:{status:'timeout',mode:'simulated',review:null}})})
+ await page.route('**/api/projects/*/review-stream',async route=>{calls++;await simulatedStream(route,{status:'timeout',mode:'simulated',review:null})})
  await editCode(page,'value = 1')
  await page.getByText('模型权限与自动分析',{exact:false}).click()
  await page.getByLabel('允许本项目向已配置模型发送所选上下文').click()

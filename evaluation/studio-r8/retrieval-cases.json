@@ -1,0 +1,861 @@
+{
+  "schema_version": 1,
+  "label_policy": "Synthetic, development-set labels authored before R8 implementation. Relevant line recall counts exact path+line. Excess context is every returned nonblank line outside labels. These labels do not measure model diagnosis quality.",
+  "cases": [
+    {
+      "id": "same-1",
+      "theme": "same-file function links",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "def normalize(x):\n    return x + 1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndef run(x):\n    return normalize(x)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 39,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "main.py",
+          "line": 39
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "same-2",
+      "theme": "same-file function links",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "def total(x):\n    return x + 2\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndef run(x):\n    return total(x)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 39,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "main.py",
+          "line": 39
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "same-3",
+      "theme": "same-file function links",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "def safe_divide(x):\n    return x + 3\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndef run(x):\n    return safe_divide(x)\n"
+      },
+      "path": "main.py",
+      "cursor_line": 39,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "main.py",
+          "line": 39
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "cross-1",
+      "theme": "cross-file function links",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import convert\nresult = convert(3)\n",
+        "helpers.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef convert(x):\n    return x + 1\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 31
+        },
+        {
+          "path": "helpers.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "cross-2",
+      "theme": "cross-file function links",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import price\nresult = price(3)\n",
+        "helpers.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef price(x):\n    return x + 2\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 31
+        },
+        {
+          "path": "helpers.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "cross-3",
+      "theme": "cross-file function links",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import format_value\nresult = format_value(3)\n",
+        "helpers.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef format_value(x):\n    return x + 3\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 31
+        },
+        {
+          "path": "helpers.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "similar-1",
+      "theme": "similar names",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from service import load\nresult = load(3)\n",
+        "service.py": "def load(x):\n    return x\n\ndef load_all(x):\n    return []\n",
+        "noise.py": "def load_backup(x):\n    return None\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "service.py",
+          "line": 1
+        },
+        {
+          "path": "service.py",
+          "line": 2
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "similar-2",
+      "theme": "similar names",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from service import parse\nresult = parse(3)\n",
+        "service.py": "def parse(x):\n    return x\n\ndef parse_all(x):\n    return []\n",
+        "noise.py": "def parse_backup(x):\n    return None\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "service.py",
+          "line": 1
+        },
+        {
+          "path": "service.py",
+          "line": 2
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "similar-3",
+      "theme": "similar names",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from service import fetch\nresult = fetch(3)\n",
+        "service.py": "def fetch(x):\n    return x\n\ndef fetch_all(x):\n    return []\n",
+        "noise.py": "def fetch_backup(x):\n    return None\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "service.py",
+          "line": 1
+        },
+        {
+          "path": "service.py",
+          "line": 2
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "alias-1",
+      "theme": "duplicate symbols and aliases",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from chosen import compute as selected\nvalue = selected(3)\n",
+        "chosen.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef compute(x):\n    return x + 1\n",
+        "decoy.py": "def compute(x):\n    return x - 1\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "chosen.py",
+          "line": 31
+        },
+        {
+          "path": "chosen.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "alias-2",
+      "theme": "duplicate symbols and aliases",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "import chosen as selected\nvalue = selected.compute(3)\n",
+        "chosen.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef compute(x):\n    return x + 1\n",
+        "decoy.py": "def compute(x):\n    return x - 1\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "chosen.py",
+          "line": 31
+        },
+        {
+          "path": "chosen.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "alias-3",
+      "theme": "duplicate symbols and aliases",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from chosen import compute\nvalue = compute(3)\n",
+        "chosen.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef compute(x):\n    return x + 1\n",
+        "decoy.py": "def compute(x):\n    return x - 1\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "chosen.py",
+          "line": 31
+        },
+        {
+          "path": "chosen.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "relative-1",
+      "theme": "relative imports",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "pkg/main.py": "from .utils import compute\nvalue = compute(3)\n",
+        "pkg/utils.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef compute(x):\n    return x + 1\n",
+        "other/utils.py": "def compute(x):\n    return x - 1\n"
+      },
+      "path": "pkg/main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "pkg/main.py",
+          "line": 1
+        },
+        {
+          "path": "pkg/main.py",
+          "line": 2
+        },
+        {
+          "path": "pkg/utils.py",
+          "line": 31
+        },
+        {
+          "path": "pkg/utils.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "relative-2",
+      "theme": "relative imports",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "pkg/sub/main.py": "from ..utils import compute\nvalue = compute(3)\n",
+        "pkg/utils.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef compute(x):\n    return x + 1\n",
+        "other/utils.py": "def compute(x):\n    return x - 1\n"
+      },
+      "path": "pkg/sub/main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "pkg/sub/main.py",
+          "line": 1
+        },
+        {
+          "path": "pkg/sub/main.py",
+          "line": 2
+        },
+        {
+          "path": "pkg/utils.py",
+          "line": 31
+        },
+        {
+          "path": "pkg/utils.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "relative-3",
+      "theme": "relative imports",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "pkg/main.py": "from . import utils\nvalue = utils.compute(3)\n",
+        "pkg/utils.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef compute(x):\n    return x + 1\n",
+        "other/utils.py": "def compute(x):\n    return x - 1\n"
+      },
+      "path": "pkg/main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "pkg/main.py",
+          "line": 1
+        },
+        {
+          "path": "pkg/main.py",
+          "line": 2
+        },
+        {
+          "path": "pkg/utils.py",
+          "line": 31
+        },
+        {
+          "path": "pkg/utils.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "docs-1",
+      "theme": "docs contradict source",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import compute\nvalue = compute(3)\n",
+        "helpers.py": "def compute(x):\n    return x + 1\n",
+        "README.md": "compute returns its argument minus one.\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "Compare implementation with documented contract",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 1
+        },
+        {
+          "path": "helpers.py",
+          "line": 2
+        },
+        {
+          "path": "README.md",
+          "line": 1
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "docs-2",
+      "theme": "docs contradict source",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import calculate\nvalue = calculate(3)\n",
+        "helpers.py": "def calculate(x):\n    return x + 1\n",
+        "README.md": "calculate returns its argument minus one.\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "Compare implementation with documented contract",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 1
+        },
+        {
+          "path": "helpers.py",
+          "line": 2
+        },
+        {
+          "path": "README.md",
+          "line": 1
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "docs-3",
+      "theme": "docs contradict source",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import increment\nvalue = increment(3)\n",
+        "helpers.py": "def increment(x):\n    return x + 1\n",
+        "README.md": "increment returns its argument minus one.\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "Compare implementation with documented contract",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 1
+        },
+        {
+          "path": "helpers.py",
+          "line": 2
+        },
+        {
+          "path": "README.md",
+          "line": 1
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "broken-1",
+      "theme": "syntaxbroken related files",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import compute\nvalue = compute(3)\n",
+        "helpers.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef compute(x):\n    return x + 1\n\ndef broken(:\n    pass\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 31
+        },
+        {
+          "path": "helpers.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "broken-2",
+      "theme": "syntaxbroken related files",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import calculate\nvalue = calculate(3)\n",
+        "helpers.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef calculate(x):\n    return x + 1\n\ndef broken(:\n    pass\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 31
+        },
+        {
+          "path": "helpers.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "broken-3",
+      "theme": "syntaxbroken related files",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import adjust\nvalue = adjust(3)\n",
+        "helpers.py": "# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\n# header\ndef adjust(x):\n    return x + 1\n\ndef broken(:\n    pass\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 31
+        },
+        {
+          "path": "helpers.py",
+          "line": 32
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "noise-1",
+      "theme": "large unrelated context",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import compute\nvalue = compute(3)\n",
+        "helpers.py": "def compute(x):\n    return x + 1\n",
+        "noise00.py": "def compute(x):\n    return 0\n",
+        "noise01.py": "def compute(x):\n    return 1\n",
+        "noise02.py": "def compute(x):\n    return 2\n",
+        "noise03.py": "def compute(x):\n    return 3\n",
+        "noise04.py": "def compute(x):\n    return 4\n",
+        "noise05.py": "def compute(x):\n    return 5\n",
+        "noise06.py": "def compute(x):\n    return 6\n",
+        "noise07.py": "def compute(x):\n    return 7\n",
+        "noise08.py": "def compute(x):\n    return 8\n",
+        "noise09.py": "def compute(x):\n    return 9\n",
+        "noise10.py": "def compute(x):\n    return 10\n",
+        "noise11.py": "def compute(x):\n    return 11\n",
+        "noise12.py": "def compute(x):\n    return 12\n",
+        "noise13.py": "def compute(x):\n    return 13\n",
+        "noise14.py": "def compute(x):\n    return 14\n",
+        "noise15.py": "def compute(x):\n    return 15\n",
+        "noise16.py": "def compute(x):\n    return 16\n",
+        "noise17.py": "def compute(x):\n    return 17\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 1
+        },
+        {
+          "path": "helpers.py",
+          "line": 2
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "noise-2",
+      "theme": "large unrelated context",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import calculate\nvalue = calculate(3)\n",
+        "helpers.py": "def calculate(x):\n    return x + 1\n",
+        "noise00.py": "def calculate(x):\n    return 0\n",
+        "noise01.py": "def calculate(x):\n    return 1\n",
+        "noise02.py": "def calculate(x):\n    return 2\n",
+        "noise03.py": "def calculate(x):\n    return 3\n",
+        "noise04.py": "def calculate(x):\n    return 4\n",
+        "noise05.py": "def calculate(x):\n    return 5\n",
+        "noise06.py": "def calculate(x):\n    return 6\n",
+        "noise07.py": "def calculate(x):\n    return 7\n",
+        "noise08.py": "def calculate(x):\n    return 8\n",
+        "noise09.py": "def calculate(x):\n    return 9\n",
+        "noise10.py": "def calculate(x):\n    return 10\n",
+        "noise11.py": "def calculate(x):\n    return 11\n",
+        "noise12.py": "def calculate(x):\n    return 12\n",
+        "noise13.py": "def calculate(x):\n    return 13\n",
+        "noise14.py": "def calculate(x):\n    return 14\n",
+        "noise15.py": "def calculate(x):\n    return 15\n",
+        "noise16.py": "def calculate(x):\n    return 16\n",
+        "noise17.py": "def calculate(x):\n    return 17\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 1
+        },
+        {
+          "path": "helpers.py",
+          "line": 2
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    },
+    {
+      "id": "noise-3",
+      "theme": "large unrelated context",
+      "provenance": "authored synthetic fixture; not a user project",
+      "files": {
+        "main.py": "from helpers import adjust\nvalue = adjust(3)\n",
+        "helpers.py": "def adjust(x):\n    return x + 1\n",
+        "noise00.py": "def adjust(x):\n    return 0\n",
+        "noise01.py": "def adjust(x):\n    return 1\n",
+        "noise02.py": "def adjust(x):\n    return 2\n",
+        "noise03.py": "def adjust(x):\n    return 3\n",
+        "noise04.py": "def adjust(x):\n    return 4\n",
+        "noise05.py": "def adjust(x):\n    return 5\n",
+        "noise06.py": "def adjust(x):\n    return 6\n",
+        "noise07.py": "def adjust(x):\n    return 7\n",
+        "noise08.py": "def adjust(x):\n    return 8\n",
+        "noise09.py": "def adjust(x):\n    return 9\n",
+        "noise10.py": "def adjust(x):\n    return 10\n",
+        "noise11.py": "def adjust(x):\n    return 11\n",
+        "noise12.py": "def adjust(x):\n    return 12\n",
+        "noise13.py": "def adjust(x):\n    return 13\n",
+        "noise14.py": "def adjust(x):\n    return 14\n",
+        "noise15.py": "def adjust(x):\n    return 15\n",
+        "noise16.py": "def adjust(x):\n    return 16\n",
+        "noise17.py": "def adjust(x):\n    return 17\n"
+      },
+      "path": "main.py",
+      "cursor_line": 2,
+      "request": "",
+      "language": "python",
+      "issues": [],
+      "relevant_lines": [
+        {
+          "path": "main.py",
+          "line": 1
+        },
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 1
+        },
+        {
+          "path": "helpers.py",
+          "line": 2
+        }
+      ],
+      "label_rationale": "Required source statements for the named relationship; other nonblank returned lines count as excess context, not necessarily harmful."
+    }
+  ]
+}

@@ -6,6 +6,14 @@ import ast
 import hashlib
 import json
 
+def brief(value,depth=0):
+    if type(value) in (int,float,bool,type(None)):return value
+    if type(value) is str:return value[:80]
+    if type(value) is list:
+        if depth>=2:return {'type':'list','length':len(value)}
+        return [brief(v,depth+1) for v in value[:8]]
+    return {'type':'internal-value'}
+
 class Unsupported(Exception): pass
 class Returned(Exception):
     def __init__(self,value): self.value=value
@@ -66,8 +74,14 @@ class Machine:
                 forbidden=(ast.Assign,ast.AnnAssign,ast.AugAssign,ast.NamedExpr,ast.Import,ast.ImportFrom,ast.FunctionDef,ast.AsyncFunctionDef,ast.ClassDef,ast.Global,ast.Nonlocal,ast.Delete)
                 if any(isinstance(x,forbidden) for statement in n.body for x in ast.walk(statement)):raise Unsupported('暂不支持函数内的名称重新绑定或嵌套定义')
                 env[n.name]=('function',n,env,path)
-            elif isinstance(n,ast.If):self.block(n.body if self.expr(n.test,env,path) else n.orelse,env,path)
-            elif isinstance(n,ast.Return):raise Returned(self.expr(n.value,env,path) if n.value else None)
+            elif isinstance(n,ast.If):
+                condition=bool(self.expr(n.test,env,path))
+                self.trace.append({'path':path,'line':n.lineno,'event':'condition','value':condition})
+                self.block(n.body if condition else n.orelse,env,path)
+            elif isinstance(n,ast.Return):
+                value=self.expr(n.value,env,path) if n.value else None
+                self.trace.append({'path':path,'line':n.lineno,'event':'return-value','value':brief(value)})
+                raise Returned(value)
             elif isinstance(n,ast.Assign):
                 value=self.expr(n.value,env,path)
                 for t in n.targets:
@@ -117,7 +131,9 @@ class Machine:
             if type(f) is not tuple or f[0]!='function':raise Unsupported('只允许调用项目内定义的函数')
             _,fn,scope,source=f
             if len(args)!=len(fn.args.args):raise TypeError('实参数量与形参数量不符')
-            local={**scope,**{p.arg:v for p,v in zip(fn.args.args,args)}}
+            parameters={p.arg:v for p,v in zip(fn.args.args,args)}
+            local={**scope,**parameters}
+            self.trace.append({'path':source,'line':fn.lineno,'event':'call-parameters','values':{k:brief(v) for k,v in parameters.items()}})
             self.depth+=1
             try:self.block(fn.body,local,source)
             except Returned as r:return r.value

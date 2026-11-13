@@ -1,0 +1,33 @@
+import {test,expect} from '@playwright/test'
+import {editCode} from './editor-input'
+import {simulatedStream} from './stream-fixture'
+
+test('R8 explicit approval, safe undo, structured explanation and real execution stay distinct',async({page})=>{
+ await page.setViewportSize({width:1440,height:900});await page.goto('/')
+ await page.getByRole('button',{name:'体验示例',exact:true}).click()
+ await page.route('**/api/projects/*/review-stream',route=>simulatedStream(route,{status:'accepted',mode:'simulated',workflow_mode:'native-tools',tool_trace:[{name:'get_current_file',status:'ok'}],review:{explanation:'测试夹具：空列表返回 None。',hints:['根据示例明确约定改为零'],citations:[],teaching:{summary:'测试夹具，不是真实模型评测',root_cause:'空列表分支返回 None',mechanism:'None 不能参与整数加法',example:'待实际验证',alternatives:[],prevention:'检查空列表',uncertainty:'仅限当前示例'},patches:[{path:'helper.py',line:4,before:'    return None',after:'    return 0',reason:'示例注释明确空列表按零处理'}]}}))
+ await page.getByText('模型权限与自动分析',{exact:false}).click()
+ await page.getByLabel('允许本项目向已配置模型发送所选上下文').click()
+ await expect(page.getByLabel('允许本项目向已配置模型发送所选上下文')).toBeChecked()
+ await page.getByRole('button',{name:'预览审查上下文'}).click()
+ await page.getByRole('button',{name:'确认发送并请求 AI 指导'}).click()
+ await page.getByText('详细解释：为什么这样修改',{exact:true}).click()
+ await expect(page.getByText('None 不能参与整数加法',{exact:true})).toBeVisible()
+ await page.getByRole('button',{name:'批准并应用到草稿'}).click()
+ await expect(page.getByText('修改已应用到草稿',{exact:false})).toBeVisible()
+ await page.getByRole('button',{name:'撤回上次 AI 修改'}).click()
+ await page.getByRole('button',{name:'helper.py',exact:true}).click()
+ await expect(page.getByRole('textbox',{name:'Python 代码'})).toContainText('return None')
+ await page.getByRole('button',{name:'预览审查上下文'}).click()
+ await page.getByRole('button',{name:'确认发送并请求 AI 指导'}).click()
+ await page.getByRole('button',{name:'批准并应用到草稿'}).click()
+ await editCode(page,'def first(values):\n    return 7\n')
+ await page.getByRole('button',{name:'撤回上次 AI 修改'}).click()
+ await expect(page.getByText('已阻止撤回',{exact:false})).toBeVisible()
+ await expect(page.getByRole('textbox',{name:'Python 代码'})).toContainText('return 7')
+ await page.getByRole('tab',{name:'main.py',exact:true}).click()
+ await page.getByRole('button',{name:'验证当前入口'}).click()
+ await expect(page.getByText('当前输入验证通过',{exact:true})).toBeVisible()
+ await page.getByText('执行过程',{exact:true}).click()
+ await expect(page.getByText('return-value',{exact:false}).first()).toBeVisible()
+})

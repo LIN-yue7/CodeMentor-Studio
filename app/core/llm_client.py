@@ -126,6 +126,10 @@ class LLMResponseError(LLMError):
     """响应格式不符合预期（缺少 choices、内容为空等）。"""
 
 
+class LLMToolsUnsupportedError(LLMError):
+    """Provider explicitly rejected the native tool calling protocol."""
+
+
 # ---------------------------------------------------------------------------
 # 数据结构
 # ---------------------------------------------------------------------------
@@ -198,6 +202,14 @@ class LLMStreamChunk:
     finish_reason: str | None = None
     usage: LLMUsage | None = None
     index: int = 0
+
+
+@dataclass(slots=True)
+class LLMToolResponse(LLMResponse):
+    """Native assistant message, including tool-call IDs for the next turn."""
+
+    tool_calls: list[dict[str, Any]] = field(default_factory=list)
+    assistant_message: dict[str, Any] = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -354,6 +366,7 @@ class LLMClient(Protocol):
         temperature: float | None = None,
         max_tokens: int | None = None,
         stop: list[str] | None = None,
+        retry: bool = True,
     ) -> LLMResponse:
         """发起一次对话补全。"""
         ...
@@ -522,8 +535,9 @@ class GenericLLMClient:
         temperature: float | None = None,
         max_tokens: int | None = None,
         stop: list[str] | None = None,
+        retry: bool = True,
     ) -> LLMResponse:
-        """发起一次对话补全（异步，含指数退避重试）。
+        """发起一次对话补全（异步，默认含指数退避重试）。
 
         Args:
             messages: 对话消息列表，至少一条。
@@ -569,7 +583,7 @@ class GenericLLMClient:
             },
             metadata={"endpoint": self.endpoint, "provider": self._config.provider},
         ) as span:
-            response = await self._request_with_retry(payload)
+            response = await self._request_with_retry(payload) if retry else await self._request_with_retry(payload,max_attempts=1)
             span.set_metadata(
                 prompt_tokens=response.usage.prompt_tokens,
                 completion_tokens=response.usage.completion_tokens,
@@ -580,9 +594,73 @@ class GenericLLMClient:
             span.set_output({"chars": len(response.content), "model": response.model})
             return response
 
-    async def _request_with_retry(self, payload: dict[str, Any]) -> LLMResponse:
+    async def chat_once(self, messages: list[LLMMessage], **kwargs) -> LLMResponse:
+        """Exactly one provider attempt, without mutating shared retry settings."""
+        return await self.chat(messages, **kwargs, retry=False)
+
+    async def chat_tools(
+        self,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]],
+        *,
+        temperature: float = 0,
+        max_tokens: int = 2400,
+        tool_choice: str = "auto",
+    ) -> LLMToolResponse:
+        """One native tool-protocol request; no retries or paid text fallback.
+
+        Dict messages deliberately preserve assistant.tool_calls, tool_call_id,
+        and provider reasoning fields. Legacy chat() remains unchanged.
+        """
+        self._ensure_ready()
+        payload = {
+            "model": self._config.model_name, "messages": messages,
+            "tools": tools, "tool_choice": tool_choice,
+            "temperature": temperature, "max_tokens": max_tokens, "stream": False,
+        }
+        if self._config.thinking_mode is not None:
+            payload["extra_body"] = {"thinking": {"type": self._config.thinking_mode}}
+        started = time.perf_counter()
+        try:
+            sdk = await self._get_sdk()
+            completion = await sdk.chat.completions.create(**payload)
+            raw = _to_plain_dict(completion)
+            choices = raw.get("choices") or []
+            if not choices or not isinstance(choices[0].get("message"), dict):
+                raise LLMResponseError("模型工具响应缺少 assistant message")
+            first = choices[0]
+            message = first["message"]
+            calls = message.get("tool_calls") or []
+            content = _text_of(message.get("content"))
+            if not isinstance(calls, list) or (not calls and not content.strip()):
+                raise LLMResponseError("模型工具响应没有正文或 tool_calls")
+            # Never promote reasoning_content to final user-facing output.
+            assistant = {"role": "assistant", "content": message.get("content")}
+            if calls:
+                assistant["tool_calls"] = calls
+            if message.get("reasoning_content") is not None:
+                assistant["reasoning_content"] = message["reasoning_content"]
+            return LLMToolResponse(
+                content=content, model=raw.get("model") or self._config.model_name,
+                finish_reason=first.get("finish_reason"),
+                usage=LLMUsage.from_payload(raw.get("usage")),
+                latency_ms=(time.perf_counter() - started) * 1000, attempts=1,
+                raw=raw, tool_calls=calls, assistant_message=assistant,
+            )
+        except Exception as exc:
+            if isinstance(exc, openai.APIStatusError):
+                detail = _error_detail(exc).lower()
+                if getattr(exc, "status_code", 0) in {400, 404, 422, 501} and any(
+                    token in detail for token in ("tool", "function calling", "function_call")
+                ):
+                    raise LLMToolsUnsupportedError(
+                        "模型服务拒绝原生工具协议；未自动重试或另发付费文本请求"
+                    ) from exc
+            raise self._map_error(exc) from exc
+
+    async def _request_with_retry(self, payload: dict[str, Any], *, max_attempts: int | None = None) -> LLMResponse:
         """带指数退避的重试：只重试"值得重试"的错误，鉴权/参数错误立刻抛出。"""
-        attempts = self._config.max_retries + 1
+        attempts = self._config.max_retries + 1 if max_attempts is None else max_attempts
         last_error: Exception | None = None
 
         for attempt in range(1, attempts + 1):
@@ -1119,6 +1197,8 @@ __all__ = [
     "LLMResponseError",
     "LLMStreamChunk",
     "LLMTimeoutError",
+    "LLMToolResponse",
+    "LLMToolsUnsupportedError",
     "LLMUsage",
     "OpenAICompatibleClient",
     "StreamingLLMClient",

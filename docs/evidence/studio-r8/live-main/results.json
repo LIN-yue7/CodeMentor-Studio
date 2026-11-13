@@ -1,0 +1,3357 @@
+[
+  {
+    "case_id": "syntax-indent",
+    "category": "Python syntax errors",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "if True:\nprint(1)\n"
+    },
+    "request": "检查语法问题，引用准确代码行并给出最小修复。",
+    "expected": {
+      "category": "Python syntax errors",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "indentation",
+        "suite"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Identify actual parser defect; do not invent a runtime execution result."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：第 1 行 `if True:` 以冒号结束，表示后面必须跟一个缩进更深的代码块；但第 2 行 `print(1)` 从第 1 列开始，与 `if` 同级，解析器因此报出“expected an indented block”。本地解析器已确认这是语法错误，程序未执行，所以不存在真实运行输出。修复方向是让 `print(1)` 缩进一级（通常 4 个空格），使其成为 `if` 的语句体；若原意是让 `print(1)` 无条件执行，则应删除 `if True:` 这一行，但这会改变结构，需要先确认意图。",
+        "hints": [
+          "在第 2 行 `print(1)` 前加 4 个空格，使其成为 `if` 的代码块：`    print(1)`；随后重新运行解析器确认语法错误消失。",
+          "若本意是无条件打印，可删除第 1 行 `if True:`，保留顶格的 `print(1)`；这属于结构调整，需先确认需求。",
+          "统一使用空格缩进，避免 Tab 与空格混用；同一代码块内各行缩进量必须一致。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "if True:"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(1)"
+          }
+        ],
+        "teaching": {
+          "summary": "Python 用缩进表示代码块。`if True:` 后面必须跟一段缩进更深的语句；当前 `print(1)` 顶格书写，解析器认为 `if` 没有语句体，于是报语法错误。最小修复是把 `print(1)` 缩进一级。",
+          "root_cause": "第 1 行 `if True:` 的冒号要求其后存在一个缩进代码块，而第 2 行 `print(1)` 位于第 1 列，与 `if` 处于同一缩进层级，未构成该代码块。本地解析器在 main.py 第 2 行第 1 列报告 expected an indented block after 'if' statement on line 1，并拒绝当前代码。",
+          "mechanism": "在 Python 中，缩进不是排版装饰，而是语法的一部分：它决定语句属于哪个代码块。`if`、`for`、`while`、`def`、`class` 等以冒号结尾的头部语句，后面必须紧跟一个缩进更深的块；块内各行缩进量需一致，块结束后再回到外层缩进。若冒号后没有更深缩进的行，解析器就无法确定块的内容，从而报错。此外，Tab 与空格混用可能让视觉对齐与实际缩进不一致，也应避免。",
+          "example": "推断的最小反例（未运行）：\nif True:\nprint(1)\n这里 `print(1)` 与 `if` 同列，缺少缩进块。改为：\nif True:\n    print(1)\n即可满足“冒号后需缩进块”的规则。实际工具证据仅为本地解析器在 main.py 第 2 行第 1 列给出的语法错误；没有执行证据，不能据此推断程序输出或整体项目状态。",
+          "alternatives": [
+            "将 `print(1)` 缩进 4 个空格，使其成为 `if` 的语句体：适用于希望该打印受条件控制的情况。",
+            "删除第 1 行 `if True:`，保留顶格的 `print(1)`：适用于希望无条件打印的情况，但会改变代码结构，需确认原意。",
+            "若后续还要添加语句，可把 `if` 块写成多行并统一缩进：适用于需要扩展分支逻辑的情况。"
+          ],
+          "prevention": "修改后重新用解析器或 `python -m py_compile main.py` 检查语法；观察冒号后的下一行是否比头部更深缩进；统一使用空格（如每级 4 个空格），避免 Tab 与空格混用；编辑器中开启显示空白字符，便于发现缩进不一致。",
+          "uncertainty": "仅提供了两行代码，无法确认 `if True:` 是否为有意保留的条件结构，也无法判断后续是否还有更多语句；因此缩进修复与删除 `if` 两种方案需由用户根据原意选择。没有执行证据，不能断言修复后程序行为或输出。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "before": "print(1)",
+            "after": "    print(1)",
+            "reason": "使 print(1) 成为 if 语句的缩进代码块，消除“expected an indented block”语法错误；仅建议，未应用。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "a4e183a0048ba64be8fef46cd7825435397bfbde0c8ac3dd0a40b15f415e3d48",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 807,
+        "completion_tokens": 1020,
+        "total_tokens": 1827
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "runtime-error",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 2,
+        "message": "SyntaxError: expected an indented block after 'if' statement on line 1"
+      },
+      "trace": [],
+      "buffer_hash": "a4e183a0048ba64be8fef46cd7825435397bfbde0c8ac3dd0a40b15f415e3d48",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      1
+    ],
+    "elapsed_ms": 7199,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "syntax-bracket",
+    "category": "Python syntax errors",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "values = [1, 2\nprint(values)\n"
+    },
+    "request": "检查语法问题，引用准确代码行并给出最小修复。",
+    "expected": {
+      "category": "Python syntax errors",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 1
+        }
+      ],
+      "key_concepts": [
+        "unclosed bracket",
+        "parser location"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Identify actual parser defect; do not invent a runtime execution result."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：第 1 行的列表字面量缺少右方括号，解析器在第 1 行第 10 列报告“'[' was never closed”，因此整个文件在解析阶段就被拒绝，第 2 行不会被执行。位置在第 1 行 `values = [1, 2`：`[` 打开了一个列表，但到行尾仍未出现配对的 `]`。根因是括号未配对，而不是第 2 行 `print(values)` 有问题。可能意图是定义包含 1 和 2 的列表并打印它，但第 1 行是否还应包含更多元素、是否本应换行续写，现有片段无法确定。静态推断只能说明补上 `]` 后语法结构完整；由于 test_status 为 not-run 且没有匹配 buffer_hash 的执行证据，不能声称程序已运行或输出正确。",
+        "hints": [
+          "在第 1 行末尾补上右方括号，使列表闭合：`values = [1, 2]`。这是与解析器报错直接对应的最小修改。",
+          "修改后重新做语法检查，确认第 1 行不再报“'[' was never closed”；再运行程序观察是否输出 `[1, 2]`，该输出属于待验证结果。",
+          "若原意是列表还有后续元素，应把元素补在同一行或使用合法的跨行写法，并确保每个 `[` 都有对应的 `]`；不要仅凭当前两行猜测缺失内容。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "values = [1, 2"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(values)"
+          }
+        ],
+        "teaching": {
+          "summary": "第 1 行用 `[` 开始写列表，却没有用 `]` 结束，解析器因此无法确定列表在哪里结束，直接拒绝整个文件。最小修复是在第 1 行末尾补 `]`。第 2 行本身没有显示出语法问题，但由于第 1 行解析失败，程序没有执行。",
+          "root_cause": "第 1 行 `values = [1, 2` 中，左方括号 `[` 没有对应的右方括号 `]`。本地解析器在第 1 行第 10 列给出“'[' was never closed”，说明它从该左括号开始寻找闭合符号，直到输入结束仍未找到。解析失败使后续语句无法进入执行阶段。",
+          "mechanism": "在 Python 中，方括号用于构造列表等结构，解析器需要按类型和嵌套顺序把左括号与右括号配对。遇到 `[` 后，解析器期待在表达式边界前出现 `]`；若到行尾或文件结尾仍未闭合，就会报未闭合错误。这个检查发生在语法解析阶段，早于运行阶段，所以即使第 2 行看起来完整，也不会被实际执行。",
+          "example": "证据是本地解析器对 `main.py` 第 1 行的报告：`'[' was never closed`，列为 10。按最小推断，把第 1 行改为 `values = [1, 2]` 后，列表字面量在语法上闭合；第 2 行 `print(values)` 可继续接受语法检查。这里没有工具返回的匹配 buffer_hash 执行证据，因此不能断言修改后一定输出 `[1, 2]`，只能把它作为待验证的预期。",
+          "alternatives": [
+            "直接在第 1 行末尾补 `]`：适用于列表就是 `[1, 2]` 的情况，改动最小。",
+            "若列表还需要更多元素，在同一行继续写元素后再补 `]`：适用于已知完整元素集合的情况。",
+            "若列表需要跨多行，使用合法的多行列表写法并确保最终有 `]`：适用于元素较多、需要可读性的情况。"
+          ],
+          "prevention": "修改后先做语法检查，确认不再出现未闭合括号错误；再运行程序并核对实际输出。书写列表、函数调用和嵌套结构时，可以成对输入括号，或从内到外检查每个左括号是否有同类型右括号。注意：语法通过只证明结构可解析，不证明列表内容符合业务意图。",
+          "uncertainty": "现有片段只显示两行，无法确认列表是否本应包含更多元素，也无法确认第 1 行是否原本打算跨行书写。没有匹配当前 buffer_hash 的执行证据，因此不能声称修复后程序已运行、输出正确或完整项目测试通过。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "before": "values = [1, 2",
+            "after": "values = [1, 2]",
+            "reason": "补上列表字面量缺失的右方括号，消除解析器报告的未闭合方括号错误。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "a33a57bd3228b3f7528e73eaa77862eefcfe2c6fb8959daf20c5cdf3e481d082",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 784,
+        "completion_tokens": 1040,
+        "total_tokens": 1824
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "runtime-error",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 1,
+        "message": "SyntaxError: '[' was never closed"
+      },
+      "trace": [],
+      "buffer_hash": "a33a57bd3228b3f7528e73eaa77862eefcfe2c6fb8959daf20c5cdf3e481d082",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      2
+    ],
+    "elapsed_ms": 7334,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "syntax-quote",
+    "category": "Python syntax errors",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "name = \"hello\nprint(name)\n"
+    },
+    "request": "检查语法问题，引用准确代码行并给出最小修复。",
+    "expected": {
+      "category": "Python syntax errors",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 1
+        }
+      ],
+      "key_concepts": [
+        "unterminated string"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Identify actual parser defect; do not invent a runtime execution result."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：第 1 行 `name = \"hello` 的双引号字符串没有闭合，本地解析器在第 1 行第 8 列报 `unterminated string literal`，因此整个文件在解析阶段就被拒绝，第 2 行 `print(name)` 不会被执行。位置是赋值语句右侧字符串字面量的起始引号处；根因是缺少与起始双引号配对的结束双引号。可能意图是把 `hello` 作为字符串赋给 `name` 再打印，但仅凭这两行无法确认是否还需要多行文本或转义内容。静态上可确定的是引号不配对；不能据此推断程序运行结果，因为 test_status 为 not-run，且没有工具返回匹配当前 buffer_hash 的执行证据。",
+        "hints": [
+          "在第 1 行字符串末尾补上配对的双引号：`name = \"hello\"`，然后重新运行解析或执行以确认语法错误消失。",
+          "若本意是多行文本，使用三引号包裹并明确结束位置，例如 `name = \"\"\"hello\"\"\"`；若内容本身含双引号，则用反斜杠转义或改用单引号外层。",
+          "修改后先做语法检查（如 `python -m py_compile main.py`），再运行程序观察 `print(name)` 的输出，避免把“能解析”误当成“逻辑正确”。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "name = \"hello"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(name)"
+          }
+        ],
+        "teaching": {
+          "summary": "第 1 行写了一个以双引号开头的字符串，但没有写结束双引号，解析器无法判断字符串到哪里结束，于是直接报语法错误并停止解析。第 2 行本身看不出问题，但因为第 1 行已让文件无法解析，它不会被执行。最小修复是在 `hello` 后补一个双引号。",
+          "root_cause": "第 1 行 `name = \"hello` 中，赋值号右侧的字符串字面量只有起始双引号，缺少结束双引号。Python 的普通字符串不能直接跨物理行，解析器读到行尾仍未找到配对引号，就在第 1 行第 8 列报告 `unterminated string literal`。这是解析阶段的词法/语法错误，不是 `print` 调用或变量使用的问题。",
+          "mechanism": "Python 用成对的引号界定字符串字面量的边界。普通单引号或双引号字符串必须在同一物理行内闭合；字符串内容若包含与外层相同的引号，需要转义，或者改用另一种外层引号。需要跨行文本时，应使用三引号或显式换行转义。解析器先做词法切分，遇到未闭合的字符串会拒绝整个源文件，因此后续语句即使看起来正确也不会进入执行阶段。",
+          "example": "静态最小反例就是当前片段：第 1 行 `name = \"hello` 缺少结束引号，解析器报未终止字符串；第 2 行 `print(name)` 因文件未被接受而不会运行。这里没有可引用的实际执行证据，test_status 为 not-run，所以不能声称修复后一定输出 `hello`，只能推断补上引号后语法层面应能通过解析。",
+          "alternatives": [
+            "直接补齐结束双引号，写成 `name = \"hello\"`：适用于内容就是单行 `hello` 的常见情况。",
+            "若内容需要跨多行，改用三引号并写清结束位置，例如 `name = \"\"\"hello\"\"\"`：适用于确实需要多行文本的场景。",
+            "若字符串内容本身包含双引号，使用反斜杠转义内部双引号，或改用单引号作为外层定界符：适用于内容含同类引号的情况。"
+          ],
+          "prevention": "修改后先做语法检查，例如 `python -m py_compile main.py`，确认解析器不再报未终止字符串；再运行程序检查 `print(name)` 的实际输出是否符合预期。写字符串时先成对写出起止引号再填内容，遇到多行或含引号内容时提前选择三引号或转义写法。注意语法通过只说明能被解析，不代表变量含义和输出逻辑一定正确。",
+          "uncertainty": "仅凭这两行无法确认 `hello` 是否就是完整目标文本，也无法确认是否原本打算写多行字符串或包含引号的内容；因此补一个结束双引号是最小语法修复，但是否符合真实意图需要用户确认。没有匹配当前 buffer_hash 的工具执行证据，不能推断运行输出或完整项目测试结果。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "before": "name = \"hello",
+            "after": "name = \"hello\"",
+            "reason": "补齐与起始双引号配对的结束引号，消除未终止字符串字面量。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "c05b2964c10316783396dc881d9af5be497311564cf591cf8a4440f50e561272",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 789,
+        "completion_tokens": 1068,
+        "total_tokens": 1857
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "runtime-error",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 1,
+        "message": "SyntaxError: unterminated string literal (detected at line 1)"
+      },
+      "trace": [],
+      "buffer_hash": "c05b2964c10316783396dc881d9af5be497311564cf591cf8a4440f50e561272",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      3
+    ],
+    "elapsed_ms": 7457,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "boundary-empty",
+    "category": "boundary-condition errors",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def average(values):\n    return sum(values) / len(values)\n"
+    },
+    "request": "依据函数约定检查边界情况，说明触发条件。",
+    "expected": {
+      "category": "boundary-condition errors",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "empty input",
+        "division by zero"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Describe a concrete failing input and source-grounded boundary condition, without claiming execution."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：从给出的两行代码看，average 的边界风险集中在“空序列”和“元素类型/数值异常”两类，其中空序列会触发 ZeroDivisionError，这是由 Python 的除法规则直接决定的静态推断，不是实际运行结果。位置在 main.py 第 2 行：return sum(values) / len(values)。根因是 len(values) 在 values 为空时为 0，而 Python 中任何数除以 0 都会抛 ZeroDivisionError；sum([]) 本身返回 0，所以 0 / 0 同样报错。函数名 average 暗示意图是求算术平均，但代码没有对输入做任何前置校验，也没有说明空输入应返回什么（0、None、抛自定义异常还是由调用方保证非空），这一约定不明确，需要确认。另外，若 values 含非数值元素（如字符串），sum 会抛 TypeError；若含 None 也会抛 TypeError；若元素是 Decimal 与 float 混用，可能抛 TypeError。这些都属于待验证的潜在逻辑问题，因为未提供调用方和测试。静态推断与实际执行的区别：local_status 为 syntax-ok 只说明本地解析器未发现语法错误，test_status 为 not-run 表示没有执行证据，因此不能声称该函数在空列表上“已经报错”，只能说按语言规则会报错。",
+        "hints": [
+          "在函数入口显式处理空序列，例如：if not values: return None（或按约定抛 ValueError），并同步更新文档说明空输入语义。",
+          "若约定调用方保证非空，可在函数开头加断言或抛异常：if len(values) == 0: raise ValueError(\"values 不能为空\")，让错误信息更明确。",
+          "验证步骤：分别用 []、[1]、[1, 2]、[1, \"a\"] 调用并观察结果；注意这是建议你本地运行的验证，不是本次工具已执行的证据。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def average(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return sum(values) / len(values)"
+          }
+        ],
+        "teaching": {
+          "summary": "这个函数想算平均值，但没考虑“列表是空的”这种情况。空列表时长度是 0，而 Python 不允许除以 0，所以会报 ZeroDivisionError。另外如果列表里放的不是数字，求和也会报类型错误。当前只确认了语法没问题，没有运行过，所以这些是按语言规则推出的风险，不是实测结果。",
+          "root_cause": "直接原因在第 2 行：sum(values) / len(values)。当 values 为空时，len(values) 为 0，Python 的除法运算遇到除数为 0 会抛出 ZeroDivisionError；此时 sum(values) 为 0，即 0 / 0，同样报错。函数没有对空输入做任何判断，也没有文档说明空输入应返回什么，因此“空列表”这一边界的行为是未定义的。",
+          "mechanism": "Python 中 / 是浮点真除法，除数为 0 时无论被除数是什么都抛 ZeroDivisionError，这与数学上 0/0 无定义一致。sum 对空可迭代对象返回 0，所以空列表不会在 sum 处失败，而是在除法处失败。此外 sum 从 0 开始累加，若元素是字符串会抛 TypeError（不能用 int 加 str），若元素是 None 也抛 TypeError。函数签名 average(values) 没有类型标注，也没有长度校验，因此边界行为完全依赖调用方。",
+          "example": "推断的最小反例（未实际执行）：average([]) 会走到 sum([]) / len([])，即 0 / 0，按规则抛 ZeroDivisionError。另一个待验证情形：average([1, \"a\"]) 在 sum 阶段因 int 与 str 相加抛 TypeError。工具证据仅为 local_status=syntax-ok（语法通过）与 test_status=not-run（未运行），不能据此断言运行结果。",
+          "alternatives": [
+            "空输入返回 None：适用于调用方希望“无数据即无结果”的场景，需在文档中写明。",
+            "空输入抛 ValueError 并给出中文提示：适用于希望尽早暴露调用错误的场景，比 ZeroDivisionError 更易读。",
+            "由调用方保证非空并在函数内加 assert values：适用于内部工具函数、调用链可控的场景，但 assert 在 -O 模式下会被移除，生产代码慎用。"
+          ],
+          "prevention": "先明确函数约定：空序列返回什么、非数值元素如何处理、是否允许混合类型。然后在函数入口加显式检查，并用 []、[1]、[1, 2]、含非数值元素的列表分别验证。验证时记录实际输出与异常类型，区分“按规则推断”和“实际运行确认”。若项目有测试框架，为这些边界补单元测试。",
+          "uncertainty": "未提供调用方代码、类型标注和测试，因此无法确定项目期望空输入返回 None、0 还是抛异常；也无法确认 values 是否可能包含非数值或混合类型。local_status 仅表示语法通过，test_status 为 not-run，所有运行期行为均为静态推断，需实际执行或测试确认。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "before": "    return sum(values) / len(values)",
+            "after": "    if not values:\n        raise ValueError(\"values 不能为空\")\n    return sum(values) / len(values)",
+            "reason": "在除法前拦截空序列，避免 ZeroDivisionError，并把空输入约定显式化；需确认项目期望的返回/异常语义后再采用。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "8bbe8bddbe851146a240a17959f708dd22ebb6bedee121ec6f0b9172e20fe8f1",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 656,
+        "completion_tokens": 1221,
+        "total_tokens": 1877
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "8bbe8bddbe851146a240a17959f708dd22ebb6bedee121ec6f0b9172e20fe8f1",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      4
+    ],
+    "elapsed_ms": 9437,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "boundary-last",
+    "category": "boundary-condition errors",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def last(values):\n    return values[len(values)]\n"
+    },
+    "request": "依据函数约定检查边界情况，说明触发条件。",
+    "expected": {
+      "category": "boundary-condition errors",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "zero-based index",
+        "out of range"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Describe a concrete failing input and source-grounded boundary condition, without claiming execution."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：`last` 的意图应是返回列表最后一个元素，但第 2 行用 `values[len(values)]` 取下标，合法下标范围是 `0` 到 `len(values)-1`，因此只要函数被调用且传入非空列表，就会访问越界位置并触发 `IndexError`；传入空列表时 `len(values)` 为 0，同样越界。触发条件与列表内容无关，只与“是否调用”有关：任何调用都会越界。本地状态为 syntax-ok 且无 local_issues，说明这不是语法错误，而是运行期边界逻辑问题；test_status 为 not-run，因此这是静态推断，未经过实际执行验证。",
+        "hints": [
+          "把下标改为 `len(values) - 1`，例如 `return values[len(values) - 1]`；随后用 `[1, 2, 3]` 调用验证应返回 `3`。",
+          "若函数约定要求空列表也有明确行为，先判断空列表并抛出带说明的异常或返回约定值，例如 `if not values: raise ValueError(\"values 不能为空\")`，再取末元素。",
+          "用边界用例验证：单元素列表、多元素列表、空列表各调用一次，确认返回值或异常符合函数约定。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def last(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return values[len(values)]"
+          }
+        ],
+        "teaching": {
+          "summary": "这个函数想取列表的最后一个元素，但下标写成了列表长度本身。Python 列表下标从 0 开始，最后一个元素的下标是长度减 1，所以现在每次调用都会越界报错。",
+          "root_cause": "第 2 行 `values[len(values)]` 把长度当作下标使用。对长度为 n 的列表，合法下标是 0 到 n-1，而 `len(values)` 等于 n，恰好落在合法范围之外，因此访问失败并抛出 `IndexError`。空列表时 n=0，同样越界。",
+          "mechanism": "Python 序列用从 0 开始的整数下标访问元素，长度为 n 的序列最后一个元素下标是 n-1。访问下标等于 n 或更大时，解释器判定越界并抛出 `IndexError: list index out of range`。此外，负下标 -1 表示倒数第一个元素，是另一种取末元素的写法。函数约定“返回最后一个元素”时，还需明确空列表应返回什么或抛什么异常，因为空列表没有最后一个元素。",
+          "example": "静态推断的最小反例：调用 `last([1, 2, 3])` 时，`len(values)` 为 3，表达式变成 `values[3]`，而合法下标只有 0、1、2，因此触发 `IndexError`。调用 `last([])` 时下标为 0，同样越界。以上为根据所给两行代码的推断，未实际运行；本地仅确认语法通过。",
+          "alternatives": [
+            "改为 `return values[len(values) - 1]`：适用于保持现有写法、只修正下标的情况。",
+            "改为 `return values[-1]`：适用于希望用 Python 负下标简洁表达末元素的情况，语义与上一方案对非空列表一致。",
+            "在函数开头增加空列表检查并按约定处理：适用于函数约定需要明确空输入行为的情况，例如抛出 `ValueError` 或返回 `None`。"
+          ],
+          "prevention": "先写出函数约定（输入范围、空输入行为、返回值），再针对边界设计用例：空列表、单元素列表、多元素列表。修改后用这些用例逐一调用，观察返回值或异常类型是否符合约定；也可用断言固定预期，例如对 `[1, 2, 3]` 断言结果为 3。",
+          "uncertainty": "未提供函数文档或调用方代码，因此空列表应返回什么、是否允许空输入尚不明确；也未实际执行，`IndexError` 的具体触发来自静态推断。若调用方保证列表非空，则只需修正下标；若可能为空，还需补充空输入处理。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "before": "    return values[len(values)]",
+            "after": "    return values[len(values) - 1]",
+            "reason": "修正末元素下标，避免对非空列表访问越界位置；空列表行为仍需按函数约定另行确认。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "2ff5aeda40bab53a34df6cb39b22a577a287fcf5a32e2c221edd7da0acae48c9",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 655,
+        "completion_tokens": 960,
+        "total_tokens": 1615
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "2ff5aeda40bab53a34df6cb39b22a577a287fcf5a32e2c221edd7da0acae48c9",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      5
+    ],
+    "elapsed_ms": 6370,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "boundary-range",
+    "category": "boundary-condition errors",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def inclusive_total(n):\n    \"\"\"Sum integers from 1 through n, including n.\"\"\"\n    return sum(range(1, n))\n"
+    },
+    "request": "依据函数约定检查边界情况，说明触发条件。",
+    "expected": {
+      "category": "boundary-condition errors",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 3
+        }
+      ],
+      "key_concepts": [
+        "exclusive range end",
+        "inclusive contract"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Describe a concrete failing input and source-grounded boundary condition, without claiming execution."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：函数名和文档字符串都承诺“包含 n”，但第 3 行 `sum(range(1, n))` 的 `range` 上界是开区间，实际只累加到 n-1，因此当 n 为正整数时结果比约定少 n。触发条件：只要 n ≥ 1 且调用者期望包含 n，就会少算；n = 1 时返回 0 而不是 1，是最小的边界反例。n = 0 时返回 0，恰好与“1 到 0 无整数”的空和一致，但这属于约定未明确说明的边界，需要确认。n 为负数时 `range(1, n)` 为空，返回 0，同样需要确认约定。当前本地状态为 syntax-ok、无 local_issues，说明这不是语法错误，而是语义/边界问题；test_status 为 not-run，没有执行证据，以上均为静态推断。",
+        "hints": [
+          "把上界改为 n + 1 以包含 n：`return sum(range(1, n + 1))`，然后手工验证 n=1 得 1、n=3 得 6。",
+          "若想避免逐个累加，可用闭式公式 `return n * (n + 1) // 2`，但需先确认 n 为非负整数，否则要补充边界处理。",
+          "补充边界测试：n=0、n=1、n=5 分别期望 0、1、15，并明确 n<0 时的约定后再决定返回值。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def inclusive_total(n):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    \"\"\"Sum integers from 1 through n, including n.\"\"\""
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    return sum(range(1, n))"
+          }
+        ],
+        "teaching": {
+          "summary": "函数注释说“从 1 加到 n，包含 n”，但代码里的 range(1, n) 只到 n-1，所以每次都会少加 n。最小反例是 n=1：约定应得 1，代码得 0。",
+          "root_cause": "Python 的 range(start, stop) 生成的序列不包含 stop。第 3 行把 n 当作 stop，因此最后一个被加的数最大是 n-1；当 n≥1 时，n 本身从未进入求和。这与第 2 行文档字符串“including n”直接冲突。",
+          "mechanism": "range 采用左闭右开区间 [start, stop)。sum 对 range 产生的每个整数累加，所以 sum(range(1, n)) 等于 1+2+…+(n-1)。要让 n 参与，需要把 stop 设为 n+1，即区间 [1, n+1)，对应整数 1 到 n。另一个基础事实是：当 start ≥ stop 时 range 为空，sum 返回 0，这解释了 n=1 返回 0、n≤0 也返回 0 的现象。",
+          "example": "静态推断的最小反例：调用 inclusive_total(1)。按第 2 行约定应返回 1；按第 3 行 range(1, 1) 为空，sum 返回 0。另一个例子：inclusive_total(3) 约定为 6，实际为 1+2=3。以上均未执行，test_status 为 not-run，没有工具执行证据。",
+          "alternatives": [
+            "改为 sum(range(1, n + 1))：适用于保持循环累加写法、n 为整数的场景，改动最小。",
+            "改为 n * (n + 1) // 2：适用于已确认 n 为非负整数、追求常数时间的场景；n<0 时需另行定义行为。",
+            "在函数开头显式处理边界，例如 n < 1 时返回 0 或抛出 ValueError：适用于需要把 n≤0 的约定写清楚的场景，具体选哪种需与调用方确认。"
+          ],
+          "prevention": "针对边界写小测试：n=0、n=1、n=2、n=5，分别核对期望值；特别检查“包含端点”的约定是否与 range 的右开区间一致。修改后运行这些用例，并确认 n<0 的预期行为。注意本地仅报告 syntax-ok，语法通过不代表语义正确。",
+          "uncertainty": "文档字符串只说明“1 到 n 包含 n”，未说明 n=0 或 n<0 时应返回什么，也未说明 n 是否可能为非整数。若 n 为浮点数，range 会报 TypeError，这属于另一类问题，当前片段未体现调用方式，无法确定。没有执行证据，所有结果均为静态推断。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 3,
+            "before": "    return sum(range(1, n))",
+            "after": "    return sum(range(1, n + 1))",
+            "reason": "range 的上界不包含，改为 n + 1 才能把 n 计入，符合文档字符串“including n”的约定。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "61f4efa7971b59005e13b8fa7baaa7d638161e40a984095ba97cb6d84d169789",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 694,
+        "completion_tokens": 1111,
+        "total_tokens": 1805
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "61f4efa7971b59005e13b8fa7baaa7d638161e40a984095ba97cb6d84d169789",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      6
+    ],
+    "elapsed_ms": 7602,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "boundary-single",
+    "category": "boundary-condition errors",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def first_pair(values):\n    \"\"\"For fewer than two values return None.\"\"\"\n    if not values:\n        return None\n    return values[0] + values[1]\n"
+    },
+    "request": "依据函数约定检查边界情况，说明触发条件。",
+    "expected": {
+      "category": "boundary-condition errors",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 5
+        }
+      ],
+      "key_concepts": [
+        "singleton input",
+        "minimum length"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Describe a concrete failing input and source-grounded boundary condition, without claiming execution."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：函数注释约定“少于两个值返回 None”，但第 3 行只检查了空序列，因此长度为 1 的序列会绕过保护，在第 5 行访问 values[1] 时触发 IndexError。位置在 main.py 第 3 行条件与第 5 行索引之间：第 3 行 `if not values:` 只对空序列为真，单元素序列为假，于是继续执行 `values[0] + values[1]`。可能意图是“长度不足 2 就返回 None”，但代码只覆盖了长度 0。不确定性：未提供调用方，无法确认传入的是列表、元组还是其他支持索引和 len 的序列；也未运行测试，因此这是静态推断，不是实际执行结果。",
+        "hints": [
+          "把边界条件改为按长度判断，例如 `if len(values) < 2:`，这样长度 0 和 1 都会返回 None；验证时分别用 `[]`、`[1]`、`[1, 2]` 调用，预期得到 None、None、3。",
+          "若希望兼容不支持 len 的可迭代对象，可先物化再判断，例如 `values = list(values)` 后再 `if len(values) < 2:`；适用于输入可能是生成器的场景，但会改变对原对象的处理方式。",
+          "补充针对边界值的测试用例，覆盖空序列、单元素、双元素，并确认返回值与注释约定一致；测试通过只代表这些用例，不代表所有输入类型都安全。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    \"\"\"For fewer than two values return None.\"\"\""
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    if not values:"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "        return None"
+          },
+          {
+            "path": "main.py",
+            "line": 5,
+            "quote": "    return values[0] + values[1]"
+          }
+        ],
+        "teaching": {
+          "summary": "函数注释说“少于两个值返回 None”，但代码只挡住了空序列。传入只有一个元素的序列时，会继续执行加法并读取第二个元素，从而越界报错。",
+          "root_cause": "第 3 行 `if not values:` 判断的是序列是否为空，而不是元素个数是否少于 2。长度为 1 的序列在布尔判断中为真，所以不会进入第 4 行返回 None，而是执行第 5 行的 `values[1]`，该下标超出范围。",
+          "mechanism": "Python 中 `not values` 对空列表、空元组、空字符串等为真，对含一个元素的序列为假。索引从 0 开始，长度为 1 的序列只有下标 0，访问下标 1 会抛出 IndexError。注释是约定，解释器不会自动按注释检查长度，因此需要显式用 `len(values) < 2` 表达“少于两个”。",
+          "example": "静态推断的最小反例：调用 `first_pair([7])`。第 3 行 `not [7]` 为假，跳过返回；第 5 行计算 `[7][0] + [7][1]`，其中 `[7][1]` 越界，预期触发 IndexError。该反例来自对 snippets 的静态分析，未实际运行。",
+          "alternatives": [
+            "改为 `if len(values) < 2:`：适用于输入是列表、元组等支持 len 的序列，最直接符合注释约定。",
+            "先物化再判断，如 `values = list(values)` 后使用 `if len(values) < 2:`：适用于输入可能是生成器等一次性可迭代对象，但会消耗并复制输入。",
+            "在调用方保证至少两个元素：适用于函数内部约定由调用者负责，但当前注释明确写了少于两个返回 None，因此与现有约定不一致，需要先确认需求。"
+          ],
+          "prevention": "为边界值写测试：空序列、单元素、双元素各一例，并检查返回值是否符合注释。修改后重新运行这些用例；若输入类型可能变化，再补充元组或生成器用例。测试通过只覆盖已写用例，不能推断所有输入都安全。",
+          "uncertainty": "未提供调用方和输入类型，无法确认是否总为列表或元组，也无法确认元素是否支持加法。test_status 为 not-run，以上越界结论是静态推断，未经过实际执行验证。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 3,
+            "before": "    if not values:",
+            "after": "    if len(values) < 2:",
+            "reason": "按注释约定，长度小于 2 时返回 None，避免单元素序列访问 values[1]。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "78582143eb679ae326b58e413e1f65adf27b6e33f8d374f8b2e8fbff74b15f7d",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 742,
+        "completion_tokens": 1022,
+        "total_tokens": 1764
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "78582143eb679ae326b58e413e1f65adf27b6e33f8d374f8b2e8fbff74b15f7d",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      7
+    ],
+    "elapsed_ms": 7045,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "scope-local",
+    "category": "variable scope",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "count = 0\ndef increment():\n    count += 1\n    return count\n"
+    },
+    "request": "检查变量作用域或绑定问题，并说明依据。",
+    "expected": {
+      "category": "variable scope",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 3
+        }
+      ],
+      "key_concepts": [
+        "local assignment",
+        "UnboundLocalError"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Identify binding or initialization issue with trigger; distinguish static reasoning from execution."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：这段代码的语法本身没有问题，但第 3 行 `count += 1` 在函数内部对 `count` 进行赋值，而函数内没有声明 `global count` 或 `nonlocal count`，因此 Python 会把 `count` 视为局部变量；执行到该行时局部变量尚未绑定值，会触发 `UnboundLocalError`。这是静态作用域与名字绑定规则导致的，不是语法错误，所以本地解析器报告 syntax-ok 是合理的。需要注意：当前没有实际执行证据，test_status 为 not-run，因此这是基于 Python 语言规则的静态推断，不是运行结果。",
+        "hints": [
+          "在函数内声明全局变量：在 `def increment():` 下一行加入 `    global count`，使 `count += 1` 读写模块级变量。",
+          "更推荐避免全局状态：把计数封装为参数或对象属性，例如 `def increment(count):` 并 `return count + 1`，由调用方保存返回值。",
+          "验证方式：在修复后运行最小调用 `increment()`，确认不再出现 `UnboundLocalError`，并检查模块级 `count` 是否符合预期。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "count = 0"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "def increment():"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    count += 1"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "    return count"
+          }
+        ],
+        "teaching": {
+          "summary": "代码能通过语法解析，但函数内部对 count 赋值却没有声明 global，Python 会把它当作局部变量；执行 `count += 1` 时该局部变量还没有值，因此会报 UnboundLocalError。",
+          "root_cause": "第 3 行 `count += 1` 是赋值语句，等价于读取 count 再写回 count。Python 在编译函数时根据函数体内是否出现对某名字的赋值来决定它的作用域：只要函数体内有赋值，该名字默认就是局部变量，除非用 global 或 nonlocal 声明。这里函数内没有 global 声明，所以 count 被绑定为局部变量；执行到第 3 行时需要先读取局部 count，但它尚未被赋值，于是抛出 UnboundLocalError。第 1 行的模块级 count 不会自动被函数内的赋值语句使用。",
+          "mechanism": "Python 的名字绑定在编译阶段确定作用域。函数体中出现赋值目标的名字，默认归入局部作用域；读取该名字时先查局部作用域，若局部作用域中尚未绑定就报 UnboundLocalError，而不是回退到模块全局。`global count` 告诉编译器该名字的赋值和读取都指向模块全局命名空间；`nonlocal` 则用于嵌套函数中指向外层函数变量。这里第 1 行定义的是模块级变量，因此应使用 global，或者改为通过参数和返回值传递状态。",
+          "example": "静态推断的最小反例：调用 `increment()` 时，第 3 行会因局部变量 count 未绑定而失败。该结论来自 Python 作用域规则，不是本次工具执行结果；当前 test_status 为 not-run，没有实际运行证据。",
+          "alternatives": [
+            "在函数内加 `global count`：适用于确实需要修改模块级计数器的场景，但会增加全局状态耦合。",
+            "改为参数传递：`def increment(count):` 并 `return count + 1`，适用于希望函数无副作用、便于测试的场景。",
+            "使用可变容器或类属性保存计数：适用于需要共享状态但不想使用 global 的场景，需要额外设计封装。"
+          ],
+          "prevention": "修改后先做最小调用验证，例如调用一次 increment() 并检查返回值和模块级 count；同时用静态检查工具或阅读函数体确认所有被赋值的名字都有明确作用域声明。避免在函数内隐式依赖模块级变量，优先使用参数和返回值。",
+          "uncertainty": "没有实际执行记录，无法确认运行时异常的具体堆栈；也无法判断调用方是否期望修改模块级 count。若项目还有其他文件或调用方式，需要结合完整上下文确认。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "before": "def increment():",
+            "after": "def increment():\n    global count",
+            "reason": "声明函数内对 count 的赋值作用于模块级变量，避免局部变量未绑定。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "5fd9d462d9372b85be89329483b5ac3b548924cc48bc16b843c5d48d508760aa",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 696,
+        "completion_tokens": 947,
+        "total_tokens": 1643
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 2,
+        "message": "暂不支持函数内的名称重新绑定或嵌套定义"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "Assign"
+        },
+        {
+          "path": "main.py",
+          "line": 2,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "5fd9d462d9372b85be89329483b5ac3b548924cc48bc16b843c5d48d508760aa",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      8
+    ],
+    "elapsed_ms": 6683,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "scope-branch",
+    "category": "variable scope",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def label(flag):\n    if flag:\n        result = \"yes\"\n    return result\n"
+    },
+    "request": "检查变量作用域或绑定问题，并说明依据。",
+    "expected": {
+      "category": "variable scope",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 4
+        }
+      ],
+      "key_concepts": [
+        "conditional initialization",
+        "false branch"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Identify binding or initialization issue with trigger; distinguish static reasoning from execution."
+    },
+    "result": {
+      "status": "failed",
+      "mode": "live",
+      "review": null,
+      "failure_kind": "invalid-output",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 700,
+        "completion_tokens": 1285,
+        "total_tokens": 1985
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 1,
+        "message": "暂不支持函数内的名称重新绑定或嵌套定义"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "d86fa54f6df5853e6c60b6813b621d98260c80749021390bae5311e46031c06a",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      9
+    ],
+    "elapsed_ms": 9080,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "scope-shadow",
+    "category": "variable scope",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def total(values):\n    sum = 0\n    return sum(values)\n"
+    },
+    "request": "检查变量作用域或绑定问题，并说明依据。",
+    "expected": {
+      "category": "variable scope",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 3
+        }
+      ],
+      "key_concepts": [
+        "builtin shadowing",
+        "noncallable integer"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Identify binding or initialization issue with trigger; distinguish static reasoning from execution."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：这段代码的语法解析通过，但第 2 行把局部变量命名为 sum，第 3 行又调用 sum(values)，于是函数内部的 sum 名字被局部变量遮蔽，调用时实际使用的是整数 0，而不是内置函数 sum。依据是第 2 行 `    sum = 0` 与第 3 行 `    return sum(values)` 位于同一函数作用域：Python 在编译函数体时，只要函数内出现对某名字的赋值，该名字在整个函数体内都被视为局部变量，因此第 3 行的 sum 解析为局部变量而非内置函数。这属于静态可推断的绑定问题，不是语法错误，local_issues 为空与 syntax-ok 一致。实际运行会得到 TypeError: 'int' object is not callable，但这是静态推断，test_status 为 not-run，未执行验证。",
+        "hints": [
+          "把累加变量改名，避免遮蔽内置函数：`    total_sum = 0`，并相应修改返回语句，例如 `    return total_sum`。",
+          "若意图是求和，可直接用内置函数：`    return sum(values)`，并删除第 2 行的赋值。",
+          "修改后可用 `python -c \"import main; print(main.total([1,2,3]))\"` 验证返回 6，并确认不再出现 'int' object is not callable。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def total(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    sum = 0"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    return sum(values)"
+          }
+        ],
+        "teaching": {
+          "summary": "函数里把变量命名为 sum，随后又像函数一样调用 sum(values)。Python 会把函数体内被赋值的名字视为局部变量，所以这里的 sum 指向整数 0，而不是内置求和函数，调用时就会失败。",
+          "root_cause": "第 2 行 `    sum = 0` 在函数 total 内对名字 sum 赋值，使 sum 成为该函数的局部变量；第 3 行 `    return sum(values)` 中的 sum 因此绑定到这个局部变量，而不是内置函数 sum。整数不可调用，静态推断会抛出 TypeError。",
+          "mechanism": "Python 的名字绑定在编译阶段确定作用域：函数体内只要有对某名字的赋值，该名字在整个函数体内都按局部变量处理，不会在运行时回退到内置命名空间。内置函数 sum 位于 builtins 中，只有局部和全局作用域都找不到该名字时才会被使用。这里局部变量 sum 遮蔽了内置 sum，所以调用表达式 `sum(values)` 实际是对整数 0 进行调用。",
+          "example": "静态推断的最小反例：执行 `total([1, 2])` 时，第 2 行使 sum 为 0，第 3 行尝试调用 0，预期得到 TypeError: 'int' object is not callable。该结论来自对 snippets 的作用域分析，未实际运行；test_status 为 not-run，没有工具执行证据。",
+          "alternatives": [
+            "将累加变量改名为 total_sum 并返回它：适用于需要手动累加的场景。",
+            "删除第 2 行并直接 `    return sum(values)`：适用于只是对 values 求和的场景。",
+            "若 values 可能包含不可求和元素，先明确输入约定再选择方案：适用于需要额外校验的场景。"
+          ],
+          "prevention": "修改后检查函数体内是否还有与内置函数同名的赋值；用 `python -c \"import main; print(main.total([1,2,3]))\"` 做最小验证，预期输出 6；若出现 'int' object is not callable，说明仍有名字遮蔽。",
+          "uncertainty": "无法从三个片段确定 total 的预期语义：是手动累加还是直接调用内置 sum。第 2 行赋值后没有累加逻辑，可能代码尚未写完；这些都需要结合完整函数确认。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "before": "    sum = 0",
+            "after": "    total_sum = 0",
+            "reason": "避免局部变量遮蔽内置函数 sum。"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "before": "    return sum(values)",
+            "after": "    return total_sum",
+            "reason": "与改名后的局部变量保持一致；若本意是求和，则应改为直接调用内置 sum。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "3928e3c315e7e30d95a5a709a6c6376e40f2b2480cdfc4833220a891d88e1568",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 682,
+        "completion_tokens": 948,
+        "total_tokens": 1630
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 1,
+        "message": "暂不支持函数内的名称重新绑定或嵌套定义"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "3928e3c315e7e30d95a5a709a6c6376e40f2b2480cdfc4833220a891d88e1568",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      10
+    ],
+    "elapsed_ms": 6392,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "return-none",
+    "category": "function return contracts",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def positive(x):\n    \"\"\"Return a bool for every integer x.\"\"\"\n    if x > 0:\n        return True\n"
+    },
+    "request": "对照函数文档检查返回值约定。",
+    "expected": {
+      "category": "function return contracts",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 3
+        }
+      ],
+      "key_concepts": [
+        "implicit None",
+        "all branches"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Explain the explicit source/documentation mismatch; avoid assuming undocumented caller requirements."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：仅凭给出的第 1–4 行，无法确认 `positive` 是否满足“对每个整数 x 返回 bool”的文档约定。第 2 行文档声明“Return a bool for every integer x”，第 3–4 行只覆盖了 `x > 0` 时返回 `True` 的分支；`x <= 0` 时函数会走到哪里、返回什么，在提供的片段中看不到。本地解析器报告 `syntax-ok` 且无 `local_issues`，这只说明已解析文本没有语法错误，不说明返回值约定成立。测试状态为 `not-run`，因此没有任何执行证据可引用。",
+        "hints": [
+          "检查函数末尾是否对 `x <= 0` 有显式 `return`，例如补上 `return False` 或按需求返回相应 bool；补完后用 `positive(-1)`、`positive(0)`、`positive(1)` 分别验证。",
+          "若希望所有路径都返回 bool，可让每个分支都显式返回，例如在 `if x > 0:` 分支后加 `    return False`，并确认缩进与函数体一致。",
+          "用断言或简单测试固定约定，例如 `assert positive(-1) is False`、`assert positive(0) is False`、`assert positive(1) is True`；这些只是建议验证步骤，尚未执行。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def positive(x):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    \"\"\"Return a bool for every integer x.\"\"\""
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    if x > 0:"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "        return True"
+          }
+        ],
+        "teaching": {
+          "summary": "文档说这个函数对每个整数都返回 bool，但片段里只看到正数分支返回 `True`。非正数分支是否返回、返回什么，片段没有给出，所以现在不能判定约定已满足。语法检查通过不等于返回值约定通过。",
+          "root_cause": "直接原因是可见代码只显式处理了 `x > 0` 的情况。若函数在 `x <= 0` 时没有后续 `return`，Python 会返回 `None`，而 `None` 不是 bool；若后续还有未展示的 `return`，则可能满足约定。由于片段在第 4 行结束，无法确定属于哪一种。",
+          "mechanism": "Python 函数执行到末尾仍未遇到 `return` 时，会隐式返回 `None`。文档字符串只是说明性文字，不会强制检查返回类型。因此“对每个整数返回 bool”需要所有输入路径都显式返回 `True` 或 `False`，或者由调用方另行保证。当前 `if x > 0:` 只描述了一个条件分支，条件为假时的行为必须看后续代码。",
+          "example": "推断的最小反例（未执行）：若函数体只有给出的四行，则调用 `positive(0)` 或 `positive(-1)` 会走到函数末尾并隐式返回 `None`，与文档“Return a bool”不一致。实际工具证据只有：本地解析器报告 `syntax-ok`、`local_issues` 为空；测试状态为 `not-run`，没有执行结果可引用。",
+          "alternatives": [
+            "在 `if` 分支之后补 `return False`：适用于“正数为 True、其余为 False”的约定，但需确认 0 和负数是否都应返回 False。",
+            "用 `return x > 0` 直接返回比较结果：适用于约定就是“是否为正数”，代码更短，但仍需确认文档意图是否仅此。",
+            "保留现有结构并在所有分支显式返回：适用于后续还要加入更多条件的情况，可读性更明确，但需要看到完整函数后再改。"
+          ],
+          "prevention": "先确认文档约定的完整含义，再检查每个输入类别是否有显式返回；补全后用 `positive(-1)`、`positive(0)`、`positive(1)` 做最小验证，并可用 `is True` / `is False` 断言检查返回类型。注意语法检查通过只证明解析成功，不能替代返回值测试。",
+          "uncertainty": "提供的片段只到第 4 行，无法看到 `x <= 0` 时是否有后续 `return`，也无法确认文档中的“bool”是否要求严格的 `True`/`False` 而非真值。测试未运行，因此不能断言当前函数实际返回 `None`，只能把“缺少非正数分支返回”列为待验证的静态推断。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "67ee5ff1e9635cb745d5a89fe777cee97c16e94dbe0d9696c459ee74655510f3",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 707,
+        "completion_tokens": 1003,
+        "total_tokens": 1710
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "67ee5ff1e9635cb745d5a89fe777cee97c16e94dbe0d9696c459ee74655510f3",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      11
+    ],
+    "elapsed_ms": 6696,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "return-mutator",
+    "category": "function return contracts",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def sorted_values(values):\n    \"\"\"Return a new sorted list; preserve input.\"\"\"\n    return values.sort()\n"
+    },
+    "request": "对照函数文档检查返回值约定。",
+    "expected": {
+      "category": "function return contracts",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 3
+        }
+      ],
+      "key_concepts": [
+        "in-place mutation",
+        "None return"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Explain the explicit source/documentation mismatch; avoid assuming undocumented caller requirements."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：函数文档承诺“返回一个新的已排序列表，并保留输入不变”，但第 3 行 `return values.sort()` 与这一约定不符。`list.sort()` 是原地排序方法，它返回 `None`，因此调用者拿到的是 `None` 而不是排序后的列表；同时原列表被就地修改，也违背了“preserve input”。本地解析器报告 syntax-ok 且无 local_issues，说明这不是语法错误，而是返回值语义与文档不一致的问题。静态阅读只能确定 `list.sort()` 的返回值规则和此处写法；实际运行结果未通过工具验证（test_status 为 not-run），因此“调用者会拿到 None”属于基于 Python 语言规则的静态推断，而非本次执行证据。",
+        "hints": [
+          "把原地排序改为返回新列表：`return sorted(values)`，这样既返回排序结果又不修改输入。",
+          "若确实需要原地排序，应拆成两步并显式返回：`values.sort()` 后 `return values`，但此时需同步修改文档中“preserve input”的承诺。",
+          "验证方式：用一个列表调用函数，检查返回值是否为排序后的新列表，并确认原列表顺序未变，例如 `a=[3,1,2]; b=sorted_values(a)` 后比较 `a` 与 `b`。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def sorted_values(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    \"\"\"Return a new sorted list; preserve input.\"\"\""
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    return values.sort()"
+          }
+        ],
+        "teaching": {
+          "summary": "这个函数的名字和文档都说要“返回一个新的排序列表，同时不动原列表”，但实现用的是 `values.sort()`。`sort()` 只负责把列表自己排好，不返回排序结果，所以函数实际返回 `None`，而且原列表被改了。语法没问题，问题在返回值约定。",
+          "root_cause": "第 3 行 `return values.sort()` 把 `list.sort()` 的返回值直接返回。按 Python 的列表方法规则，`list.sort()` 原地排序并返回 `None`，因此函数返回 `None`；同时 `values` 指向的列表被就地重排，与第 2 行文档中的“Return a new sorted list; preserve input”冲突。",
+          "mechanism": "Python 中列表排序有两种常见写法：`list.sort()` 是原地方法，修改列表本身并返回 `None`；内置函数 `sorted(iterable)` 返回一个新的已排序列表，不修改原对象。文档写的是“new sorted list”和“preserve input”，对应的是 `sorted()` 的语义。当前实现把原地方法的返回值当作结果返回，导致返回值类型与文档不符。这是接口契约层面的问题，不是语法错误；本地解析器 syntax-ok、local_issues 为空也印证了这一点。",
+          "example": "静态推断的最小反例：若 `values = [3, 1, 2]`，执行 `return values.sort()` 后函数返回 `None`，而 `values` 变为 `[1, 2, 3]`。这与文档“返回新列表、保留输入”不符。该反例来自对 `list.sort()` 规则的推断，本次未运行代码，test_status 为 not-run，因此不作为实际执行证据。",
+          "alternatives": [
+            "改为 `return sorted(values)`：适用于要严格满足当前文档“返回新列表且不改输入”的约定，改动最小。",
+            "改为 `values.sort()` 后 `return values`：适用于调用方确实希望原地排序，但必须同步修改文档，去掉“new”和“preserve input”的承诺。",
+            "在函数内先复制再排序，如 `result = list(values); result.sort(); return result`：适用于需要显式控制复制行为或后续要扩展排序逻辑的场景。"
+          ],
+          "prevention": "检查返回值约定时，先确认文档描述的是“新对象”还是“原地修改”，再选择 `sorted()` 或 `sort()`。写完后用一个小列表验证两点：返回值是否为排序后的列表、原列表是否保持不变。也可以对照函数名与文档措辞，确认二者一致。",
+          "uncertainty": "未提供调用方代码，无法确认外部是否依赖返回 `None` 或依赖原地修改；也未实际运行，返回值行为是基于 Python 列表方法规则的静态推断。若项目另有约定要求原地排序，则应优先修改文档而非实现。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 3,
+            "before": "    return values.sort()",
+            "after": "    return sorted(values)",
+            "reason": "`sorted()` 返回新的已排序列表且不修改输入，符合第 2 行文档约定。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "98d65b5d137adf865ef1c5f29f2dc712f7240601fa1355d25ddd067069f0554e",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 685,
+        "completion_tokens": 1020,
+        "total_tokens": 1705
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "98d65b5d137adf865ef1c5f29f2dc712f7240601fa1355d25ddd067069f0554e",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      12
+    ],
+    "elapsed_ms": 6821,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "return-type",
+    "category": "function return contracts",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def double(x):\n    \"\"\"Return twice x as an integer.\"\"\"\n    return str(x * 2)\n"
+    },
+    "request": "对照函数文档检查返回值约定。",
+    "expected": {
+      "category": "function return contracts",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 3
+        }
+      ],
+      "key_concepts": [
+        "return type",
+        "documented contract"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Explain the explicit source/documentation mismatch; avoid assuming undocumented caller requirements."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：函数文档写的是“返回整数形式的 x 的两倍”，但第 3 行实际返回的是 str(x * 2)，即字符串，返回值类型与文档约定不一致。位置在 main.py 第 2 行（约定）与第 3 行（实现）之间。根因是 return 外层多包了一层 str()，把整数结果转成了字符串。可能意图是让调用方拿到整数以便继续做算术；但也不排除调用方确实需要字符串（例如直接拼接输出），这一点从给出的三行无法确定，需要确认调用处如何使用返回值。静态上只能确认类型不符，不能据此断言任何运行结果或测试状态；test_status 为 not-run，没有执行证据。",
+        "hints": [
+          "去掉 str() 包装，让返回值与文档一致：把 `    return str(x * 2)` 改为 `    return x * 2`，然后用 `assert double(3) == 6` 和 `assert isinstance(double(3), int)` 验证。",
+          "若调用方确实需要字符串，则应改文档而不是改实现：把第 2 行改为说明返回字符串，例如 `    \"\"\"Return twice x as a string.\"\"\"`，并检查所有调用处是否按字符串使用。",
+          "修改后检查边界输入，例如 `double(0)`、负数、浮点参数，确认“整数”约定对非整数输入是否仍成立，必要时在文档中写明参数类型要求。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def double(x):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    \"\"\"Return twice x as an integer.\"\"\""
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    return str(x * 2)"
+          }
+        ],
+        "teaching": {
+          "summary": "这个函数名叫 double，文档说返回“x 的两倍，整数形式”，但代码把结果用 str() 包了一层，返回的其实是字符串。文档和代码对“返回什么类型”说法不一致，需要二选一：改代码或改文档。",
+          "root_cause": "第 3 行 `return str(x * 2)` 中，`x * 2` 先算出数值，再被 `str(...)` 转成字符串返回；而第 2 行文档明确写的是 integer（整数）。因此返回值类型与文档约定冲突，这是静态可确认的不一致。",
+          "mechanism": "Python 是动态类型语言，函数不会因为文档写了 integer 就自动把返回值转成整数，返回什么完全由 return 表达式决定。`str()` 是显式类型转换，会把任意对象变成其字符串表示，所以 `double(3)` 按代码会得到 `'6'` 而不是 `6`。文档字符串只是说明文字，解释器不检查它，因此文档与实现可能悄悄脱节；这类问题通常靠类型检查、断言或测试来发现。",
+          "example": "推断的最小反例（未实际运行）：按第 3 行，`double(3)` 返回 `'6'`（字符串），而文档约定应为 `6`（整数），`double(3) == 6` 会为 False。这只是基于所给代码的静态推断；本次没有工具执行证据，test_status 为 not-run，不能据此声称测试通过或失败。",
+          "alternatives": [
+            "改实现：把第 3 行改为 `    return x * 2`，适用于调用方需要整数做后续计算的情况。",
+            "改文档：把第 2 行改为说明返回字符串，适用于调用方本来就把结果当字符串使用（如拼接输出）的情况。",
+            "保持返回字符串但在文档中写明并统一命名/注释，适用于接口已对外发布、不宜改变返回类型的情况，但需检查所有调用处。"
+          ],
+          "prevention": "修改后可用断言验证类型与值，例如 `assert double(3) == 6` 与 `assert isinstance(double(3), int)`；也可在函数内加类型注解 `def double(x: int) -> int:` 并配合静态检查工具。养成“文档声明与 return 表达式逐项对照”的习惯，并覆盖 0、负数、非整数输入等边界。",
+          "uncertainty": "给出的片段只有三行，看不到调用方如何使用返回值，因此无法确定应改代码还是改文档；也无法确认 x 是否总为整数（若传入浮点，`x * 2` 也不是整数，文档的 integer 约定本身可能需要补充说明）。没有执行证据，所有行为描述均为静态推断。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 3,
+            "before": "    return str(x * 2)",
+            "after": "    return x * 2",
+            "reason": "使返回值类型与第 2 行文档声明的整数约定一致；需用户确认调用方不依赖字符串返回值。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "5b30107d13816fd86af7436e0c9fdda0f15cb1467311bd66b4e7f633d9ce31f2",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 688,
+        "completion_tokens": 1038,
+        "total_tokens": 1726
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "5b30107d13816fd86af7436e0c9fdda0f15cb1467311bd66b4e7f633d9ce31f2",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      13
+    ],
+    "elapsed_ms": 7185,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-alias",
+    "category": "cross-file dependencies",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "from helpers import normalize as clean\nprint(clean(2).strip())\n",
+      "helpers.py": "def normalize(value):\n    return value + 1\n",
+      "other.py": "def normalize(value):\n    return str(value)\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "import alias",
+        "integer return",
+        "duplicate symbol"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：本地解析器显示语法正常，但按给出的代码静态推断，main.py 第 2 行会在运行时出错。第 1 行把 helpers.normalize 以别名 clean 导入；helpers.py 第 1–2 行显示 normalize(value) 返回 value + 1，即整数。于是 clean(2) 得到 3，随后对 3 调用 .strip()，整数没有 strip 方法，会触发 AttributeError。这不是导入失败，也不是语法错误，而是“实际导入的实现”与调用处预期不一致：调用处似乎把 clean 当成返回字符串的函数。文档未提供，因此无法判断文档是否声称返回字符串；只能以 helpers.py 的实际实现为准。test_status 为 not-run，以上均为静态推断，未执行验证。",
+        "hints": [
+          "先核对调用处期望：若 clean 应返回字符串，就在 helpers.py 中让 normalize 返回字符串，例如 `return str(value + 1)`，再运行 `python main.py` 验证。",
+          "若 clean 本就应返回数值，则去掉字符串方法调用，把第 2 行改为 `print(clean(2))`，并补充针对返回类型的断言或测试。",
+          "在导入处或函数文档中明确返回类型，并用 `assert isinstance(clean(2), str)` 之类的最小检查确认实际实现与调用约定一致。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "from helpers import normalize as clean"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(clean(2).strip())"
+          },
+          {
+            "path": "helpers.py",
+            "line": 1,
+            "quote": "def normalize(value):"
+          },
+          {
+            "path": "helpers.py",
+            "line": 2,
+            "quote": "    return value + 1"
+          }
+        ],
+        "teaching": {
+          "summary": "代码能通过语法解析，但按实际导入的函数实现看，调用处把整数当字符串用了。main.py 导入的是 helpers.py 里的 normalize，它返回 value + 1，所以 clean(2) 是整数 3；对整数调用 .strip() 会失败。需要先确认这个函数到底应该返回字符串还是数字，再统一实现和调用。",
+          "root_cause": "直接原因是返回值类型与调用方式不匹配。helpers.py 第 2 行 `return value + 1` 在 value 为整数 2 时返回整数 3；main.py 第 2 行 `print(clean(2).strip())` 却对结果调用字符串方法 strip。Python 在运行时按对象实际类型查找方法，整数类型没有 strip，因此会抛出 AttributeError。导入语句本身没有错误，别名 clean 指向的就是 normalize。",
+          "mechanism": "Python 的 import 在运行时把模块对象中的属性绑定到当前命名空间；`from helpers import normalize as clean` 只是给同一个函数对象起别名，不会改变函数行为。函数返回什么类型由函数体决定，调用方不会自动转换。方法调用 `obj.strip()` 要求 obj 所属类型提供 strip；str 有该方法，int 没有。因此类型约定必须在实现与调用之间保持一致。语法检查只验证代码结构，不验证运行时类型，所以 local_status 为 syntax-ok 并不能排除这个运行时问题。",
+          "example": "静态推断的最小反例：按 helpers.py 第 2 行，normalize(2) 返回 3；按 main.py 第 2 行，随后执行 3.strip()，整数没有 strip 方法。该结论来自对给出代码的静态推断，test_status 为 not-run，未实际执行验证。",
+          "alternatives": [
+            "让函数返回字符串：在 helpers.py 第 2 行改为 `return str(value + 1)`，适用于调用方确实需要对结果做字符串处理的情况。",
+            "让调用方接受数值：把 main.py 第 2 行改为 `print(clean(2))`，适用于该函数设计上就是数值计算的情况。",
+            "先明确接口契约：在函数文档或类型标注中写明返回类型，再同步修改实现或调用处，适用于项目内多处依赖该函数、需要统一约定的情况。"
+          ],
+          "prevention": "先查看实际导入模块的实现，而不是只依据文档或函数名猜测返回类型；为关键函数补充返回类型标注和最小单元测试，例如断言 clean(2) 的类型；修改后运行 `python main.py` 或对应测试确认。注意本地语法检查通过不等于运行时类型正确。",
+          "uncertainty": "未提供项目文档、类型标注或其他调用点，无法确定 clean 的预期返回类型，也无法判断是否还有其他地方依赖当前数值返回值；未执行代码，AttributeError 属于静态推断。若 value 实际传入字符串，行为会不同，但当前调用传入的是整数 2。"
+        },
+        "patches": [
+          {
+            "path": "helpers.py",
+            "line": 2,
+            "before": "    return value + 1",
+            "after": "    return str(value + 1)",
+            "reason": "若调用方期望字符串，使返回值支持 .strip()；需用户确认接口约定后再采用。"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "before": "print(clean(2).strip())",
+            "after": "print(clean(2))",
+            "reason": "若函数按设计返回数值，则移除不适用的字符串方法调用。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "184f995b0b57795bfabd10942d37938253086b18f0a761d83a1dfc9bf6a7c72e",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 712,
+        "completion_tokens": 1116,
+        "total_tokens": 1828
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "helpers.py",
+        "line": 2,
+        "message": "只允许项目模块的公开名称"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "FunctionDef"
+        },
+        {
+          "path": "main.py",
+          "line": 2,
+          "event": "Expr"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "call-parameters",
+          "values": {
+            "value": 2
+          }
+        },
+        {
+          "path": "helpers.py",
+          "line": 2,
+          "event": "Return"
+        },
+        {
+          "path": "helpers.py",
+          "line": 2,
+          "event": "return-value",
+          "value": 3
+        }
+      ],
+      "buffer_hash": "184f995b0b57795bfabd10942d37938253086b18f0a761d83a1dfc9bf6a7c72e",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      14
+    ],
+    "elapsed_ms": 7783,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-relative",
+    "category": "cross-file dependencies",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "pkg/main.py": "from .helpers import score\nprint(score([]))\n",
+      "pkg/helpers.py": "def score(values):\n    return max(values)\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "pkg/main.py",
+          "line": 2
+        },
+        {
+          "path": "pkg/helpers.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "relative import",
+        "empty sequence"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：本地解析器已确认语法正常，且没有给出任何 local_issues；因此当前问题不是语法错误，而是“导入的实现与调用方式是否匹配”这一待验证的依赖/语义问题。证据只有四行：pkg/main.py 第 1 行从同包 helpers 导入 score，第 2 行用空列表调用 score([])；pkg/helpers.py 第 1 行定义 score(values)，第 2 行直接 return max(values)。静态推断：score 的实现对 values 调用 max，而 max 对空序列会抛出 ValueError（这是 Python 内置规则，不是本次执行证据），所以 score([]) 在语义上很可能失败。但 test_status 为 not-run，没有工具返回匹配 buffer_hash 的执行证据，因此不能声称已运行、已复现或项目测试通过。关于“文档与代码”的区分：提供的片段中没有文档内容，无法核对文档描述与实现是否一致，这一点需要用户补充文档或说明预期行为。",
+        "hints": [
+          "先确认 score 的预期契约：若空列表应返回默认值，可在实现中显式处理，例如在 pkg/helpers.py 第 2 行前加 `    if not values:` 并返回约定值；随后用 `python -m pkg.main` 或针对 score([]) 的最小用例验证。",
+          "若空列表属于非法输入，应在调用处避免传入空列表，或在 score 内抛出带说明的异常；验证时分别覆盖空列表与非空列表两种输入。",
+          "核对文档与代码：把文档中对 score 空输入、返回类型的描述与 pkg/helpers.py 第 2 行的 max(values) 对照，确认哪一方是权威来源，再决定改实现还是改文档。"
+        ],
+        "citations": [
+          {
+            "path": "pkg/main.py",
+            "line": 1,
+            "quote": "from .helpers import score"
+          },
+          {
+            "path": "pkg/main.py",
+            "line": 2,
+            "quote": "print(score([]))"
+          },
+          {
+            "path": "pkg/helpers.py",
+            "line": 1,
+            "quote": "def score(values):"
+          },
+          {
+            "path": "pkg/helpers.py",
+            "line": 2,
+            "quote": "    return max(values)"
+          }
+        ],
+        "teaching": {
+          "summary": "语法检查通过，没有本地解析错误。真正需要核对的是：main.py 导入并调用的 score 来自 helpers.py，而该实现对传入列表直接取 max；当传入空列表时，按 Python 的 max 规则很可能报错。片段中没有文档，无法判断文档承诺的行为，因此“文档与代码不一致”只能作为待确认项。",
+          "root_cause": "直接原因在静态层面是调用与实现组合：pkg/main.py 第 2 行以空列表调用 score([])，pkg/helpers.py 第 2 行执行 max(values)。Python 的 max 对空可迭代对象没有可返回值，会抛出 ValueError。导入路径本身（from .helpers import score）与 helpers.py 中定义的 score 名称一致，未发现导入名不匹配的证据。由于 test_status 为 not-run 且无执行证据，这只是基于代码规则的静态推断，不是已复现的运行结果。",
+          "mechanism": "Python 的 from .helpers import score 表示从当前包内的 helpers 模块取名为 score 的对象；helpers.py 第 1 行定义了同名函数，因此名称层面可对应。函数体 max(values) 依赖 values 至少含一个元素：max 需要比较候选值，空序列没有候选值，内置实现会报 ValueError。这与语法无关，local_status 为 syntax-ok、local_issues 为空正说明解析阶段没有发现问题。依赖检查的关键是核对“实际被导入的实现”而非同名文档或另一个模块；本片段只展示了这一处实现，未提供其他同名定义，故不能推断存在导入遮蔽或版本差异。",
+          "example": "静态最小反例（推断，未执行）：调用 score([]) 时，values 为空列表，第 2 行 max([]) 按 Python 规则抛出 ValueError。实际工具证据仅有：local_status 为 syntax-ok、local_issues 为空、test_status 为 not-run；没有匹配 buffer_hash 的执行结果，因此不能引用为“已运行失败”。",
+          "alternatives": [
+            "在 score 内处理空输入：适用于空列表有明确默认语义的场景，例如返回 0 或 None，并同步更新文档与调用方预期。",
+            "在调用处保证非空：适用于空列表本身是调用方错误的情况，可在 main.py 调用前校验并给出清晰错误信息。",
+            "明确抛出受控异常：适用于空输入属于非法契约的情况，在 score 内检查后抛出带说明的异常，并在文档中写明前置条件。"
+          ],
+          "prevention": "修改后用最小用例分别验证空列表与非空列表，并确认导入的是 helpers.py 中的实现；同时把文档中关于空输入和返回类型的描述与代码对齐。由于当前未运行测试，任何“已修复”结论都应等实际执行结果后再下。",
+          "uncertainty": "片段未包含文档内容，无法判断文档承诺的行为；也未提供其他 score 定义或包结构，无法排除导入遮蔽；test_status 为 not-run，空列表报错属于静态推断而非执行证据。若项目对空输入另有约定，需要用户确认预期契约。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "da867aec0b06eb5dd431d97038b8f52f82d577de7bbdfa719fde1824b47ad41f",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 717,
+        "completion_tokens": 1129,
+        "total_tokens": 1846
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "pkg/main.py",
+        "line": 1,
+        "message": "暂不支持相对导入执行"
+      },
+      "trace": [
+        {
+          "path": "pkg/main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        }
+      ],
+      "buffer_hash": "da867aec0b06eb5dd431d97038b8f52f82d577de7bbdfa719fde1824b47ad41f",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "pkg/main.py"
+    },
+    "request_indices": [
+      15
+    ],
+    "elapsed_ms": 8597,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-docs",
+    "category": "cross-file dependencies",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "from helpers import offset\nprint(offset(3))\n",
+      "helpers.py": "def offset(x):\n    return x + 1\n",
+      "README.md": "offset returns its input minus one.\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "helpers.py",
+          "line": 2
+        },
+        {
+          "path": "README.md",
+          "line": 1
+        }
+      ],
+      "key_concepts": [
+        "source-documentation conflict",
+        "authority boundary"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "failed",
+      "mode": "live",
+      "review": null,
+      "failure_kind": "invalid-output",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 732,
+        "completion_tokens": 1422,
+        "total_tokens": 2154
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "4\n",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "FunctionDef"
+        },
+        {
+          "path": "main.py",
+          "line": 2,
+          "event": "Expr"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "call-parameters",
+          "values": {
+            "x": 3
+          }
+        },
+        {
+          "path": "helpers.py",
+          "line": 2,
+          "event": "Return"
+        },
+        {
+          "path": "helpers.py",
+          "line": 2,
+          "event": "return-value",
+          "value": 4
+        }
+      ],
+      "buffer_hash": "a5a95713c949d9141a50f2097a0e35fd350ab341b37d4d030ff597a2967abd32",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      16
+    ],
+    "elapsed_ms": 9089,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "correct-empty",
+    "category": "correct-code false-positive control",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def average(values):\n    if not values:\n        return None\n    return sum(values) / len(values)\n"
+    },
+    "request": "检查这段代码；没有确定问题时明确说明，不要为了给建议编造错误。",
+    "expected": {
+      "category": "correct-code false-positive control",
+      "location": [],
+      "key_concepts": [
+        "empty guard",
+        "correct code"
+      ],
+      "valid_code": true,
+      "expected_valid_behavior": "Accept as correct under stated contract; optional style advice must not be reported as a demonstrated defect."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：仅凭给出的 4 行代码，没有发现确定的语法或逻辑错误。本地解析器返回 syntax-ok，且 local_issues 为空，说明这段函数定义在语法层面是完整的。函数 average(values) 先判断 values 是否为空，为空返回 None，否则返回 sum(values) / len(values)，这是常见的求平均值写法。需要说明的不确定性：没有看到调用方如何使用返回值，也没有看到 values 的实际类型；如果调用方直接把返回值当数字参与运算，那么空列表时返回 None 可能引发后续问题，但这属于调用约定层面的待验证事项，不是这 4 行本身的确定错误。另外 test_status 为 not-run，说明没有实际执行证据，以上均为静态阅读结论。",
+        "hints": [
+          "若希望空输入有明确数值语义，可在调用处先判断返回值是否为 None，例如：result = average(values); if result is None: ...，适用于调用方需要区分“无数据”和“平均值为 0”的场景。",
+          "若希望函数对空输入直接报错而不是返回 None，可改为 raise ValueError(\"values 不能为空\")，适用于调用方保证输入非空、希望尽早暴露问题的场景。",
+          "验证方式：为 average([])、average([1, 2, 3]) 分别编写测试并实际运行，确认返回值符合调用方预期；当前未运行测试，不能声称已通过。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def average(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    if not values:"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "        return None"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "    return sum(values) / len(values)"
+          }
+        ],
+        "teaching": {
+          "summary": "这段代码定义了一个求平均值的函数：输入为空时返回 None，否则用总和除以元素个数。给出的 4 行在语法上是完整的，本地解析也没有报告问题，因此没有发现确定错误。唯一值得留意的是“空输入返回 None”这一约定是否与调用方预期一致，但这需要看调用代码才能判断。",
+          "root_cause": "没有确定的根因可报告。local_status 为 syntax-ok、local_issues 为空，说明本地解析器未发现语法问题；从静态阅读看，第 2 行用 if not values 处理空序列，第 3 行返回 None，第 4 行在非空时计算 sum(values) / len(values)，逻辑路径完整。可能的隐患仅在于返回值类型不统一（None 或数值），属于接口约定问题，需结合调用方确认，不能据此断言代码有错。",
+          "mechanism": "Python 中 if not values 会对 values 做真值判断：空列表、空元组、空字符串等为假，非空容器为真。因此第 2 行能拦住空输入，避免第 4 行出现 len(values) 为 0 导致的除零错误。第 4 行 sum(values) / len(values) 依赖 values 可迭代且元素支持加法与除法；对数字列表成立。函数在空输入时返回 None，在非空时返回数值，这种“混合返回类型”本身合法，但调用方若不做检查就直接运算，可能在空输入时出错。",
+          "example": "静态推断的最小反例（未实际运行）：若调用方写 avg = average([]) + 1，则 average([]) 返回 None，None + 1 会触发 TypeError。这只是基于第 3 行返回 None 的推断，用于说明调用约定风险，不代表给出的函数本身有语法或逻辑错误。实际工具证据仅为 local_status 为 syntax-ok、local_issues 为空；test_status 为 not-run，没有执行结果可引用。",
+          "alternatives": [
+            "保持现状并在调用处检查 None：适用于需要区分“无数据”和“平均值为 0”的场景。",
+            "空输入时抛出 ValueError：适用于调用方保证输入非空、希望问题尽早暴露的场景。",
+            "空输入时返回 0 或约定哨兵值：适用于业务上把空集合平均值定义为 0 的场景，但需在文档中写明约定。"
+          ],
+          "prevention": "为函数补充针对空列表、单元素列表、普通数字列表的测试并实际运行；在文档字符串中写明空输入返回 None 的约定；调用方在使用返回值前判断是否为 None。注意当前 test_status 为 not-run，任何“测试通过”的说法都需要实际执行证据支持。",
+          "uncertainty": "未提供调用方代码，无法判断返回 None 是否会被误用；未提供 values 的元素类型，无法确认 sum 与除法对所有输入都成立；未运行测试，无法确认运行时行为。以上均需补充信息或实际执行后才能下结论。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "6c095cebf4faf8e6b69e1cb9aa28b7e93f1036f6c8aca4f42f42526ee368351e",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 713,
+        "completion_tokens": 1020,
+        "total_tokens": 1733
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "6c095cebf4faf8e6b69e1cb9aa28b7e93f1036f6c8aca4f42f42526ee368351e",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      17
+    ],
+    "elapsed_ms": 7117,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "correct-scope",
+    "category": "correct-code false-positive control",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def total(values):\n    result = 0\n    for value in values:\n        result += value\n    return result\n"
+    },
+    "request": "检查这段代码；没有确定问题时明确说明，不要为了给建议编造错误。",
+    "expected": {
+      "category": "correct-code false-positive control",
+      "location": [],
+      "key_concepts": [
+        "initialized accumulator",
+        "correct code"
+      ],
+      "valid_code": true,
+      "expected_valid_behavior": "Accept as correct under stated contract; optional style advice must not be reported as a demonstrated defect."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：仅凭给出的 5 行，未发现确定的语法或逻辑错误；本地解析器也报告 syntax-ok，且没有 local_issues。这段代码定义了一个求和函数 total(values)：第 2 行把累加器初始化为 0，第 3 行遍历 values，第 4 行把每个元素加到 result，第 5 行返回总和。就这 5 行本身而言，控制流和返回值是自洽的。需要说明的是，这只能证明“给出的片段没有可定位的语法问题”，不能证明整个项目或所有输入都正确；test_status 为 not-run，也没有工具返回与当前 buffer_hash 匹配的执行证据，因此不能声称运行通过。可能的语义风险只能作为待验证项：例如 values 中若混入非数值类型，result += value 可能失败；若 values 为空，函数返回 0，这是否符合调用方预期需确认；若元素是字符串，会得到拼接结果而非数值和。这些都不是已确定的错误，需要结合调用处和需求确认。",
+        "hints": [
+          "先确认调用方传入的 values 元素类型是否都为数值；若需防御，可在函数入口加类型检查或文档说明，例如在 docstring 中写明“values 应为数值序列”。",
+          "用最小用例验证边界：total([]) 预期是否为 0、total([1, 2, 3]) 是否为 6；这些是待你实际运行的验证步骤，当前未执行。",
+          "若调用方可能传入生成器或一次性迭代对象，当前 for 循环只遍历一次，通常没问题；但若函数内需要多次遍历，应先转成 list，这取决于未提供的调用场景。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def total(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    result = 0"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    for value in values:"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "        result += value"
+          },
+          {
+            "path": "main.py",
+            "line": 5,
+            "quote": "    return result"
+          }
+        ],
+        "teaching": {
+          "summary": "这段代码是一个普通的求和函数：从 0 开始，把 values 里的每个元素依次加到 result，最后返回总和。给出的片段没有确定的语法错误，本地解析结果也是 syntax-ok；但代码没有实际运行，不能据此断言所有输入都正确。",
+          "root_cause": "没有可定位的确定性问题。local_issues 为空、local_status 为 syntax-ok，说明本地解析器没有在这 5 行中发现语法错误；从静态阅读看，result 先初始化再累加、循环后返回，结构完整。因此本次不应编造错误。",
+          "mechanism": "Python 中 def 定义函数，函数体靠缩进表示层级。result = 0 建立局部变量；for value in values 依次取出可迭代对象的元素；result += value 等价于 result = result + value，要求两侧类型能支持加法；return result 把最终值交给调用方。若 values 为空，循环不执行，返回初始值 0。若元素类型不支持与整数相加，会在运行时抛异常，但这取决于未提供的输入，不能从片段断定。",
+          "example": "静态推断的最小反例（未运行）：若调用 total([1, \"2\"])，第 4 行会尝试 1 + \"2\"，在 Python 中整数与字符串相加会报 TypeError。这只是说明输入类型会影响结果，并不表示当前代码有确定错误；实际是否发生需由调用方数据验证。",
+          "alternatives": [
+            "保持现状：适用于调用方保证 values 为数值序列，且空序列返回 0 符合业务预期。",
+            "在函数内增加类型或输入校验并抛出明确异常：适用于需要尽早暴露错误输入的场景，但会增加代码复杂度。",
+            "在 docstring 中写明参数类型和空序列行为：适用于以文档约定为主、不想增加运行时检查的场景。"
+          ],
+          "prevention": "用最小用例分别验证空序列、单元素、多元素和异常类型输入；确认调用方传入的数据类型；若项目有测试框架，为 total 补充边界测试。当前 test_status 为 not-run，需实际运行后才能得出执行结论。",
+          "uncertainty": "未提供调用 total 的代码、values 的实际类型和业务对空序列的预期，因此无法判断是否存在语义层面的问题；也没有与当前 buffer_hash 匹配的执行证据，不能声称测试通过。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "b52a438205671212b8338d3bcdb399afe015d95a038152c28709546e9745f102",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 723,
+        "completion_tokens": 956,
+        "total_tokens": 1679
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 1,
+        "message": "暂不支持函数内的名称重新绑定或嵌套定义"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "b52a438205671212b8338d3bcdb399afe015d95a038152c28709546e9745f102",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      18
+    ],
+    "elapsed_ms": 7725,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "correct-return",
+    "category": "correct-code false-positive control",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def positive(x):\n    \"\"\"Return a bool for every integer x.\"\"\"\n    return x > 0\n"
+    },
+    "request": "检查这段代码；没有确定问题时明确说明，不要为了给建议编造错误。",
+    "expected": {
+      "category": "correct-code false-positive control",
+      "location": [],
+      "key_concepts": [
+        "complete boolean contract",
+        "correct code"
+      ],
+      "valid_code": true,
+      "expected_valid_behavior": "Accept as correct under stated contract; optional style advice must not be reported as a demonstrated defect."
+    },
+    "result": {
+      "status": "failed",
+      "mode": "live",
+      "review": null,
+      "failure_kind": "provider-error",
+      "workflow_mode": "direct-review"
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "9741c2215b7b280d002b0e11c6ce269a97b158f5d3bb01a3588b6cd7dad2ae6a",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      19
+    ],
+    "elapsed_ms": 12297,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "recheck-colon",
+    "category": "after-fix recheck",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def greet(name):\n    return name\n"
+    },
+    "request": "这是修改后的版本。只根据当前源码复查，不要沿用旧错误。",
+    "expected": {
+      "category": "after-fix recheck",
+      "location": [],
+      "key_concepts": [
+        "syntax fixed",
+        "no stale diagnosis"
+      ],
+      "valid_code": true,
+      "expected_valid_behavior": "Do not repeat former defect; assess only current supplied source and preserve uncertainty."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "当前源码只有两行：第 1 行定义函数 greet(name)，第 2 行直接返回参数 name。本地解析器给出的状态是 syntax-ok，local_issues 为空，因此没有可报告的语法错误。就这两行而言，函数能正常定义并返回传入值；但“修改后的版本”具体想修什么、期望 greet 做什么，从现有证据看不出来。如果原意是返回问候语（例如 \"Hello, \" + name），那么当前实现只返回名字，属于待确认的语义问题，而不是语法问题。测试状态为 not-run，也没有工具返回匹配当前 buffer_hash 的执行证据，所以不能声称该函数已通过任何运行验证。",
+        "hints": [
+          "若目标是返回问候语，可在第 2 行拼接前缀，例如 `    return \"Hello, \" + name`，然后用 `print(greet(\"Ada\"))` 手动验证输出。",
+          "若目标就是原样返回参数，则当前两行已满足，无需改动；建议补一个最小调用示例确认预期。",
+          "修改后先运行一次最小调用，确认返回值类型和内容符合预期，再扩展到其他用例。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def greet(name):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return name"
+          }
+        ],
+        "teaching": {
+          "summary": "这两行代码定义了一个接收 name 并原样返回它的函数。本地解析器确认语法没问题，也没有列出任何语法问题。真正需要确认的是：你希望 greet 返回名字本身，还是返回一句问候语。当前代码只完成了前者。",
+          "root_cause": "没有语法层面的直接原因可报告：local_status 为 syntax-ok，local_issues 为空。若你觉得“结果不对”，可能的原因是函数体只写了 `return name`，没有做任何字符串拼接或格式化；但这属于对需求的推断，现有两行代码本身不构成错误。",
+          "mechanism": "Python 用 def 定义函数，括号内是参数列表，冒号后跟缩进函数体。return 语句把表达式的值交回调用者并结束函数。这里表达式就是变量 name，所以 greet(\"Ada\") 会得到 \"Ada\" 本身，而不是 \"Hello, Ada\"。字符串拼接需要显式写出，例如用 + 连接，或用 f-string 格式化；Python 不会自动添加问候语。",
+          "example": "推断的最小反例（未运行）：调用 greet(\"Ada\") 时，按第 2 行 `    return name` 的语义会返回 \"Ada\"；若期望 \"Hello, Ada\"，则返回值与期望不符。这只是基于源码的静态推断，没有工具执行证据，不能视为已运行验证。",
+          "alternatives": [
+            "用加号拼接：`    return \"Hello, \" + name`，适用于 name 确定为字符串的情况。",
+            "用 f-string：`    return f\"Hello, {name}\"`，适用于希望格式更清晰、便于插入多个变量的情况。",
+            "保持原样返回：不改代码，适用于调用方自己负责拼接问候语的场景。"
+          ],
+          "prevention": "修改后先写一个最小调用并打印结果，核对返回值是否符合预期；再补充边界输入（如空字符串）检查行为。由于当前 test_status 为 not-run，任何“已通过”的结论都需要实际运行证据支持。",
+          "uncertainty": "请求只说“这是修改后的版本”，没有说明期望 greet 的具体行为，也没有提供调用方或测试用例。因此无法确定 `return name` 是遗漏还是有意为之；上述语义问题均需你确认目标后才能定论。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "before": "    return name",
+            "after": "    return \"Hello, \" + name",
+            "reason": "仅当需求是返回问候语时采用；当前证据未确认该需求，补丁仅供审阅。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "667fd9579d7108645c4fef73bb73360a1b36e4a8d4597688b19d9f4081897fcf",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 658,
+        "completion_tokens": 826,
+        "total_tokens": 1484
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "667fd9579d7108645c4fef73bb73360a1b36e4a8d4597688b19d9f4081897fcf",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      20
+    ],
+    "elapsed_ms": 6496,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "recheck-boundary",
+    "category": "after-fix recheck",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def last(values):\n    if not values:\n        return None\n    return values[-1]\n"
+    },
+    "request": "这是修改后的版本。只根据当前源码复查，不要沿用旧错误。",
+    "expected": {
+      "category": "after-fix recheck",
+      "location": [],
+      "key_concepts": [
+        "boundary fixed",
+        "empty guard"
+      ],
+      "valid_code": true,
+      "expected_valid_behavior": "Do not repeat former defect; assess only current supplied source and preserve uncertainty."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "当前源码只包含一个函数 last(values)：先判断 values 是否为空，为空返回 None，否则返回 values[-1]。本地解析器给出的状态是 syntax-ok，local_issues 为空，因此就现有证据看没有可定位的语法错误。需要区分的是：语法通过只说明代码能被解析，不代表函数在所有输入下都符合预期；test_status 为 not-run，也没有工具返回与当前 buffer_hash 匹配的执行证据，所以不能声称该函数已通过测试或行为完全正确。从静态阅读看，函数对“空序列返回 None、非空序列返回最后一个元素”的意图是自洽的，但 values 是否允许为 None、是否要求返回 None 还是抛异常、是否只接受支持索引和真值判断的序列，这些需求条件未给出，属于待确认的不确定性。",
+        "hints": [
+          "若需求是“空输入返回 None”，当前实现已符合静态意图；可补充针对空列表和非空列表的测试来验证，例如 assert last([]) is None 与 assert last([1, 2]) == 2。",
+          "若调用方可能传入 None，需要先明确契约：要么在函数入口增加 if values is None: return None，要么让调用方保证传入序列；不要仅凭当前代码推断 None 一定被支持。",
+          "复查时把“语法通过”和“行为正确”分开记录：先运行解析检查，再运行覆盖空序列、单元素、多元素的最小测试，避免把未执行的代码当作已验证。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def last(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    if not values:"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "        return None"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "    return values[-1]"
+          }
+        ],
+        "teaching": {
+          "summary": "这段代码定义了一个取序列最后一个元素的函数：空序列返回 None，非空序列返回末项。当前本地解析结果是语法正常，没有列出语法问题；但测试尚未运行，所以只能确认“能解析”，不能确认“所有输入下行为正确”。",
+          "root_cause": "没有发现可归因于当前源码的语法错误。local_status 为 syntax-ok 且 local_issues 为空，说明本地解析器没有报告语法层面的失败。若后续出现行为问题，根因需要结合具体输入和需求判断，例如 values 为 None 时 not values 为真会返回 None，而不是访问 values[-1]；这是静态推断出的边界行为，不是已执行验证的结论。",
+          "mechanism": "Python 中 if not values: 会对 values 做真值测试。空列表、空元组、空字符串等为假，因此进入 return None；非空序列为真，继续执行 values[-1]。负索引 -1 表示从末尾取一个元素，这是序列协议支持的写法。语法解析器只检查词法和语法结构，不检查运行时类型、索引是否可用或业务语义是否符合预期，所以 syntax-ok 与 test_status 为 not-run 是两件不同的事。",
+          "example": "静态推断的最小情形：last([]) 会因 not values 为真而返回 None；last([1, 2]) 会跳过 if 并返回 2。以上是根据第 2 至 4 行代码作出的推断，不是工具执行结果。当前没有与 buffer_hash 匹配的执行证据，因此不能写成“测试通过”。",
+          "alternatives": [
+            "保持现状：适用于需求就是“空序列返回 None、非空序列返回末项”，并补充最小测试验证。",
+            "在入口显式处理 None：适用于调用方可能传 None 且希望统一返回 None，可写 if values is None: return None，再处理空序列。",
+            "改为抛出异常：适用于空输入应被视为错误而非返回 None 的场景，可去掉空判断或改为 raise ValueError，但需先确认调用方契约。"
+          ],
+          "prevention": "先明确函数契约：values 允许哪些类型、空输入返回 None 还是抛异常、None 是否合法。然后用最小测试覆盖空列表、单元素列表和多元素列表，并记录测试是否实际运行。复查时分别报告语法检查结果和运行结果，不把未运行的测试当作通过。",
+          "uncertainty": "需求没有说明 values 是否可能为 None，也没有说明空输入应返回 None 还是报错；因此无法判断当前行为是否完全符合业务预期。test_status 为 not-run，且没有匹配当前 buffer_hash 的执行证据，所以不能断言函数已通过测试或覆盖所有边界。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "7a9c893e993ff22a97a2a6cc1633078d6f400c46538b39d232c9a8c32986b81f",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 707,
+        "completion_tokens": 976,
+        "total_tokens": 1683
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "7a9c893e993ff22a97a2a6cc1633078d6f400c46538b39d232c9a8c32986b81f",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      21
+    ],
+    "elapsed_ms": 7404,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "recheck-return",
+    "category": "after-fix recheck",
+    "use_tools": false,
+    "context_variant": "C",
+    "files": {
+      "main.py": "def positive(x):\n    return x > 0\n"
+    },
+    "request": "这是修改后的版本。只根据当前源码复查，不要沿用旧错误。",
+    "expected": {
+      "category": "after-fix recheck",
+      "location": [],
+      "key_concepts": [
+        "return fixed",
+        "all branches"
+      ],
+      "valid_code": true,
+      "expected_valid_behavior": "Do not repeat former defect; assess only current supplied source and preserve uncertainty."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "当前源码只有两行：第 1 行定义函数 positive(x)，第 2 行返回 x > 0。本地解析器报告 syntax-ok 且没有 local_issues，说明就这两行而言没有可定位的语法错误。函数名 positive 与实现 x > 0 在语义上一致：传入数值时返回布尔值，表示该数是否为正数。由于没有调用点、没有测试结果，也没有更多上下文，无法判断这个函数是否满足你的整体需求，也无法确认修改后的版本是否修复了旧问题。静态阅读只能说明这两行本身自洽，不能证明项目运行通过。",
+        "hints": [
+          "确认调用方传入的是可比较的数值类型，例如 positive(3) 应得到 True；若可能传入字符串，需要先明确类型约定。",
+          "如果需求是“非负”而非“正数”，把第 2 行改为 return x >= 0，并用 positive(0) 验证边界。",
+          "补充最小验证：分别调用 positive(1)、positive(0)、positive(-1)，检查结果是否符合预期，再决定是否需要改动。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def positive(x):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return x > 0"
+          }
+        ],
+        "teaching": {
+          "summary": "这两行定义了一个判断正数的函数：接收 x，返回 x 是否大于 0。本地解析器认为语法没问题，也没有报告局部问题。仅凭这两行，函数逻辑与名字一致，但无法确认它是否满足你的完整需求，因为缺少调用方和测试结果。",
+          "root_cause": "没有发现语法层面的直接原因。local_status 为 syntax-ok、local_issues 为空，说明当前提供的两行在解析阶段是合法的。若你之前遇到过错误，当前片段中已看不到对应证据，因此不能沿用旧结论，也不能断言旧错误已被修复。",
+          "mechanism": "Python 用 def 定义函数，函数体需要缩进。第 2 行的 return 把表达式 x > 0 的结果作为返回值。> 是比较运算符，对两个可比较对象返回布尔值 True 或 False。因此 positive 的语义是“x 是否严格大于 0”。需要注意，0 会返回 False，负数也返回 False；如果业务上把 0 视为正数或非负，这个实现就不符合预期。此外，如果 x 是不可比较的类型（例如某些对象），运行时会抛出 TypeError，但这属于运行期问题，静态解析不会报告。",
+          "example": "推断的最小验证（未实际执行）：调用 positive(1) 预期得到 True，positive(0) 预期得到 False，positive(-1) 预期得到 False。这些是根据第 2 行 x > 0 的静态推断，不是工具返回的执行证据；当前 test_status 为 not-run，因此不能声称测试通过。",
+          "alternatives": [
+            "保持严格正数语义：不改代码，适用于只需要判断 x > 0 的场景，并用 1、0、-1 三个输入验证边界。",
+            "改为非负语义：把第 2 行改为 return x >= 0，适用于 0 也应被视为满足条件的场景，并补充 positive(0) 应返回 True 的验证。",
+            "在调用前做类型检查或约定：适用于输入可能不是数值的情况，先明确接口契约，避免运行期比较出错。"
+          ],
+          "prevention": "修改后先确认函数名与边界语义一致，再针对边界值 0、正数、负数各写一个最小调用检查。查看本地解析结果只能排除语法问题，不能替代运行验证；需要实际执行或测试后才能判断行为是否符合需求。",
+          "uncertainty": "没有提供调用点、测试用例或旧版本代码，因此无法判断这次修改是否解决了原先的问题，也无法确认输入类型范围和“正数”是否包含 0。当前结论仅限这两行的静态阅读和本地解析器报告。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "95b934687be13a375cc3f24577a00931f437573bb36e40ffa01548d624071007",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 654,
+        "completion_tokens": 837,
+        "total_tokens": 1491
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "passed",
+      "stdout": "",
+      "error": null,
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "FunctionDef"
+        }
+      ],
+      "buffer_hash": "95b934687be13a375cc3f24577a00931f437573bb36e40ffa01548d624071007",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      22
+    ],
+    "elapsed_ms": 6988,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-arity",
+    "category": "cross-file dependencies",
+    "use_tools": true,
+    "context_variant": "C",
+    "files": {
+      "main.py": "from helpers import add\nresult = add(1)\n",
+      "helpers.py": "def add(a, b):\n    return a + b\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 1
+        }
+      ],
+      "key_concepts": [
+        "required argument",
+        "import binding"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：main.py 第 2 行调用 add(1) 只传了 1 个实参，而 helpers.py 第 1 行定义的 add(a, b) 需要 2 个形参，因此按静态推断会触发 TypeError（缺少位置参数 b）。这不是语法错误：本地解析器状态为 syntax-ok、local_issues 为空，说明代码能被解析；问题属于调用与定义之间的参数个数不匹配，属于运行期错误。关于“项目内依赖检查”：项目内唯一的 add 定义出现在 helpers.py 第 1 行（search_project 字面搜索与 get_references 词法出现均只找到这一处定义），main.py 第 1 行 from helpers import add 导入的正是这个实现，没有发现同名覆盖或其它实现，因此文档/注释若声称 add 只接收一个参数，应以代码为准。不确定性：未提供 helpers.py 之外的模块内容、未提供文档文本，也未运行测试（test_status 为 not-run），所以“运行时会报 TypeError”是静态推断而非实际执行结果；若 helpers.py 中还有未展示的默认参数或 *args 变体，结论需重新核对。",
+        "hints": [
+          "在调用处补齐第二个实参，例如把 main.py 第 2 行改为 result = add(1, 2)，然后运行该脚本确认不再报缺少参数。",
+          "若确实希望只传一个值，则修改 helpers.py 第 1 行给 b 提供默认值，例如 def add(a, b=0):，并明确默认值语义是否符合业务预期。",
+          "核对文档与注释：以 helpers.py 第 1 行的实际签名为准，若文档写的是单参数版本，应更新文档而不是改代码。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "from helpers import add"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "result = add(1)"
+          },
+          {
+            "path": "helpers.py",
+            "line": 1,
+            "quote": "def add(a, b):"
+          },
+          {
+            "path": "helpers.py",
+            "line": 2,
+            "quote": "    return a + b"
+          }
+        ],
+        "teaching": {
+          "summary": "导入本身没问题：main.py 从 helpers 导入的 add，就是 helpers.py 里定义的那个函数。问题出在调用时少给了一个参数——定义要两个（a 和 b），调用只给了一个（1）。这类错误代码能正常解析，但一运行就会报缺少参数。",
+          "root_cause": "helpers.py 第 1 行 def add(a, b): 声明了两个必填位置参数；main.py 第 2 行 result = add(1) 只提供了一个位置实参。Python 在调用时按位置把实参绑定到形参，绑定后 b 没有对应值，且没有默认值，于是抛出 TypeError: add() missing 1 required positional argument: 'b'。这是静态推断，因为 test_status 为 not-run，没有实际执行证据。",
+          "mechanism": "Python 函数调用时先做参数绑定：位置实参按顺序填入形参列表，剩余没有默认值的形参即为缺失。形参是否必填由定义处决定，调用处无法“少传”来绕过，除非该形参有默认值或函数使用 *args/**kwargs 收集。另一方面，import 只负责把名字绑定到对象，from helpers import add 会把 helpers 模块中的 add 函数对象引入当前命名空间；它不会检查调用参数个数，所以导入语句本身不会报错，错误延迟到调用时发生。这也是为什么本地解析器给出 syntax-ok：语法层面 add(1) 是合法表达式，参数个数属于语义/运行期约束。",
+          "example": "推断的最小反例（未执行）：\n\ndef add(a, b):\n    return a + b\n\nadd(1)   # 推断会抛 TypeError: missing 1 required positional argument: 'b'\nadd(1, 2)  # 推断返回 3\n\n实际工具证据：get_diagnostics 返回空列表（source 为 local-parser），说明没有本地解析器记录的语法问题；search_project 对 \"def add\" 只命中 helpers.py 第 1 行，get_references 对 add 只命中 main.py 第 1、2 行与 helpers.py 第 1 行，说明项目内可见范围内只有一个 add 定义，导入目标唯一。",
+          "alternatives": [
+            "在调用处补参数：把 main.py 第 2 行改为 result = add(1, 2)；适用于调用者确实知道第二个加数。",
+            "在定义处给默认值：把 helpers.py 第 1 行改为 def add(a, b=0):；适用于“第二个加数可省略”是合理业务语义，且所有调用方都能接受默认值。",
+            "保持签名不变并显式校验：在 add 内部或调用前检查参数，用更清晰的错误信息提示调用方；适用于该函数是公共接口、需要防止误用。"
+          ],
+          "prevention": "修改后运行该脚本或最小测试用例，确认 add(1) 不再被调用、add(1, 2) 返回预期值；同时检查项目内其它调用点是否也少传参数（可用 get_references 对 add 做词法检索，但注意它只是词法出现，不是语义解析）。阅读文档时以 helpers.py 的实际签名为准，若文档与代码不一致，先确认哪一方是权威来源再改。",
+          "uncertainty": "未提供 helpers.py 的完整内容，无法排除文件后面还有其它 add 定义或装饰器改变签名；未提供文档/注释原文，无法判断文档与代码具体差异；test_status 为 not-run，且没有 hash 匹配的执行结果，因此所有运行期行为均为静态推断，未经实际执行验证。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "before": "result = add(1)",
+            "after": "result = add(1, 2)",
+            "reason": "调用处补齐第二个位置参数，与 helpers.py 中 add(a, b) 的签名匹配；仅为建议，未应用、未验证。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "1778bacc4e7d6efe7904b3bc83ea70c9c7b409e9f4a4f7cf860219fbf4133423",
+      "tool_trace": [
+        {
+          "id": "call_00_Po341nqJHu3p5Ek06cVp8565",
+          "name": "get_current_file",
+          "arguments": {
+            "start_line": 1,
+            "end_line": 40
+          },
+          "status": "ok",
+          "turn": 1,
+          "result_chars": 144,
+          "snippet_count": 2
+        },
+        {
+          "id": "call_01_0Ejfd7epGUMN8WfEnodB4374",
+          "name": "get_diagnostics",
+          "arguments": {},
+          "status": "ok",
+          "turn": 1,
+          "result_chars": 50,
+          "snippet_count": 0
+        },
+        {
+          "id": "call_00_7Hs0EPhVrsJB2CiGVq7n5626",
+          "name": "search_project",
+          "arguments": {
+            "query": "def add",
+            "limit": 10
+          },
+          "status": "ok",
+          "turn": 2,
+          "result_chars": 107,
+          "snippet_count": 1
+        },
+        {
+          "id": "call_01_w9fArebYYE0tApllMf9z8207",
+          "name": "get_references",
+          "arguments": {
+            "symbol": "add",
+            "limit": 10
+          },
+          "status": "ok",
+          "turn": 2,
+          "result_chars": 234,
+          "snippet_count": 3
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 5047,
+        "completion_tokens": 1494,
+        "total_tokens": 6541
+      },
+      "model_turns": 3,
+      "workflow_mode": "native-tools"
+    },
+    "execution": {
+      "status": "runtime-error",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 2,
+        "message": "TypeError: 实参数量与形参数量不符"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "FunctionDef"
+        },
+        {
+          "path": "main.py",
+          "line": 2,
+          "event": "Assign"
+        }
+      ],
+      "buffer_hash": "1778bacc4e7d6efe7904b3bc83ea70c9c7b409e9f4a4f7cf860219fbf4133423",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      23,
+      24,
+      25
+    ],
+    "elapsed_ms": 10713,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-alias",
+    "category": "cross-file dependencies",
+    "use_tools": true,
+    "context_variant": "C",
+    "files": {
+      "main.py": "from helpers import normalize as clean\nprint(clean(2).strip())\n",
+      "helpers.py": "def normalize(value):\n    return value + 1\n",
+      "other.py": "def normalize(value):\n    return str(value)\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "import alias",
+        "integer return",
+        "duplicate symbol"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "failed",
+      "mode": "live",
+      "review": null,
+      "failure_kind": "invalid-output",
+      "tool_trace": [
+        {
+          "id": "call_00_YaWXsxKYLv6Ftgi7qQ5e2980",
+          "name": "get_current_file",
+          "arguments": {
+            "start_line": 1,
+            "end_line": 10
+          },
+          "status": "ok",
+          "turn": 1,
+          "result_chars": 167,
+          "snippet_count": 2
+        },
+        {
+          "id": "call_01_qwNit4WBTuFH8ndCS4TI3671",
+          "name": "get_references",
+          "arguments": {
+            "symbol": "normalize"
+          },
+          "status": "ok",
+          "turn": 1,
+          "result_chars": 263,
+          "snippet_count": 3
+        },
+        {
+          "id": "call_02_FeB26tHOnFKiCO0UI4vq9314",
+          "name": "get_diagnostics",
+          "arguments": {},
+          "status": "ok",
+          "turn": 1,
+          "result_chars": 50,
+          "snippet_count": 0
+        },
+        {
+          "id": "call_00_ufG0Dt4TdlpzvclM6O1K5583",
+          "name": "get_current_file",
+          "arguments": {
+            "end_line": 10,
+            "start_line": 1
+          },
+          "status": "ok",
+          "turn": 2,
+          "result_chars": 167,
+          "snippet_count": 2
+        },
+        {
+          "id": "call_01_lZojlJMmSsc5oE6QyY189778",
+          "name": "search_project",
+          "arguments": {
+            "query": "def normalize",
+            "limit": 10
+          },
+          "status": "ok",
+          "turn": 2,
+          "result_chars": 175,
+          "snippet_count": 2
+        },
+        {
+          "id": "call_02_8PXmoEH2FPTqgXrv7KnW1213",
+          "name": "get_execution_result",
+          "arguments": {},
+          "status": "ok",
+          "turn": 2,
+          "result_chars": 706,
+          "snippet_count": 0
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 5529,
+        "completion_tokens": 1644,
+        "total_tokens": 7173
+      },
+      "model_turns": 3,
+      "workflow_mode": "native-tools"
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "helpers.py",
+        "line": 2,
+        "message": "只允许项目模块的公开名称"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "FunctionDef"
+        },
+        {
+          "path": "main.py",
+          "line": 2,
+          "event": "Expr"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "call-parameters",
+          "values": {
+            "value": 2
+          }
+        },
+        {
+          "path": "helpers.py",
+          "line": 2,
+          "event": "Return"
+        },
+        {
+          "path": "helpers.py",
+          "line": 2,
+          "event": "return-value",
+          "value": 3
+        }
+      ],
+      "buffer_hash": "184f995b0b57795bfabd10942d37938253086b18f0a761d83a1dfc9bf6a7c72e",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      26,
+      27,
+      28
+    ],
+    "elapsed_ms": 12152,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-relative",
+    "category": "cross-file dependencies",
+    "use_tools": true,
+    "context_variant": "C",
+    "files": {
+      "pkg/main.py": "from .helpers import score\nprint(score([]))\n",
+      "pkg/helpers.py": "def score(values):\n    return max(values)\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "pkg/main.py",
+          "line": 2
+        },
+        {
+          "path": "pkg/helpers.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "relative import",
+        "empty sequence"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "failed",
+      "mode": "live",
+      "review": null,
+      "failure_kind": "model-turn-limit",
+      "tool_trace": [
+        {
+          "id": "call_00_GrNkLLkqruyo7mbbI6Ln1792",
+          "name": "get_current_file",
+          "arguments": {
+            "start_line": 1,
+            "end_line": 40
+          },
+          "status": "ok",
+          "turn": 1,
+          "result_chars": 156,
+          "snippet_count": 2
+        },
+        {
+          "id": "call_01_8lv66chOQwBpUUDhyTb85347",
+          "name": "get_diagnostics",
+          "arguments": {},
+          "status": "ok",
+          "turn": 1,
+          "result_chars": 50,
+          "snippet_count": 0
+        },
+        {
+          "id": "call_00_DxbdvraAnNPIb2XOt1eR1525",
+          "name": "get_current_file",
+          "arguments": {
+            "end_line": 40,
+            "start_line": 1
+          },
+          "status": "ok",
+          "turn": 2,
+          "result_chars": 156,
+          "snippet_count": 2
+        },
+        {
+          "id": "call_01_UphWdYJ9F8B4F3fuHxn64986",
+          "name": "search_project",
+          "arguments": {
+            "query": "def score",
+            "limit": 10
+          },
+          "status": "ok",
+          "turn": 2,
+          "result_chars": 115,
+          "snippet_count": 1
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 5055,
+        "completion_tokens": 238,
+        "total_tokens": 5293
+      },
+      "model_turns": 3,
+      "workflow_mode": "native-tools"
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "pkg/main.py",
+        "line": 1,
+        "message": "暂不支持相对导入执行"
+      },
+      "trace": [
+        {
+          "path": "pkg/main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        }
+      ],
+      "buffer_hash": "da867aec0b06eb5dd431d97038b8f52f82d577de7bbdfa719fde1824b47ad41f",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "pkg/main.py"
+    },
+    "request_indices": [
+      29,
+      30,
+      31
+    ],
+    "elapsed_ms": 3685,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-arity",
+    "category": "cross-file dependencies",
+    "use_tools": false,
+    "context_variant": "A",
+    "files": {
+      "main.py": "from helpers import add\nresult = add(1)\n",
+      "helpers.py": "def add(a, b):\n    return a + b\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 1
+        }
+      ],
+      "key_concepts": [
+        "required argument",
+        "import binding"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "failed",
+      "mode": "live",
+      "review": null,
+      "failure_kind": "invalid-output",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 665,
+        "completion_tokens": 932,
+        "total_tokens": 1597
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "runtime-error",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 2,
+        "message": "TypeError: 实参数量与形参数量不符"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "FunctionDef"
+        },
+        {
+          "path": "main.py",
+          "line": 2,
+          "event": "Assign"
+        }
+      ],
+      "buffer_hash": "1778bacc4e7d6efe7904b3bc83ea70c9c7b409e9f4a4f7cf860219fbf4133423",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      32
+    ],
+    "elapsed_ms": 7212,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-arity",
+    "category": "cross-file dependencies",
+    "use_tools": false,
+    "context_variant": "B",
+    "files": {
+      "main.py": "from helpers import add\nresult = add(1)\n",
+      "helpers.py": "def add(a, b):\n    return a + b\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 1
+        }
+      ],
+      "key_concepts": [
+        "required argument",
+        "import binding"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "failed",
+      "mode": "live",
+      "review": null,
+      "failure_kind": "invalid-output",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 712,
+        "completion_tokens": 1131,
+        "total_tokens": 1843
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "runtime-error",
+      "stdout": "",
+      "error": {
+        "path": "main.py",
+        "line": 2,
+        "message": "TypeError: 实参数量与形参数量不符"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "FunctionDef"
+        },
+        {
+          "path": "main.py",
+          "line": 2,
+          "event": "Assign"
+        }
+      ],
+      "buffer_hash": "1778bacc4e7d6efe7904b3bc83ea70c9c7b409e9f4a4f7cf860219fbf4133423",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      33
+    ],
+    "elapsed_ms": 8930,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-alias",
+    "category": "cross-file dependencies",
+    "use_tools": false,
+    "context_variant": "A",
+    "files": {
+      "main.py": "from helpers import normalize as clean\nprint(clean(2).strip())\n",
+      "helpers.py": "def normalize(value):\n    return value + 1\n",
+      "other.py": "def normalize(value):\n    return str(value)\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "import alias",
+        "integer return",
+        "duplicate symbol"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：本地解析器已确认这两行没有语法错误（local_status 为 syntax-ok，local_issues 为空），因此问题不在 Python 语法层面，而在于运行时语义：第 1 行把 helpers.normalize 以别名 clean 导入，第 2 行直接对 clean(2) 的返回值调用 .strip()。若 normalize 返回的不是字符串（例如返回整数、None 或自定义对象），.strip() 就会在运行时失败；若 normalize 返回字符串，则这行是合法的。由于未提供 helpers.py 的内容，无法确认 normalize 的实际实现，也无法确认文档描述与代码是否一致，这一点必须通过查看 helpers.py 中 normalize 的定义来核对。另外，导入语句本身只证明名字存在性由模块决定，不能证明 clean(2) 的返回类型。test_status 为 not-run，且没有工具返回匹配当前 buffer_hash 的执行证据，所以不能声称已运行或测试通过。",
+        "hints": [
+          "先打开 helpers.py，定位 def normalize(...) 的返回语句，确认它返回 str 还是其他类型；这是区分文档与代码的关键一步。",
+          "若 normalize 可能返回非字符串，在调用处显式转换或先判断类型，例如 print(str(clean(2)).strip()) 或先赋值再检查 isinstance(value, str)。",
+          "验证方式：在本地用最小脚本打印 type(clean(2))，或阅读 normalize 的 return 分支；不要仅凭文档字符串判断返回类型。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "from helpers import normalize as clean"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(clean(2).strip())"
+          }
+        ],
+        "teaching": {
+          "summary": "这两行代码语法没问题，解析器也确认了。真正要核对的是 helpers 模块里 normalize 到底返回什么：第 2 行把它的返回值当成字符串来用（调用 .strip()），如果实际返回的不是字符串，运行时就会出错。项目里文档和代码可能不一致，所以应以 helpers.py 的实际实现为准。",
+          "root_cause": "直接原因是第 2 行对 clean(2) 的返回值直接调用 .strip()，这要求该返回值是字符串（或至少实现了 strip 方法）。第 1 行只说明 normalize 被导入并重命名为 clean，并不保证其返回类型。由于未提供 helpers.py，无法确认 normalize 的实现，因此这是一个待验证的运行时类型假设，而不是已确定的语法错误。",
+          "mechanism": "Python 的 import 语句只负责把模块中的名字绑定到当前命名空间，别名 clean 指向的就是 helpers.normalize 这个函数对象，导入本身不检查参数或返回类型。属性访问 clean(2).strip() 的执行顺序是：先调用 clean(2) 得到返回值，再在该返回值上查找 strip 属性并调用。如果返回值是 str，strip 存在且可用；如果是 int、None 等，会抛出 AttributeError；如果返回自定义对象且没有 strip，同样失败。因此类型契约由 normalize 的实现决定，而不是由导入语句或文档字符串决定。",
+          "example": "推断的最小反例（未运行，仅用于说明机制）：若 helpers.py 中 normalize 定义为 def normalize(x): return x * 2，则 clean(2) 返回 4，4.strip() 会因整数没有 strip 方法而失败。反之若 normalize 返回字符串，则第 2 行可正常执行。实际证据仅为提供的两行代码和 local_status=syntax-ok；没有工具返回匹配 buffer_hash 的执行结果，故不能断言运行结果。",
+          "alternatives": [
+            "核对 helpers.py 中 normalize 的 return 分支，若确实返回非字符串，在调用处转换：print(str(clean(2)).strip())；适用于确认需要字符串输出的场景。",
+            "若 normalize 的返回类型不确定，先赋值并检查：value = clean(2); print(value.strip() if isinstance(value, str) else value)；适用于需要兼容多种返回类型的场景。",
+            "若文档与实现不一致，以代码为准修正文档或统一 normalize 的返回契约；适用于该函数被多处调用、需要稳定接口的场景。"
+          ],
+          "prevention": "核对依赖实现时，优先阅读被导入模块的函数定义和 return 语句，而不是只看文档字符串或注释。对返回值做类型敏感操作前，可用 type() 或 isinstance() 做最小验证，或写一个只覆盖该调用的小脚本。修改后重新运行本地解析与相关测试，并注意区分“语法通过”和“运行通过”。",
+          "uncertainty": "未提供 helpers.py，无法确认 normalize 的参数含义、返回类型及是否存在副作用；也未提供项目文档内容，无法判断文档与代码具体在哪一点不一致。test_status 为 not-run，且没有匹配当前 buffer_hash 的执行证据，因此所有关于运行时行为的判断都是静态推断，需实际查看实现或运行最小验证后确认。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "184f995b0b57795bfabd10942d37938253086b18f0a761d83a1dfc9bf6a7c72e",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 666,
+        "completion_tokens": 1045,
+        "total_tokens": 1711
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "helpers.py",
+        "line": 2,
+        "message": "只允许项目模块的公开名称"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "FunctionDef"
+        },
+        {
+          "path": "main.py",
+          "line": 2,
+          "event": "Expr"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "call-parameters",
+          "values": {
+            "value": 2
+          }
+        },
+        {
+          "path": "helpers.py",
+          "line": 2,
+          "event": "Return"
+        },
+        {
+          "path": "helpers.py",
+          "line": 2,
+          "event": "return-value",
+          "value": 3
+        }
+      ],
+      "buffer_hash": "184f995b0b57795bfabd10942d37938253086b18f0a761d83a1dfc9bf6a7c72e",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      34
+    ],
+    "elapsed_ms": 7849,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-alias",
+    "category": "cross-file dependencies",
+    "use_tools": false,
+    "context_variant": "B",
+    "files": {
+      "main.py": "from helpers import normalize as clean\nprint(clean(2).strip())\n",
+      "helpers.py": "def normalize(value):\n    return value + 1\n",
+      "other.py": "def normalize(value):\n    return str(value)\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 2
+        },
+        {
+          "path": "helpers.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "import alias",
+        "integer return",
+        "duplicate symbol"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：本地解析器报告语法正常，也没有给出任何 local_issues，因此这里不存在已确定的语法错误；问题更可能出在“导入的实现与调用方式是否匹配”这一层，但仅凭给出的四行代码无法确认运行结果。位置在 main.py 第 1 行导入 helpers.normalize 并重命名为 clean，第 2 行立即调用 clean(2) 再对返回值调用 .strip()。helpers.py 第 1 至 2 行显示 normalize(value) 返回 value + 1，即返回一个数值而不是字符串。静态推断：clean(2) 得到 3，而 3 没有 strip 方法，因此第 2 行在运行期很可能抛出 AttributeError；这是待验证的推断，不是工具执行证据。另外，request 提到“项目内依赖检查问题”和“区分文档与代码”，但提供的片段中没有依赖清单、文档或其它实现文件，无法核对是否存在同名模块、版本差异或文档描述与代码不一致，需要补充这些文件才能判断。",
+        "hints": [
+          "先核对导入来源：确认 helpers 解析到的是当前 helpers.py，而不是同名的第三方包或缓存文件；可在导入后打印 clean.__module__ 与 clean.__code__.co_filename 验证。",
+          "让调用与返回类型匹配：若 normalize 返回数值，就不要对结果调用 .strip()，例如改为 print(clean(2))；若本意是返回字符串，则应在 helpers.py 中返回字符串，例如 return str(value + 1)。",
+          "用最小验证步骤确认推断：单独执行 print(clean(2)) 观察输出类型，再执行 print(clean(2).strip()) 观察是否报错，从而区分“类型不匹配”与“导入到了别的实现”。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "from helpers import normalize as clean"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(clean(2).strip())"
+          },
+          {
+            "path": "helpers.py",
+            "line": 1,
+            "quote": "def normalize(value):"
+          },
+          {
+            "path": "helpers.py",
+            "line": 2,
+            "quote": "    return value + 1"
+          }
+        ],
+        "teaching": {
+          "summary": "语法检查通过，说明代码能被解析。真正可疑的是类型与导入来源：main.py 把 helpers.normalize 当作返回字符串的函数使用，但 helpers.py 里它返回的是数值加一的结果。因此第 2 行的 .strip() 很可能在运行时失败。至于“依赖检查”和“文档与代码不一致”，现有片段不足以判断，需要更多文件。",
+          "root_cause": "直接原因是调用契约不匹配：main.py 第 2 行对 clean(2) 的返回值调用 .strip()，而 helpers.py 第 2 行 return value + 1 表明该函数返回数值。数值类型没有 strip 方法，所以静态推断会在运行期报 AttributeError。另一个未排除的因素是导入解析：main.py 第 1 行 from helpers import normalize 实际加载的 helpers 模块是否就是给出的 helpers.py，片段本身无法证明。",
+          "mechanism": "Python 的 import 会按模块搜索路径查找名为 helpers 的模块，找到后取其中的 normalize 属性并绑定到本地名 clean。函数调用时只按函数体实际返回的对象决定后续可用操作，与函数名或文档描述无关。value + 1 在 value 为整数时得到整数，整数对象没有 strip 方法；strip 是字符串方法，用于去除首尾空白。因此“函数名暗示字符串处理”并不能保证返回字符串，调用方必须依据真实返回类型使用结果。语法检查只验证词法与语法结构，不检查属性是否存在，也不检查导入到的是哪个文件。",
+          "example": "推断的最小反例（未执行）：clean(2) 返回 3，随后 3.strip() 触发 AttributeError。实际工具证据仅为：local_status 为 syntax-ok、local_issues 为空、test_status 为 not-run，说明没有已确认的语法错误，也没有执行证据支持运行结果。",
+          "alternatives": [
+            "去掉 .strip()，直接使用数值结果：适用于调用方只需要数值的情况，改动最小。",
+            "在 helpers.py 中返回字符串，例如 return str(value + 1)：适用于该函数对外约定就是返回可 strip 的文本，但需检查其它调用方是否依赖数值。",
+            "在 main.py 中显式转换，例如 print(str(clean(2)).strip())：适用于只想在调用处适配，但会掩盖函数返回类型与命名不一致的问题。"
+          ],
+          "prevention": "先确认导入来源，打印 clean.__module__ 和函数所在文件路径，排除同名模块或旧缓存；再单独打印 clean(2) 及其类型，确认返回的是数值还是字符串；最后再运行带 .strip() 的完整表达式，对比两次结果。修改后重新运行最小示例，并检查项目内其它调用 normalize 的位置是否受返回类型变化影响。依赖与文档一致性需要结合依赖清单和文档原文核对，当前片段不足。",
+          "uncertainty": "未提供依赖清单、文档内容、其它调用点或运行输出，因此无法确认 helpers 实际解析到哪个文件，也无法确认是否真的抛出 AttributeError；test_status 为 not-run，没有任何执行证据。request 中“依赖检查问题”的具体表现未知，需要补充相关文件与报错信息。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "before": "print(clean(2).strip())",
+            "after": "print(clean(2))",
+            "reason": "helpers.normalize 返回数值，去掉对数值调用 strip 的最小改动；仅为审阅建议，未应用未验证。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "184f995b0b57795bfabd10942d37938253086b18f0a761d83a1dfc9bf6a7c72e",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 712,
+        "completion_tokens": 1208,
+        "total_tokens": 1920
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "helpers.py",
+        "line": 2,
+        "message": "只允许项目模块的公开名称"
+      },
+      "trace": [
+        {
+          "path": "main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "FunctionDef"
+        },
+        {
+          "path": "main.py",
+          "line": 2,
+          "event": "Expr"
+        },
+        {
+          "path": "helpers.py",
+          "line": 1,
+          "event": "call-parameters",
+          "values": {
+            "value": 2
+          }
+        },
+        {
+          "path": "helpers.py",
+          "line": 2,
+          "event": "Return"
+        },
+        {
+          "path": "helpers.py",
+          "line": 2,
+          "event": "return-value",
+          "value": 3
+        }
+      ],
+      "buffer_hash": "184f995b0b57795bfabd10942d37938253086b18f0a761d83a1dfc9bf6a7c72e",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "main.py"
+    },
+    "request_indices": [
+      35
+    ],
+    "elapsed_ms": 8517,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-relative",
+    "category": "cross-file dependencies",
+    "use_tools": false,
+    "context_variant": "A",
+    "files": {
+      "pkg/main.py": "from .helpers import score\nprint(score([]))\n",
+      "pkg/helpers.py": "def score(values):\n    return max(values)\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "pkg/main.py",
+          "line": 2
+        },
+        {
+          "path": "pkg/helpers.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "relative import",
+        "empty sequence"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：本地解析器只确认了 pkg/main.py 两行语法可解析，没有任何执行证据；因此无法判断 score([]) 的返回值、是否抛异常，也无法判断 from .helpers import score 是否真的能导入到预期实现。你要求“优先核对实际导入的实现，区分文档与代码”，但当前 snippets 只给了 pkg/main.py 第 1、2 行，没有提供 pkg/helpers.py 或包初始化文件的内容，所以“实际导入的实现”在证据上缺失，不能推测。位置：第 1 行是相对导入，第 2 行立即调用 score 并传入空列表。根因层面目前只能确定语法通过；导入解析、名称是否存在、空列表是否被接受都属于待验证项。静态上可推断：该导入是包内相对导入，只有在 pkg 作为包被导入（而非直接以脚本方式运行 pkg/main.py）时才符合相对导入规则；但这是规则推断，不是对项目的实际验证。文档与代码是否一致无法从这两行判断。",
+        "hints": [
+          "先打开 pkg/helpers.py，确认其中是否定义了 score，以及它对空列表的处理；这是核对“实际导入实现”的最小步骤。",
+          "确认运行方式：若直接执行 python pkg/main.py，相对导入可能失败；可改为 python -m pkg.main 验证包上下文，或按项目约定调整导入。",
+          "用一个最小输入验证行为，例如在能导入的环境下调用 score([]) 并观察返回值或异常；不要仅凭文档描述下结论。"
+        ],
+        "citations": [
+          {
+            "path": "pkg/main.py",
+            "line": 1,
+            "quote": "from .helpers import score"
+          },
+          {
+            "path": "pkg/main.py",
+            "line": 2,
+            "quote": "print(score([]))"
+          }
+        ],
+        "teaching": {
+          "summary": "这两行代码从同包的 helpers 模块导入 score，然后用空列表调用并打印结果。本地只确认语法没问题，没有运行过，所以不能断定导入一定成功，也不能断定 score([]) 会返回什么或是否报错。要回答“实际导入的实现是什么”，必须看 pkg/helpers.py 的真实代码，而不是只看文档。",
+          "root_cause": "当前证据不足：snippets 只包含 pkg/main.py 的导入行和调用行，没有 helpers 模块内容，也没有包结构或初始化文件。因此无法确定 score 的定义、参数约束和空列表行为。唯一确定的事实是 local_status 为 syntax-ok 且 local_issues 为空，这只说明本地解析器未发现语法错误。",
+          "mechanism": "from .helpers import score 中的点表示相对导入，它依赖当前模块所属的包上下文。score([]) 把空列表作为实参传入；函数是否接受空列表、返回何值、是否抛异常，取决于 helpers 中 score 的实现，而该实现未提供。文档描述可能与代码不一致，因此核对时应以实际被导入模块的源码为准，并用受控执行验证行为；当前没有工具返回匹配 buffer_hash 的执行证据，不能声称运行结果。",
+          "example": "推断的最小反例（未运行）：若 helpers.py 中 score 的实现对空列表取首元素或做除法，score([]) 可能抛异常；若它对空列表返回 0，则打印 0。两种都可能，取决于未提供的实现。实际工具证据仅有：local_status 为 syntax-ok、local_issues 为空、test_status 为 not-run。",
+          "alternatives": [
+            "补充 helpers 源码后静态核对：适用于需要确认实际实现与文档是否一致；先查看 score 的定义和空列表分支。",
+            "在包上下文中做最小执行验证：适用于需要确认导入与调用行为；例如用 python -m pkg.main 运行，并记录输出或异常。",
+            "若 score 不支持空列表，则在调用处传入符合约定的输入或增加空列表处理：适用于调用方需要防御空输入的情况，但需先确认函数契约。"
+          ],
+          "prevention": "核对导入问题时，先定位被导入模块的真实源码，再检查运行方式是否提供包上下文；用最小输入做一次受控验证，并区分“语法通过”“导入成功”“行为符合预期”三个层次。文档结论要与代码实现交叉确认，不能只依据其中一方。",
+          "uncertainty": "缺少 pkg/helpers.py 内容、包初始化文件和项目运行配置，无法确认 score 是否存在、空列表是否合法、相对导入在实际运行方式下是否成立；test_status 为 not-run，也没有匹配 buffer_hash 的执行证据，因此所有行为判断均为待验证。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "da867aec0b06eb5dd431d97038b8f52f82d577de7bbdfa719fde1824b47ad41f",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 666,
+        "completion_tokens": 966,
+        "total_tokens": 1632
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "pkg/main.py",
+        "line": 1,
+        "message": "暂不支持相对导入执行"
+      },
+      "trace": [
+        {
+          "path": "pkg/main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        }
+      ],
+      "buffer_hash": "da867aec0b06eb5dd431d97038b8f52f82d577de7bbdfa719fde1824b47ad41f",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "pkg/main.py"
+    },
+    "request_indices": [
+      36
+    ],
+    "elapsed_ms": 8915,
+    "semantic_review": "pending-human-review"
+  },
+  {
+    "case_id": "cross-relative",
+    "category": "cross-file dependencies",
+    "use_tools": false,
+    "context_variant": "B",
+    "files": {
+      "pkg/main.py": "from .helpers import score\nprint(score([]))\n",
+      "pkg/helpers.py": "def score(values):\n    return max(values)\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "pkg/main.py",
+          "line": 2
+        },
+        {
+          "path": "pkg/helpers.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "relative import",
+        "empty sequence"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：本地解析器已确认语法正常（syntax-ok），且没有本地语法问题；但代码在运行期存在一个待验证的逻辑风险：pkg/main.py 第 2 行调用 score([])，而 pkg/helpers.py 第 2 行实现为 return max(values)，对空列表调用 max 会抛出 ValueError。按 request 要求，先核对实际导入的实现：第 1 行 from .helpers import score 指向同包 helpers.py 中的 score，因此实际执行的是 max(values) 这一实现，而不是任何文档描述。文档与代码是否一致无法从给出的片段判断，因为未提供文档内容。test_status 为 not-run，说明没有执行证据，上述 ValueError 属于静态推断，不是实际运行结果。",
+        "hints": [
+          "在调用处避免传入空列表，或先判断：if values: return max(values)，否则返回约定的默认值（如 0 或 None），需先确认业务语义。",
+          "若希望空列表有明确结果，可在 helpers.py 中改为 return max(values, default=0)，并确认 0 是否为合理默认值。",
+          "验证步骤：为 score([]) 和 score([1,2]) 各写一个最小测试，运行后确认空输入行为符合预期；同时核对文档中关于空输入的说明是否与实现一致。"
+        ],
+        "citations": [
+          {
+            "path": "pkg/main.py",
+            "line": 1,
+            "quote": "from .helpers import score"
+          },
+          {
+            "path": "pkg/main.py",
+            "line": 2,
+            "quote": "print(score([]))"
+          },
+          {
+            "path": "pkg/helpers.py",
+            "line": 1,
+            "quote": "def score(values):"
+          },
+          {
+            "path": "pkg/helpers.py",
+            "line": 2,
+            "quote": "    return max(values)"
+          }
+        ],
+        "teaching": {
+          "summary": "语法检查通过，但 score 的实现直接对传入列表取最大值。main.py 传入的是空列表，而 max 对空序列没有可比较元素，静态推断会报错。实际导入的是同包 helpers.py 里的 score，所以应以该实现为准，而不是文档描述。由于测试未运行，这只是待验证的推断。",
+          "root_cause": "pkg/helpers.py 第 2 行 return max(values) 在 values 为空时没有可返回的最大值，Python 内置 max 对空可迭代对象会抛出 ValueError。pkg/main.py 第 2 行恰好以 [] 调用，因此该调用路径在运行期很可能失败。",
+          "mechanism": "max 的工作方式是遍历可迭代对象并比较元素，要求至少有一个元素；空序列没有候选值，无法确定最大值，因此抛出 ValueError。from .helpers import score 表示从同一包的 helpers 模块导入 score，所以调用绑定到 helpers.py 中的函数定义，而不是其他同名实现或文档示例。语法解析只检查代码结构是否合法，不检查运行期取值，因此 syntax-ok 与运行期风险可以同时存在。",
+          "example": "静态推断的最小反例：score([]) 进入 helpers.py 第 2 行 max([])，按 Python 语义会抛出 ValueError。这是基于所给代码行的推断，不是工具执行证据；test_status 为 not-run，未实际运行验证。",
+          "alternatives": [
+            "在 helpers.py 使用 max(values, default=0)：适用于空输入应有确定默认值且 0 合理的场景。",
+            "在调用前判断空列表并单独处理：适用于空输入需要特殊提示或返回 None 的场景。",
+            "在 score 内显式 if not values: 返回约定值：适用于需要记录日志或区分空输入的场景。"
+          ],
+          "prevention": "为 score 补充空列表与非空列表的最小测试并实际运行；核对文档中关于空输入和默认值的描述是否与 helpers.py 实现一致；修改后重新运行测试确认行为，而不是仅依赖语法检查。",
+          "uncertainty": "未提供文档内容，无法判断文档与代码是否冲突；未提供测试或运行结果，ValueError 属于静态推断；空输入应返回什么值取决于业务约定，需确认。"
+        },
+        "patches": [
+          {
+            "path": "pkg/helpers.py",
+            "line": 2,
+            "before": "    return max(values)",
+            "after": "    return max(values, default=0)",
+            "reason": "为 max 提供空序列默认值，避免 score([]) 抛出 ValueError；默认值 0 需与业务约定确认。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "da867aec0b06eb5dd431d97038b8f52f82d577de7bbdfa719fde1824b47ad41f",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 717,
+        "completion_tokens": 924,
+        "total_tokens": 1641
+      },
+      "model_turns": 1
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "pkg/main.py",
+        "line": 1,
+        "message": "暂不支持相对导入执行"
+      },
+      "trace": [
+        {
+          "path": "pkg/main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        }
+      ],
+      "buffer_hash": "da867aec0b06eb5dd431d97038b8f52f82d577de7bbdfa719fde1824b47ad41f",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "pkg/main.py"
+    },
+    "request_indices": [
+      37
+    ],
+    "elapsed_ms": 6253,
+    "semantic_review": "pending-human-review"
+  }
+]

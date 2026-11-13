@@ -68,4 +68,23 @@ async def read_learning(db, owner, project_id):
     rows = (await db.scalars(select(ProjectLearningEvent).where(
         ProjectLearningEvent.owner==owner,ProjectLearningEvent.project_id==project_id))).all()
     items = sorted((row.data for row in rows),key=lambda x:(x['created_at'],x['id']),reverse=True)
-    return {'items':items[:200]}
+    return {'items':items[:200],'summary':summarize_learning(items[:200])}
+
+def summarize_learning(items):
+    """Describe recorded versions, not inferred ability or unobserved independence."""
+    from collections import defaultdict
+    groups=defaultdict(list)
+    hints={(e.get('path'),e.get('buffer_hash')) for e in items if e.get('kind')=='hint-viewed'}
+    for e in items:
+        if e.get('kind')=='syntax-error':groups[e['concept']].append(e)
+    evidence=[]
+    for concept,errors in sorted(groups.items()):
+        versions={(e['path'],e['buffer_hash']) for e in errors}
+        fixes=sum(e.get('kind')=='syntax-rechecked' and e.get('concept')==concept for e in items)
+        evidence.append({'concept':concept,'observed_versions':len(versions),'hint_viewed_versions':len(versions&hints),'saved_syntax_rechecks':fixes})
+    repeated=[e for e in evidence if e['observed_versions']>=3]
+    if not repeated:
+        return {'status':'insufficient','evidence':evidence,'recommendations':['当前记录不足以归纳反复出现的模式或熟练程度。先用普通输入、空输入和边界输入核对当前代码。'],'boundary':'仅统计当前保留的真实事件；未查看提示不等于独立掌握，语法复查不等于运行正确。'}
+    return {'status':'observed-pattern','evidence':evidence,'recommendations':[
+        f"在已记录的{e['observed_versions']}个不同代码版本中观察到“{e['concept']}”，其中{e['hint_viewed_versions']}个版本记录过查看提示。建议比较出错行与修正行，解释规则后再尝试一个相似例子。" for e in repeated[:3]],
+        'boundary':'版本计数不是学习次数；不推断能力等级或未观察的独立完成情况。'}

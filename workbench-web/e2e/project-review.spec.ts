@@ -1,7 +1,7 @@
 import {editCode} from './editor-input'
 import {test,expect} from '@playwright/test'
 test('project code requires preview and explicit permission; local mode stays honest',async({page})=>{
- let calls=0;page.on('request',r=>{if(r.url().endsWith('/review'))calls++})
+ let calls=0;page.on('request',r=>{if(r.url().endsWith('/review-stream'))calls++})
  await page.goto('/')
  await page.getByRole('button',{name:'新建项目',exact:true}).click()
  await page.getByLabel('项目名称',{exact:true}).fill('隐私验收')

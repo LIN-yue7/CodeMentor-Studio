@@ -1,0 +1,171 @@
+[
+  {
+    "case_id": "cross-relative",
+    "category": "cross-file dependencies",
+    "use_tools": true,
+    "context_variant": "C",
+    "files": {
+      "pkg/main.py": "from .helpers import score\nprint(score([]))\n",
+      "pkg/helpers.py": "def score(values):\n    return max(values)\n"
+    },
+    "request": "结合项目内依赖检查问题；优先核对实际导入的实现，区分文档与代码。",
+    "expected": {
+      "category": "cross-file dependencies",
+      "location": [
+        {
+          "path": "pkg/main.py",
+          "line": 2
+        },
+        {
+          "path": "pkg/helpers.py",
+          "line": 2
+        }
+      ],
+      "key_concepts": [
+        "relative import",
+        "empty sequence"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Use actual linked file source; do not select same-name decoy or silently treat documentation as executable truth."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "核心结论：语法层面没有问题（local_status 为 syntax-ok，local_issues 为空），但按项目内实际导入的实现看，pkg/main.py 第 2 行用空列表调用 score([])，而 pkg/helpers.py 第 2 行实现是 return max(values)，空序列会让 max 抛出 ValueError。这是待验证的运行时逻辑问题，不是语法错误。位置：调用点在 pkg/main.py 第 2 行，被导入的实现是 pkg/helpers.py 第 1–2 行；导入语句 from .helpers import score 指向同包内的 helpers，因此应以该实现为准，而不是文档描述。根因：score 没有对空输入做约定或保护，直接委托 max。不确定性：未运行测试（test_status 为 not-run），也没有工具返回匹配当前 buffer_hash 的执行证据，所以“会抛 ValueError”是静态推断；若项目另有约定（例如调用方保证非空），则需确认。",
+        "hints": [
+          "在 score 内显式处理空序列，例如：def score(values):\n    if not values:\n        return 0\n    return max(values)（返回值需按业务约定确认）。",
+          "若空输入应视为错误，在调用处避免传入空列表，或捕获异常：try:\n    print(score([]))\nexcept ValueError:\n    print(\"empty\")。",
+          "验证步骤：为 score([]) 与 score([1,2]) 各写一个最小用例并运行；确认文档对空输入的定义与代码一致后再定返回值。"
+        ],
+        "citations": [
+          {
+            "path": "pkg/main.py",
+            "line": 1,
+            "quote": "from .helpers import score"
+          },
+          {
+            "path": "pkg/main.py",
+            "line": 2,
+            "quote": "print(score([]))"
+          },
+          {
+            "path": "pkg/helpers.py",
+            "line": 1,
+            "quote": "def score(values):"
+          },
+          {
+            "path": "pkg/helpers.py",
+            "line": 2,
+            "quote": "    return max(values)"
+          }
+        ],
+        "teaching": {
+          "summary": "代码能通过语法解析，但按实际导入的实现，score([]) 会把空列表交给 max，运行时会报错。文档若说空输入有默认值，应以 helpers.py 的代码为准，并确认期望行为。",
+          "root_cause": "pkg/main.py 第 2 行传入空列表；pkg/helpers.py 第 2 行 return max(values) 对空序列没有保护，max 在空可迭代对象上会抛 ValueError。导入语句 from .helpers import score 表明调用的是同包 helpers 中的这个实现。",
+          "mechanism": "Python 的 max 需要一个非空可迭代对象来取最大值；对空序列没有可比较元素，因此抛 ValueError。函数本身没有默认值参数或长度判断，所以空输入的行为完全由 max 决定。语法检查只验证解析与缩进等，不检查这类运行时条件，因此 syntax-ok 与 local_issues 为空并不代表调用安全。",
+          "example": "静态推断的最小反例：score([]) 进入 helpers.py 第 2 行 max([])，预期抛 ValueError: max() arg is an empty sequence。此为基于所给行的推断，未实际执行；test_status 为 not-run，且没有匹配当前 buffer_hash 的工具执行证据。",
+          "alternatives": [
+            "在 score 内加空值分支返回约定默认值：适用于业务上空集合有明确默认结果。",
+            "在调用处保证非空或捕获 ValueError：适用于空输入属于调用方错误、希望显式暴露。",
+            "改用带 default 的写法（如 max(values, default=0)）：适用于 Python 3.4+ 且默认值语义明确。需确认项目版本与约定。"
+          ],
+          "prevention": "为 score 补充空列表、单元素、多元素三类最小用例并运行；核对文档对空输入的定义是否与 helpers.py 实现一致；在函数签名或注释中写明空输入约定，避免调用方与实现假设不一致。",
+          "uncertainty": "未运行任何测试，也没有匹配当前 buffer_hash 的执行证据，因此异常类型与触发点是静态推断。空输入应返回什么值、项目是否另有调用方保证非空、以及文档具体内容均未提供，需要确认。"
+        },
+        "patches": [
+          {
+            "path": "pkg/helpers.py",
+            "line": 2,
+            "before": "    return max(values)",
+            "after": "    return max(values) if values else 0",
+            "reason": "避免空序列触发 max 的 ValueError；返回值 0 需按业务约定确认。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "da867aec0b06eb5dd431d97038b8f52f82d577de7bbdfa719fde1824b47ad41f",
+      "tool_trace": [
+        {
+          "id": "call_00_2JLLpdHCCeq4UrSMHHYF4364",
+          "name": "get_current_file",
+          "arguments": {
+            "start_line": 1,
+            "end_line": 40
+          },
+          "status": "ok",
+          "turn": 1,
+          "result_chars": 156,
+          "snippet_count": 2
+        },
+        {
+          "id": "call_01_CbXSGEu4OGSKhCaFzyI14405",
+          "name": "get_diagnostics",
+          "arguments": {},
+          "status": "ok",
+          "turn": 1,
+          "result_chars": 50,
+          "snippet_count": 0
+        },
+        {
+          "id": "call_00_jnyfPHDKiTPSIUi1wyo05122",
+          "name": "get_current_file",
+          "arguments": {
+            "end_line": 40,
+            "start_line": 1
+          },
+          "status": "ok",
+          "turn": 2,
+          "result_chars": 156,
+          "snippet_count": 2
+        },
+        {
+          "id": "call_01_2dpuAgMAXEbleaHaHXQd5297",
+          "name": "search_project",
+          "arguments": {
+            "query": "def score",
+            "limit": 10
+          },
+          "status": "ok",
+          "turn": 2,
+          "result_chars": 115,
+          "snippet_count": 1
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 4276,
+        "completion_tokens": 1132,
+        "total_tokens": 5408
+      },
+      "model_turns": 3,
+      "workflow_mode": "native-tools"
+    },
+    "execution": {
+      "status": "unsupported",
+      "stdout": "",
+      "error": {
+        "path": "pkg/main.py",
+        "line": 1,
+        "message": "暂不支持相对导入执行"
+      },
+      "trace": [
+        {
+          "path": "pkg/main.py",
+          "line": 1,
+          "event": "ImportFrom"
+        }
+      ],
+      "buffer_hash": "da867aec0b06eb5dd431d97038b8f52f82d577de7bbdfa719fde1824b47ad41f",
+      "execution_kind": "restricted-ast-interpreter",
+      "boundary": "实际执行了受限 Python 子集及当前输入；不等于完整 CPython 或全量测试通过。",
+      "entry_path": "pkg/main.py"
+    },
+    "request_indices": [
+      1,
+      2,
+      3
+    ],
+    "elapsed_ms": 9412,
+    "semantic_review": "pending-human-review"
+  }
+]

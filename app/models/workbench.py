@@ -66,3 +66,11 @@ class ProjectLearningState(Base):
     path: Mapped[str] = mapped_column(String(160), primary_key=True)
     revision: Mapped[int] = mapped_column(default=0)
     issues: Mapped[list] = mapped_column(JSON)
+
+
+class ProjectExecution(Base):
+    __tablename__ = 'cm_project_execution'
+    owner: Mapped[str] = mapped_column(String(32), primary_key=True)
+    project_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    path: Mapped[str] = mapped_column(String(160), primary_key=True)
+    result: Mapped[dict] = mapped_column(JSON)

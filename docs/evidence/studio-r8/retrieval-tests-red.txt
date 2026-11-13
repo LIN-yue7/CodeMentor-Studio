@@ -1,0 +1,249 @@
+D:\codex\2026-11-11\codementor-studio-ai-web-2026-ai\outputs\CodeMentor-Studio\.venv\Lib\site-packages\pytest_asyncio\plugin.py:300: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the "fixture" caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+FFF.......FFFFF...FFFFFFF..                                              [100%]
+================================== FAILURES ===================================
+________________ test_relevant_lines_and_bound_imports[same-1] ________________
+
+case = {'id': 'same-1', 'theme': 'same-file function links', 'provenance': 'authored synthetic fixture; not a user project', ...1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndef run(x):\n    return normalize(x)\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+>       assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+E       AssertionError: assert {('main.py', ...main.py', 39)} <= {('main.py', ...py', 37), ...}
+E         
+E         Extra items in the left set:
+E         ('main.py', 1)
+E         ('main.py', 2)
+
+tests\test_r8_retrieval.py:12: AssertionError
+________________ test_relevant_lines_and_bound_imports[same-2] ________________
+
+case = {'id': 'same-2', 'theme': 'same-file function links', 'provenance': 'authored synthetic fixture; not a user project', ...x + 2\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndef run(x):\n    return total(x)\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+>       assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+E       AssertionError: assert {('main.py', ...main.py', 39)} <= {('main.py', ...py', 37), ...}
+E         
+E         Extra items in the left set:
+E         ('main.py', 1)
+E         ('main.py', 2)
+
+tests\test_r8_retrieval.py:12: AssertionError
+________________ test_relevant_lines_and_bound_imports[same-3] ________________
+
+case = {'id': 'same-3', 'theme': 'same-file function links', 'provenance': 'authored synthetic fixture; not a user project', ...n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndef run(x):\n    return safe_divide(x)\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+>       assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+E       AssertionError: assert {('main.py', ...main.py', 39)} <= {('main.py', ...py', 37), ...}
+E         
+E         Extra items in the left set:
+E         ('main.py', 1)
+E         ('main.py', 2)
+
+tests\test_r8_retrieval.py:12: AssertionError
+_______________ test_relevant_lines_and_bound_imports[alias-2] ________________
+
+case = {'id': 'alias-2', 'theme': 'duplicate symbols and aliases', 'provenance': 'authored synthetic fixture; not a user proj...der\n# header\n# header\ndef compute(x):\n    return x + 1\n', 'decoy.py': 'def compute(x):\n    return x - 1\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+        assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+        if case['theme'] in ['duplicate symbols and aliases','relative imports','large unrelated context']:
+>           assert not any(s['path'].startswith(('decoy','noise','other')) for s in result['snippets'])
+E           assert not True
+E            +  where True = any(<generator object test_relevant_lines_and_bound_imports.<locals>.<genexpr> at 0x00000148BEFD6B50>)
+
+tests\test_r8_retrieval.py:14: AssertionError
+_______________ test_relevant_lines_and_bound_imports[alias-3] ________________
+
+case = {'id': 'alias-3', 'theme': 'duplicate symbols and aliases', 'provenance': 'authored synthetic fixture; not a user proj...der\n# header\n# header\ndef compute(x):\n    return x + 1\n', 'decoy.py': 'def compute(x):\n    return x - 1\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+        assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+        if case['theme'] in ['duplicate symbols and aliases','relative imports','large unrelated context']:
+>           assert not any(s['path'].startswith(('decoy','noise','other')) for s in result['snippets'])
+E           assert not True
+E            +  where True = any(<generator object test_relevant_lines_and_bound_imports.<locals>.<genexpr> at 0x00000148BEFD6DC0>)
+
+tests\test_r8_retrieval.py:14: AssertionError
+______________ test_relevant_lines_and_bound_imports[relative-1] ______________
+
+case = {'id': 'relative-1', 'theme': 'relative imports', 'provenance': 'authored synthetic fixture; not a user project', 'fil... header\n# header\ndef compute(x):\n    return x + 1\n', 'other/utils.py': 'def compute(x):\n    return x - 1\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+        assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+        if case['theme'] in ['duplicate symbols and aliases','relative imports','large unrelated context']:
+>           assert not any(s['path'].startswith(('decoy','noise','other')) for s in result['snippets'])
+E           assert not True
+E            +  where True = any(<generator object test_relevant_lines_and_bound_imports.<locals>.<genexpr> at 0x00000148BEFF52F0>)
+
+tests\test_r8_retrieval.py:14: AssertionError
+______________ test_relevant_lines_and_bound_imports[relative-2] ______________
+
+case = {'id': 'relative-2', 'theme': 'relative imports', 'provenance': 'authored synthetic fixture; not a user project', 'fil... header\n# header\ndef compute(x):\n    return x + 1\n', 'other/utils.py': 'def compute(x):\n    return x - 1\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+        assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+        if case['theme'] in ['duplicate symbols and aliases','relative imports','large unrelated context']:
+>           assert not any(s['path'].startswith(('decoy','noise','other')) for s in result['snippets'])
+E           assert not True
+E            +  where True = any(<generator object test_relevant_lines_and_bound_imports.<locals>.<genexpr> at 0x00000148BEFE6DC0>)
+
+tests\test_r8_retrieval.py:14: AssertionError
+______________ test_relevant_lines_and_bound_imports[relative-3] ______________
+
+case = {'id': 'relative-3', 'theme': 'relative imports', 'provenance': 'authored synthetic fixture; not a user project', 'fil... header\n# header\ndef compute(x):\n    return x + 1\n', 'other/utils.py': 'def compute(x):\n    return x - 1\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+        assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+        if case['theme'] in ['duplicate symbols and aliases','relative imports','large unrelated context']:
+>           assert not any(s['path'].startswith(('decoy','noise','other')) for s in result['snippets'])
+E           assert not True
+E            +  where True = any(<generator object test_relevant_lines_and_bound_imports.<locals>.<genexpr> at 0x00000148BEFE76B0>)
+
+tests\test_r8_retrieval.py:14: AssertionError
+_______________ test_relevant_lines_and_bound_imports[broken-1] _______________
+
+case = {'id': 'broken-1', 'theme': 'syntaxbroken related files', 'provenance': 'authored synthetic fixture; not a user projec...# header\n# header\n# header\n# header\n# header\ndef compute(x):\n    return x + 1\n\ndef broken(:\n    pass\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+>       assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+E       AssertionError: assert {('helpers.py...'main.py', 2)} <= {('helpers.py....py', 6), ...}
+E         
+E         Extra items in the left set:
+E         ('helpers.py', 31)
+E         ('helpers.py', 32)
+
+tests\test_r8_retrieval.py:12: AssertionError
+_______________ test_relevant_lines_and_bound_imports[broken-2] _______________
+
+case = {'id': 'broken-2', 'theme': 'syntaxbroken related files', 'provenance': 'authored synthetic fixture; not a user projec...header\n# header\n# header\n# header\n# header\ndef calculate(x):\n    return x + 1\n\ndef broken(:\n    pass\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+>       assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+E       AssertionError: assert {('helpers.py...'main.py', 2)} <= {('helpers.py....py', 6), ...}
+E         
+E         Extra items in the left set:
+E         ('helpers.py', 31)
+E         ('helpers.py', 32)
+
+tests\test_r8_retrieval.py:12: AssertionError
+_______________ test_relevant_lines_and_bound_imports[broken-3] _______________
+
+case = {'id': 'broken-3', 'theme': 'syntaxbroken related files', 'provenance': 'authored synthetic fixture; not a user projec...n# header\n# header\n# header\n# header\n# header\ndef adjust(x):\n    return x + 1\n\ndef broken(:\n    pass\n'}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+>       assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+E       AssertionError: assert {('helpers.py...'main.py', 2)} <= {('helpers.py....py', 6), ...}
+E         
+E         Extra items in the left set:
+E         ('helpers.py', 31)
+E         ('helpers.py', 32)
+
+tests\test_r8_retrieval.py:12: AssertionError
+_______________ test_relevant_lines_and_bound_imports[noise-1] ________________
+
+case = {'id': 'noise-1', 'theme': 'large unrelated context', 'provenance': 'authored synthetic fixture; not a user project', ... x + 1\n', 'noise00.py': 'def compute(x):\n    return 0\n', 'noise01.py': 'def compute(x):\n    return 1\n', ...}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+        assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+        if case['theme'] in ['duplicate symbols and aliases','relative imports','large unrelated context']:
+>           assert not any(s['path'].startswith(('decoy','noise','other')) for s in result['snippets'])
+E           assert not True
+E            +  where True = any(<generator object test_relevant_lines_and_bound_imports.<locals>.<genexpr> at 0x00000148BEFF57D0>)
+
+tests\test_r8_retrieval.py:14: AssertionError
+_______________ test_relevant_lines_and_bound_imports[noise-2] ________________
+
+case = {'id': 'noise-2', 'theme': 'large unrelated context', 'provenance': 'authored synthetic fixture; not a user project', ... 1\n', 'noise00.py': 'def calculate(x):\n    return 0\n', 'noise01.py': 'def calculate(x):\n    return 1\n', ...}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+        assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+        if case['theme'] in ['duplicate symbols and aliases','relative imports','large unrelated context']:
+>           assert not any(s['path'].startswith(('decoy','noise','other')) for s in result['snippets'])
+E           assert not True
+E            +  where True = any(<generator object test_relevant_lines_and_bound_imports.<locals>.<genexpr> at 0x00000148BF00A4D0>)
+
+tests\test_r8_retrieval.py:14: AssertionError
+_______________ test_relevant_lines_and_bound_imports[noise-3] ________________
+
+case = {'id': 'noise-3', 'theme': 'large unrelated context', 'provenance': 'authored synthetic fixture; not a user project', ...rn x + 1\n', 'noise00.py': 'def adjust(x):\n    return 0\n', 'noise01.py': 'def adjust(x):\n    return 1\n', ...}, ...}
+
+    @pytest.mark.parametrize('case', CASES, ids=lambda c: c['id'])
+    def test_relevant_lines_and_bound_imports(case):
+        result = retrieve_project(**{k: case[k] for k in ['files','path','cursor_line','request','language','issues']})
+        actual = {(s['path'],s['line']) for s in result['snippets']}
+        assert {(s['path'],s['line']) for s in case['relevant_lines']} <= actual
+        if case['theme'] in ['duplicate symbols and aliases','relative imports','large unrelated context']:
+>           assert not any(s['path'].startswith(('decoy','noise','other')) for s in result['snippets'])
+E           assert not True
+E            +  where True = any(<generator object test_relevant_lines_and_bound_imports.<locals>.<genexpr> at 0x00000148BEFD7AC0>)
+
+tests\test_r8_retrieval.py:14: AssertionError
+__________ test_cursor_scope_does_not_pull_unrelated_function_import __________
+
+    def test_cursor_scope_does_not_pull_unrelated_function_import():
+        files = {'main.py':'from a import relevant\nfrom b import unused\ndef focus():\n    return relevant()\n\ndef elsewhere():\n    return unused()\n', 'a.py':'def relevant():\n    return 1\n','b.py':'def unused():\n    return 2\n'}
+        result=retrieve_project(files,'main.py',4)
+        assert any(s['path']=='a.py' for s in result['snippets'])
+>       assert not any(s['path']=='b.py' for s in result['snippets'])
+E       assert not True
+E        +  where True = any(<generator object test_cursor_scope_does_not_pull_unrelated_function_import.<locals>.<genexpr> at 0x00000148BF00BAC0>)
+
+tests\test_r8_retrieval.py:22: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[same-1]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[same-2]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[same-3]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[alias-2]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[alias-3]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[relative-1]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[relative-2]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[relative-3]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[broken-1]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[broken-2]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[broken-3]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[noise-1]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[noise-2]
+FAILED tests/test_r8_retrieval.py::test_relevant_lines_and_bound_imports[noise-3]
+FAILED tests/test_r8_retrieval.py::test_cursor_scope_does_not_pull_unrelated_function_import

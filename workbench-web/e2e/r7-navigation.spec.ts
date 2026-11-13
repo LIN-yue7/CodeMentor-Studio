@@ -1,3 +1,4 @@
+import {simulatedStream} from './stream-fixture'
 import {editCode} from './editor-input'
 import {test,expect} from '@playwright/test'
 
@@ -78,7 +79,7 @@ test('JSON import preserves both files and rename keeps the edited contents',asy
 test('patch preview requires approval and stale patches are removed',async({page})=>{
  await page.setViewportSize({width:1440,height:900});await page.goto('/')
  await page.getByRole('button',{name:'体验示例',exact:true}).click()
- await page.route('**/api/projects/*/review',route=>route.fulfill({json:{status:'accepted',mode:'simulated',review:{explanation:'自动化测试模拟输出',hints:['将空值返回改为零'],citations:[],patches:[{path:'helper.py',line:4,before:'    return None',after:'    return 0',reason:'测试审批'}]}}}))
+ await page.route('**/api/projects/*/review-stream',route=>simulatedStream(route,{status:'accepted',mode:'simulated',review:{explanation:'自动化测试模拟输出',hints:['将空值返回改为零'],citations:[],patches:[{path:'helper.py',line:4,before:'    return None',after:'    return 0',reason:'测试审批'}]}}))
  await page.getByText('模型权限与自动分析',{exact:false}).click()
  await page.getByLabel('允许本项目向已配置模型发送所选上下文').click()
  await expect(page.getByLabel('允许本项目向已配置模型发送所选上下文')).toBeChecked()

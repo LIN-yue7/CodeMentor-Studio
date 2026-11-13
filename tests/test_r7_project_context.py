@@ -67,4 +67,5 @@ def test_review_preview_does_not_fabricate_learning_observations():
         url=f"/api/projects/{p['id']}"
         response=client.post(url+'/review-preview',json={'revision':0,'files':{'main.py':'def f(:'},'path':'main.py'})
         assert response.status_code==200
-        assert client.get(url+'/learning').json()=={'items':[]}
+        assert client.get(url+'/learning').json()['items']==[]
+        assert client.get(url+'/learning').json()['summary']['status']=='insufficient'

@@ -1,7 +1,7 @@
 import {editCode} from './editor-input'
 import {test,expect} from '@playwright/test'
 import {mkdirSync,writeFileSync} from 'node:fs'
-const out='../docs/evidence/studio-r7'
+const out=process.env.STUDIO_EVIDENCE_ROOT||'../docs/evidence/studio-r7'
 const round=process.env.STUDIO_VISUAL_ROUND||'final'
 for(const [width,height] of [[1440,900],[1366,768],[900,700],[390,844]]){
  test(`visual and interaction ${width}`,async({page})=>{

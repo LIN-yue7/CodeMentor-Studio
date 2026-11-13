@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "invalid-nonjson",
+      "provider_output": "Here is a poem about the moon.",
+      "category": "unrelated model responses/invalid structured outputs",
+      "expected_valid_behavior": "Reject malformed or unsupported structured output, or clearly mark invalid evidence; never publish as a verified finding.",
+      "mode": "controlled offline provider fixture; no paid call"
+    },
+    {
+      "id": "invalid-unrelated",
+      "provider_output": {
+        "summary": "Buy a sports car",
+        "findings": []
+      },
+      "category": "unrelated model responses/invalid structured outputs",
+      "expected_valid_behavior": "Reject malformed or unsupported structured output, or clearly mark invalid evidence; never publish as a verified finding.",
+      "mode": "controlled offline provider fixture; no paid call"
+    },
+    {
+      "id": "invalid-missing-fields",
+      "provider_output": {},
+      "category": "unrelated model responses/invalid structured outputs",
+      "expected_valid_behavior": "Reject malformed or unsupported structured output, or clearly mark invalid evidence; never publish as a verified finding.",
+      "mode": "controlled offline provider fixture; no paid call"
+    },
+    {
+      "id": "invalid-source-ref",
+      "provider_output": {
+        "summary": "error",
+        "findings": [
+          {
+            "path": "absent.py",
+            "line": 999,
+            "quote": "invented",
+            "message": "bug"
+          }
+        ]
+      },
+      "category": "unrelated model responses/invalid structured outputs",
+      "expected_valid_behavior": "Reject malformed or unsupported structured output, or clearly mark invalid evidence; never publish as a verified finding.",
+      "mode": "controlled offline provider fixture; no paid call"
+    },
+    {
+      "id": "invalid-wrong-types",
+      "provider_output": {
+        "summary": [
+          "bad"
+        ],
+        "findings": "not a list"
+      },
+      "category": "unrelated model responses/invalid structured outputs",
+      "expected_valid_behavior": "Reject malformed or unsupported structured output, or clearly mark invalid evidence; never publish as a verified finding.",
+      "mode": "controlled offline provider fixture; no paid call"
+    },
+    {
+      "id": "invalid-fenced-partial",
+      "provider_output": "```json\n{\"summary\":",
+      "category": "unrelated model responses/invalid structured outputs",
+      "expected_valid_behavior": "Reject malformed or unsupported structured output, or clearly mark invalid evidence; never publish as a verified finding.",
+      "mode": "controlled offline provider fixture; no paid call"
+    }
+  ],
+  "boundary": "Adapter must map conceptual payloads to actual provider envelope; expected outcome must be validated against production validation behavior, not declared from these labels."
+}
