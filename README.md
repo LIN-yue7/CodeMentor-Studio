@@ -1,6 +1,6 @@
-# CodeMentor Studio R9 候选开发版
+# CodeMentor Studio R9
 
-基于R8提交00db306继续开发。当前验收进度与限制见 [R9状态](docs/studio-r9-status.md)，试用项目与操作步骤见 [试用与演示](docs/studio-r9-trial.md)，评测口径见 [独立评测](docs/studio-r9-evaluation.md)。
+R9 是正式参赛软件版本，冻结代码基线为 `78aee0d955fca9a4191241b73d70895b40e4e7ea`。本页更新和第三方许可证附件属于交付文档。工程验证与功能限制见 [R9 状态](docs/studio-r9-status.md)，试用步骤见 [试用与演示](docs/studio-r9-trial.md)，评测口径见 [独立评测](docs/studio-r9-evaluation.md)。
 
 ## 首次安装
 
@@ -28,7 +28,7 @@ npm --prefix workbench-web run test:e2e -- --workers=2
 
 测试中的模拟模型不发起外部付费调用。真实评测使用独立账本与原始记录。模型解释和补丁仍需结合输入与需求判断，受限执行只覆盖明确支持的Python子集。
 
-许可证与发布检查见 [工程交付记录](docs/studio-r9-engineering.md)。正式外部仓库及评委访问验证待发布授权。
+第三方随附代码的声明与许可证见 [第三方许可证](docs/third-party/README.md)。工程验收过程见 [工程交付记录](docs/studio-r9-engineering.md)。比赛访问权限依实际授予的 GitHub 权限。
 
 ---
 
