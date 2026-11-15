@@ -2,7 +2,7 @@
 
 CodeMentor Studio 是面向编程初学者的 AI 编程学习工作台。学生可以在多文件项目中查看诊断、阅读带源码依据的解释、审阅修改建议，并通过复查和受限执行核对修改结果。
 
-R9 是正式参赛软件版本，冻结代码基线为 `78aee0d955fca9a4191241b73d70895b40e4e7ea`。工程验证与功能限制见 [R9 状态](docs/studio-r9-status.md)，试用步骤见 [试用与演示](docs/studio-r9-trial.md)，评测口径见 [独立评测](docs/studio-r9-evaluation.md)。
+R9 是正式参赛软件版本。技术报告引用冻结提交 `78aee0d955fca9a4191241b73d70895b40e4e7ea`。GitHub 的 `studio-r9` 分支对应移除历史 Word 附件后的提交 `c1335172033b6e583de6ebea68861b92e9ee2996`。工程验证与功能限制见 [R9 状态](docs/studio-r9-status.md)，试用步骤见 [试用与演示](docs/studio-r9-trial.md)，评测口径见 [独立评测](docs/studio-r9-evaluation.md)。
 
 ## 参赛团队
 
@@ -853,9 +853,6 @@ Markdown 写进 DOM。
 完整的表设计 / 提示词实现 / 前端分栏 / **数据流图** 见
 [`docs/错题本与举一反三-设计与数据流.md`](docs/错题本与举一反三-设计与数据流.md)。
 
-参赛用的技术报告（Word，12 页，含架构图与数据流图）见
-[`2026AIC-算法创新赛-作品方案-TU0.docx`](2026AIC-算法创新赛-作品方案-TU0.docx)。
-
 ### 6.2 AI 自动检测（深度版）
 
 | 方法 | 路径 | 说明 |
@@ -1065,7 +1062,6 @@ Markdown 写进 DOM。
 ├── data/library/                学生作业目录（自动创建，已在 .gitignore）
 │   └── .trash/                  删除回收站：删掉的文件带时间戳放在这里，可手动找回
 ├── data/                         运行期数据：app.db（含错题本）/ 项目库
-├── 2026AIC-算法创新赛-作品方案-TU0.docx   参赛技术报告（Word，12 页）
 ├── tests/                        879 个用例，全部离线可跑
 └── tools/                        构建与验收脚本（见第 8 节）
     ├── auto_install_python.ps1   ★ 没有 Python 时自动下载并静默安装 3.11.9
