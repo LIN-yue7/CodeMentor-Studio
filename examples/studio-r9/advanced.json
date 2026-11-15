@@ -1,0 +1,8 @@
+{
+  "name": "R9 advanced",
+  "files": {
+    "main.py": "# 需求：非空列表取首项，空列表按0处理；当前入口应打印2。\nfrom pricing import quote as estimate\nprint(estimate([]) + 2)\n",
+    "pricing.py": "from numbers_local import first\ndef quote(values):\n    return first(values)\n",
+    "numbers_local.py": "def first(values):\n    if values:\n        return values[0]\n"
+  }
+}

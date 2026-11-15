@@ -1,3 +1,37 @@
+# CodeMentor Studio R9 候选开发版
+
+基于R8提交00db306继续开发。当前验收进度与限制见 [R9状态](docs/studio-r9-status.md)，试用项目与操作步骤见 [试用与演示](docs/studio-r9-trial.md)，评测口径见 [独立评测](docs/studio-r9-evaluation.md)。
+
+## 首次安装
+
+需要Windows、Python 3.11及以上、Node.js 22.12及以上与npm。推荐本次复测使用的Python 3.11；本机Python 3.12/3.13曾因Windows WMI查询阻塞启动。锁定依赖见requirements-lock.txt与workbench-web/package-lock.json。已安装3.11时，可先运行 `py -3.11 -m venv .venv`，再执行下面的准备脚本。
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/prepare_studio.ps1
+```
+
+安装完成后双击 `Start-Studio.cmd`，浏览器打开 http://127.0.0.1:8780/ 。默认本地模式。首次安装会生成私有稳定会话签名，保存在已忽略的.env；已存在配置会保留。
+
+从项目菜单导入 `examples/studio-r9/beginner.json` 或 `advanced.json` 即可开始。项目JSON支持备份和重新导入。匿名日志可从“存储与备份”导出。
+
+实时模式需正确的模型配置及项目外发许可。R9评测额度只用于已授权的评测命令，日常演示调用另行计费。离线演示、历史回放与实时模型输出应按实际来源标注。
+
+## 验证
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q -o addopts=''
+npm --prefix workbench-web run build
+node --test workbench-web/tests/*.test.mjs
+$env:CODEMENTOR_TEST_PYTHON=(Resolve-Path '.venv/Scripts/python.exe').Path
+npm --prefix workbench-web run test:e2e -- --workers=2
+```
+
+测试中的模拟模型不发起外部付费调用。真实评测使用独立账本与原始记录。模型解释和补丁仍需结合输入与需求判断，受限执行只覆盖明确支持的Python子集。
+
+许可证与发布检查见 [工程交付记录](docs/studio-r9-engineering.md)。正式外部仓库及评委访问验证待发布授权。
+
+---
+
 # CodeMentor Studio · R8开发验收版本
 
 面向真实项目的AI编程学习工作台。当前正式入口是 `app.workbench:app`；下面保留的 AI 2.0 / 旧单机说明仅作历史记录，不能替代当前能力与验证状态。

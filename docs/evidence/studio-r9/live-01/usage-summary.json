@@ -1,0 +1,12 @@
+{
+  "scope": "live-01 only; no external invoice",
+  "requests": 24,
+  "usage": {
+    "prompt_tokens": 26339,
+    "completion_tokens": 19996,
+    "total_tokens": 46335
+  },
+  "peak_cny_upper_estimate": 0.212646,
+  "rate_source": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "cache_assumption": "all input billed at uncached peak; actual charge requires provider bill"
+}

@@ -1,0 +1,241 @@
+[
+  {
+    "case_id": "scope-shadow",
+    "group": "development-regression",
+    "provenance": "real-model",
+    "files": {
+      "main.py": "def total(values):\n    sum = 0\n    return sum(values)\n"
+    },
+    "request": "检查变量作用域或绑定问题，并说明依据。",
+    "expected": {
+      "category": "variable scope",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 3
+        }
+      ],
+      "key_concepts": [
+        "builtin shadowing",
+        "noncallable integer"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Identify binding or initialization issue with trigger; distinguish static reasoning from execution."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "第 2 行的局部变量 sum 遮蔽了内置求和函数。第 3 行的 sum(values) 试图调用整数，会引发 TypeError。函数内赋值让同名标识符成为局部变量，后面的调用使用该局部绑定。",
+        "hints": [
+          "若目标是求和，删除遮蔽赋值并保留 sum(values)。也可以逐项累加后返回。",
+          "用 total([]) 和 total([1, 2]) 核对求和预期 0 和 3。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def total(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    sum = 0"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    return sum(values)"
+          }
+        ],
+        "teaching": {
+          "summary": "第 2 行的局部变量 sum 遮蔽了内置求和函数。",
+          "root_cause": "第 3 行的 sum(values) 试图调用整数，会引发 TypeError。",
+          "mechanism": "函数内赋值让同名标识符成为局部变量，后面的调用使用该局部绑定。",
+          "example": "静态推断：total([1, 2]) 会在调用局部整数时抛出 TypeError。",
+          "alternatives": [],
+          "prevention": "用 total([]) 和 total([1, 2]) 核对求和预期 0 和 3。",
+          "uncertainty": "输入元素类型和空输入的业务约定仍需结合调用方确认。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "3928e3c315e7e30d95a5a709a6c6376e40f2b2480cdfc4833220a891d88e1568",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 888,
+        "completion_tokens": 993,
+        "total_tokens": 1881
+      },
+      "model_turns": 1,
+      "teaching_source": "local-static-rule"
+    },
+    "request_indices": [
+      25
+    ],
+    "semantic_review": "pending"
+  },
+  {
+    "case_id": "return-none",
+    "group": "development-regression",
+    "provenance": "real-model",
+    "files": {
+      "main.py": "def positive(x):\n    \"\"\"Return a bool for every integer x.\"\"\"\n    if x > 0:\n        return True\n"
+    },
+    "request": "对照函数文档检查返回值约定。",
+    "expected": {
+      "category": "function return contracts",
+      "location": [
+        {
+          "path": "main.py",
+          "line": 3
+        }
+      ],
+      "key_concepts": [
+        "implicit None",
+        "all branches"
+      ],
+      "valid_code": false,
+      "expected_valid_behavior": "Explain the explicit source/documentation mismatch; avoid assuming undocumented caller requirements."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "positive 在 x <= 0 时会隐式返回 None。第 3 行的条件为假时，控制流直接到达函数末尾，违背布尔返回约定。Python 函数走到末尾时会隐式返回 None。文档和类型标注不会替函数补上返回值。",
+        "hints": [
+          "若约定为判断正数，在分支后显式返回 False，也可直接返回 x > 0。",
+          "用负数、0、正数测试三个输入，并检查结果是否为 True 或 False。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    \"\"\"Return a bool for every integer x.\"\"\""
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    if x > 0:"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "        return True"
+          }
+        ],
+        "teaching": {
+          "summary": "positive 在 x <= 0 时会隐式返回 None。",
+          "root_cause": "第 3 行的条件为假时，控制流直接到达函数末尾，违背布尔返回约定。",
+          "mechanism": "Python 函数走到末尾时会隐式返回 None。文档和类型标注不会替函数补上返回值。",
+          "example": "静态推断：positive(0) 和 positive(-1) 返回 None，positive(1) 返回 True。",
+          "alternatives": [],
+          "prevention": "用负数、0、正数测试三个输入，并检查结果是否为 True 或 False。",
+          "uncertainty": "非正数应映射到哪个布尔值仍由需求决定。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "67ee5ff1e9635cb745d5a89fe777cee97c16e94dbe0d9696c459ee74655510f3",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 913,
+        "completion_tokens": 758,
+        "total_tokens": 1671
+      },
+      "model_turns": 1,
+      "teaching_source": "local-static-rule",
+      "patch_check": {
+        "status": "unknown",
+        "reason": "no-observed-output",
+        "before": "passed",
+        "after": "passed"
+      }
+    },
+    "request_indices": [
+      26
+    ],
+    "semantic_review": "pending"
+  },
+  {
+    "case_id": "correct-scope",
+    "group": "development-regression",
+    "provenance": "real-model",
+    "files": {
+      "main.py": "def total(values):\n    result = 0\n    for value in values:\n        result += value\n    return result\n"
+    },
+    "request": "检查这段代码；没有确定问题时明确说明，不要为了给建议编造错误。",
+    "expected": {
+      "category": "correct-code false-positive control",
+      "location": [],
+      "key_concepts": [
+        "initialized accumulator",
+        "correct code"
+      ],
+      "valid_code": true,
+      "expected_valid_behavior": "Accept as correct under stated contract; optional style advice must not be reported as a demonstrated defect."
+    },
+    "result": {
+      "status": "accepted",
+      "mode": "live",
+      "review": {
+        "explanation": "result 在循环前已初始化为整数 0。当前循环逐项执行 result += value，累加器的作用域与初始化没有发现问题。整数起始值可以和常见数值相加。若第一个元素是字符串，0 与字符串相加会引发 TypeError。",
+        "hints": [
+          "如果调用方约定传入数值，保留当前累加方式。只有需求明确接受其他类型时才需要调整。",
+          "用普通数值列表和空列表核对调用约定。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def total(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    result = 0"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    for value in values:"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "        result += value"
+          },
+          {
+            "path": "main.py",
+            "line": 5,
+            "quote": "    return result"
+          }
+        ],
+        "teaching": {
+          "summary": "result 在循环前已初始化为整数 0。",
+          "root_cause": "当前循环逐项执行 result += value，累加器的作用域与初始化没有发现问题。",
+          "mechanism": "整数起始值可以和常见数值相加。若第一个元素是字符串，0 与字符串相加会引发 TypeError。",
+          "example": "静态推断：total([1, 2]) 得到 3，total([]) 得到 0，total([\"a\"]) 引发 TypeError。",
+          "alternatives": [],
+          "prevention": "用普通数值列表和空列表核对调用约定。",
+          "uncertainty": "允许的元素类型取决于调用方约定。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "b52a438205671212b8338d3bcdb399afe015d95a038152c28709546e9745f102",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 929,
+        "completion_tokens": 777,
+        "total_tokens": 1706
+      },
+      "model_turns": 1,
+      "teaching_source": "local-static-rule"
+    },
+    "request_indices": [
+      27
+    ],
+    "semantic_review": "pending"
+  }
+]

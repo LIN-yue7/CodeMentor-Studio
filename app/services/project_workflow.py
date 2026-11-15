@@ -7,7 +7,7 @@ from copy import deepcopy
 from app.services.project_review import review
 
 async def run_workflow(tutor,owner,project_id,payload,data,snapshot,on_event=None):
-    key=hashlib.sha256(json.dumps([owner,project_id,data,payload.path,payload.language,payload.mode,payload.use_tools,snapshot.get('execution_result'),snapshot.get('learning_history')],sort_keys=True,ensure_ascii=False).encode()).hexdigest()
+    key=hashlib.sha256(json.dumps([owner,project_id,data,payload.path,payload.cursor_line,payload.language,payload.mode,payload.use_tools,snapshot.get('execution_result'),snapshot.get('learning_history')],sort_keys=True,ensure_ascii=False).encode()).hexdigest()
     if not hasattr(tutor,'project_cache'):
         tutor.project_cache={};tutor.project_locks={}
     now=time.monotonic()

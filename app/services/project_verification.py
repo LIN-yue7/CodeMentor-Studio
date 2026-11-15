@@ -127,6 +127,11 @@ class Machine:
                     text+=part
                 self.stdout+=text+'\n'
                 return None
+            if isinstance(n.func, ast.Name) and n.func.id == 'sum' and 'sum' not in env:
+                if (len(args) != 1 or type(args[0]) is not list
+                        or any(type(item) not in (int, float) for item in args[0])):
+                    raise Unsupported('仅支持对数值列表调用 sum')
+                return self.bound(sum(args[0]))
             f=self.expr(n.func,env,path)
             if type(f) is not tuple or f[0]!='function':raise Unsupported('只允许调用项目内定义的函数')
             _,fn,scope,source=f

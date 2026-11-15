@@ -1,0 +1,10 @@
+{
+  "app\\services\\project_agent.py": "740b1ae6fc0b73e93c900cb8fcee4f58df6257765acc55900cd995ac088d7cd2",
+  "app\\services\\project_diagnostics.py": "1ca32ca30365ceed710772282d122df13e52afd57039fde897bf15e62d4b47b3",
+  "app\\services\\project_learning.py": "b5efbab040297a92c35a891ef8e4a8f9252241eea9d3634a03d97d37035e18fe",
+  "app\\services\\project_retrieval.py": "0766821b53b5b9ec625b2cf74e135b6f192b11fbe2fe607d1c0ca47a610ad7c0",
+  "app\\services\\project_review.py": "5ddf2064e4789dafe510febcc734376509c33ed1eb12e8370e1fa77195187b60",
+  "app\\services\\project_review_quality.py": "7c0e1cb3831b8ffea02da63a9e30135ecf51c32822ba1fc10a92308dd753c85d",
+  "app\\services\\project_verification.py": "28dc8ea6201a4390ea5cd0321209074eec00de541eb35b58783fb07f6b19a9fa",
+  "app\\services\\project_workflow.py": "0983af00d284a7e96985f12aa6e1f960ac11f07c70ba5829059ae16fff5b9d2f"
+}

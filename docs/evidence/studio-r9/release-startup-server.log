@@ -1,0 +1,17 @@
+INFO:     Loading environment from '.env'
+INFO:     Started server process [29764]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8780 (Press CTRL+C to quit)
+INFO:     127.0.0.1:8354 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:8354 - "POST /api/session HTTP/1.1" 200 OK
+INFO:     127.0.0.1:8354 - "POST /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:8354 - "POST /api/projects/57a00080-7c66-4f03-98aa-cde8ba770083 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:8354 - "POST /api/projects/57a00080-7c66-4f03-98aa-cde8ba770083/verify HTTP/1.1" 200 OK
+INFO:     Loading environment from '.env'
+INFO:     Started server process [26044]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8780 (Press CTRL+C to quit)
+INFO:     127.0.0.1:1331 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:1331 - "GET /api/projects/57a00080-7c66-4f03-98aa-cde8ba770083 HTTP/1.1" 200 OK

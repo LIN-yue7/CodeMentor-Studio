@@ -1,0 +1,9 @@
+{
+  "initial_frozen_count": 16,
+  "initial_live_run": "live-01",
+  "post_evaluation_development_cases": [
+    "missing-branch-return"
+  ],
+  "remaining_not_used_for_case_specific_fix": 15,
+  "limits": "Initial scores retained; replay after fixes is development evidence, not new independent or real-model success."
+}

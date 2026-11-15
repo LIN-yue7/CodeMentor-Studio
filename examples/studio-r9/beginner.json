@@ -1,0 +1,7 @@
+{
+  "name": "R9 beginner",
+  "files": {
+    "main.py": "# 需求：非空列表取首项，空列表按0处理；当前入口应打印1。\nfrom helper import first\nprint(first([]) + 1)\n",
+    "helper.py": "def first(values)\n    if values:\n        return values[0]\n"
+  }
+}

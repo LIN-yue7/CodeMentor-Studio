@@ -1,0 +1,7 @@
+
+> codementor-workbench@2.0.0 test:e2e
+> playwright test
+
+[WebServer] D:\DeveloperTools\Python313\Scripts\python.exe: No module named uvicorn
+Error: Process from config.webServer was not able to start. Exit code: 1
+

@@ -7,8 +7,26 @@ type Payload={files:Record<string,string>;revision:number;path:string;cursor_lin
 type Preview={snippets:{path:string;line:number;quote:string}[];buffer_hash:string;status?:string;reason?:string}
 type Patch={path:string;line:number;before:string;after:string;reason:string}
 type Teaching={summary:string;root_cause:string;mechanism:string;example:string;alternatives:string[];prevention:string;uncertainty:string}
-type Result={status:string;mode:string;reason?:string;failure_kind?:string;workflow_mode?:string;cache_hit?:boolean;tool_trace?:{name:string;status:string}[];review?:{teaching?:Teaching|null;patches?:Patch[];explanation:string;hints:string[];citations:{path:string;line:number;quote:string}[]}|null}
+type Result={status:string;mode:string;reason?:string;failure_kind?:string;workflow_mode?:string;cache_hit?:boolean;teaching_source?:string;patch_check?:{status:string;reason:string};tool_trace?:{name:string;status:string}[];review?:{teaching?:Teaching|null;patches?:Patch[];explanation:string;hints:string[];citations:{path:string;line:number;quote:string}[]}|null}
 const messages:Record<string,string>={disabled:'模型功能未启用：当前仅提供本地静态分析。',limited:'已达到调用限额，请稍后手动重试。',timeout:'模型响应超时，自动分析已暂停；可重新预览后重试。',failed:'模型结果未通过校验或服务异常，没有生成可用建议。',blocked:'检测到疑似敏感内容，已阻止发送。'}
+const patchMessages:Record<string,string>={
+ 'unsupported':'验证范围不足，已暂缓提供补丁应用。可结合建议手动修改并复查。',
+ 'no-observed-output':'缺少可比较的运行输出，已暂缓提供补丁应用。',
+ 'return-contract-unconfirmed':'新增返回值需要确认业务约定；消除当前异常不足以证明默认值正确。请确认后手动修改并复查。',
+ 'missing-snapshot':'缺少源代码快照，已暂缓提供补丁应用。',
+ 'preservation-unconfirmed':'无法确认候选保留原有函数行为，已暂缓提供补丁应用。',
+ 'accumulator-regression':'候选改变了已有累加结果，已拦截补丁应用。',
+ 'existing-branch-regression':'候选改变了已有分支返回值，已拦截补丁应用。',
+ 'reference-mismatch':'补丁未提供应用操作。受限样例的结果与原代码调用所表达的求和行为不符。',
+ 'new-runtime-error':'补丁未提供应用操作。受限检查发现了新的运行错误。',
+ 'candidate-syntax-error':'补丁未提供应用操作。修改后的代码含有语法错误。',
+ 'editor-line-mismatch':'补丁未提供应用操作。修改位置与编辑器中的原始行不一致。',
+ 'output-changed':'受限检查观察到输出发生变化。请核对业务预期。',
+ 'existing-runtime-error':'当前输入仍出现原有错误。请核对修改目标。',
+ 'observed-error-removed':'当前输入的错误消失。请继续核对结果是否符合预期。',
+ 'same-observed-output':'本次受限检查观察到相同输出。仍需核对其他输入和业务预期。',
+ 'sum-reference-samples':'受限求和样例的结果一致。仍需核对其他输入和业务预期。',
+}
 
 export function ProjectReview({id,payload,onApplyFiles}:{id:string;payload:Payload;onApplyFiles?:(files:Record<string,string>)=>void}){
  const [allowed,setAllowed]=useState(false),[ready,setReady]=useState(false),[busy,setBusy]=useState(false)
@@ -83,8 +101,9 @@ export function ProjectReview({id,payload,onApplyFiles}:{id:string;payload:Paylo
    {!result.review&&<p>{result.reason??messages[result.status]??messages.failed}</p>}
    {result.failure_kind==='tools-unsupported'&&<><p>当前服务不支持原生工具调用，可使用已有片段进行单轮分析。</p><button disabled={busy} onClick={()=>void run(true,true,false)}>改用单轮分析（重新请求）</button></>}
    {result.workflow_mode&&<p className="subtle">{result.cache_hit?'当前版本缓存 · ':''}{result.workflow_mode==='native-tools'?'原生工具工作流':result.workflow_mode==='text-fallback'?'模型无工具接口 · 单轮降级':'单轮文本分析'}{result.tool_trace?.length?` · 实际工具调用 ${result.tool_trace.length} 次`:''}</p>}
+   {result.patch_check&&<p className="review-feedback">{patchMessages[result.patch_check.reason]??'补丁的运行效果尚未确认，请核对修改和预期行为。'}</p>}
    {result.review?.teaching&&<><p>{result.review.teaching.summary}</p><details onToggle={e=>{if(e.currentTarget.open)void post('/projects/'+id+'/learning-action',{path:payload.path,action:'hint-viewed',code:payload.files[payload.path]}).catch(()=>{})}}><summary>详细解释：为什么这样修改</summary>{([['根因',result.review.teaching.root_cause],['语言机制',result.review.teaching.mechanism],['例子与证据',result.review.teaching.example],['验证与预防',result.review.teaching.prevention],['尚不确定',result.review.teaching.uncertainty]]).map(([title,text])=>text&&<div key={title}><h4>{title}</h4><p className="model-explanation">{text}</p></div>)}{result.review.teaching.alternatives.map((text,i)=><p key={i}>{text}</p>)}</details></>}
-   {result.review&&<><p className="subtle">模型建议 · 尚未通过运行验证</p><p className="model-explanation">{result.review.explanation}</p>{result.review.hints.map((h,i)=><details key={i} open={i===0}><summary>{['修改方向','更多建议','进一步验证与提醒'][i]??'进一步说明'}</summary><p className="model-explanation">{h}</p></details>)}{!!result.review.patches?.length&&<details open><summary>审阅建议修改 · 尚未应用</summary>{result.review.patches.map((p,i)=><div key={i}><p>{p.path}:{p.line} · {p.reason}</p><pre className="patch-before">− {p.before}</pre><pre className="patch-after">+ {p.after}</pre></div>)}<button disabled={!onApplyFiles} onClick={applyPatches}>批准并应用到草稿</button></details>}<details><summary>引用的代码证据</summary>{result.review.citations.map((c,i)=><p key={i}>{c.path}:{c.line} <code>{c.quote}</code></p>)}</details></>}
+   {result.review&&<><p className="subtle">{result.teaching_source==='local-static-rule'?'本地静态解释':'模型建议 · 尚未通过运行验证'}</p><p className="model-explanation">{result.review.explanation}</p>{result.review.hints.map((h,i)=><details key={i} open={i===0}><summary>{['修改方向','更多建议','进一步验证与提醒'][i]??'进一步说明'}</summary><p className="model-explanation">{h}</p></details>)}{!!result.review.patches?.length&&<details open><summary>审阅建议修改 · 尚未应用</summary>{result.review.patches.map((p,i)=><div key={i}><p>{p.path}:{p.line} · {p.reason}</p><pre className="patch-before">− {p.before}</pre><pre className="patch-after">+ {p.after}</pre></div>)}<button disabled={!onApplyFiles} onClick={applyPatches}>批准并应用到草稿</button></details>}<details><summary>引用的代码证据</summary>{result.review.citations.map((c,i)=><p key={i}>{c.path}:{c.line} <code>{c.quote}</code></p>)}</details></>}
   </div>}
  </section>
 }

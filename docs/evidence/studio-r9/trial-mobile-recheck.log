@@ -1,0 +1,21 @@
+
+> codementor-workbench@2.0.0 test:e2e
+> playwright test r9-trial.spec.ts
+
+[WebServer] INFO:     Started server process [44724]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8766 (Press CTRL+C to quit)
+
+Running 4 tests using 2 workers
+
+(node:22340) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [desktop] › e2e\r9-trial.spec.ts:7:2 › R9 beginner imported project and anonymous export (1.3s)
+  ok 1 [mobile] › e2e\r9-trial.spec.ts:7:2 › R9 beginner imported project and anonymous export (1.6s)
+  ok 3 [desktop] › e2e\r9-trial.spec.ts:7:2 › R9 advanced imported project and anonymous export (763ms)
+  ok 4 [mobile] › e2e\r9-trial.spec.ts:7:2 › R9 advanced imported project and anonymous export (789ms)
+
+  4 passed (9.1s)

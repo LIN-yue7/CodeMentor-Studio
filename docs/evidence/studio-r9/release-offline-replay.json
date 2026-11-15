@@ -1,0 +1,1612 @@
+[
+  {
+    "source_run": "live-01",
+    "case_id": "scope-shadow",
+    "group": "development-regression",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "第 2 行的局部变量 sum 遮蔽了内置求和函数。第 3 行的 sum(values) 试图调用整数，会引发 TypeError。函数内赋值让同名标识符成为局部变量，后面的调用使用该局部绑定。",
+        "hints": [
+          "若目标是求和，删除遮蔽赋值并保留 sum(values)。也可以逐项累加后返回。",
+          "用 total([]) 和 total([1, 2]) 核对求和预期 0 和 3。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def total(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    sum = 0"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    return sum(values)"
+          }
+        ],
+        "teaching": {
+          "summary": "第 2 行的局部变量 sum 遮蔽了内置求和函数。",
+          "root_cause": "第 3 行的 sum(values) 试图调用整数，会引发 TypeError。",
+          "mechanism": "函数内赋值让同名标识符成为局部变量，后面的调用使用该局部绑定。",
+          "example": "静态推断：total([1, 2]) 会在调用局部整数时抛出 TypeError。",
+          "alternatives": [],
+          "prevention": "用 total([]) 和 total([1, 2]) 核对求和预期 0 和 3。",
+          "uncertainty": "输入元素类型和空输入的业务约定仍需结合调用方确认。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "3928e3c315e7e30d95a5a709a6c6376e40f2b2480cdfc4833220a891d88e1568",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "teaching_source": "local-static-rule"
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "return-none",
+    "group": "development-regression",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "positive 在 x <= 0 时会隐式返回 None。第 3 行的条件为假时，控制流直接到达函数末尾，违背布尔返回约定。Python 函数走到末尾时会隐式返回 None。文档和类型标注不会替函数补上返回值。",
+        "hints": [
+          "若约定为判断正数，在分支后显式返回 False，也可直接返回 x > 0。",
+          "用负数、0、正数测试三个输入，并检查结果是否为 True 或 False。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    \"\"\"Return a bool for every integer x.\"\"\""
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    if x > 0:"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "        return True"
+          }
+        ],
+        "teaching": {
+          "summary": "positive 在 x <= 0 时会隐式返回 None。",
+          "root_cause": "第 3 行的条件为假时，控制流直接到达函数末尾，违背布尔返回约定。",
+          "mechanism": "Python 函数走到末尾时会隐式返回 None。文档和类型标注不会替函数补上返回值。",
+          "example": "静态推断：positive(0) 和 positive(-1) 返回 None，positive(1) 返回 True。",
+          "alternatives": [],
+          "prevention": "用负数、0、正数测试三个输入，并检查结果是否为 True 或 False。",
+          "uncertainty": "非正数应映射到哪个布尔值仍由需求决定。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "67ee5ff1e9635cb745d5a89fe777cee97c16e94dbe0d9696c459ee74655510f3",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "teaching_source": "local-static-rule",
+      "patch_check": {
+        "status": "unknown",
+        "reason": "return-contract-unconfirmed"
+      }
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "correct-scope",
+    "group": "development-regression",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "result 在循环前已初始化为整数 0。当前循环逐项执行 result += value，累加器的作用域与初始化没有发现问题。整数起始值可以和常见数值相加。若第一个元素是字符串，0 与字符串相加会引发 TypeError。",
+        "hints": [
+          "如果调用方约定传入数值，保留当前累加方式。只有需求明确接受其他类型时才需要调整。",
+          "用普通数值列表和空列表核对调用约定。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def total(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    result = 0"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    for value in values:"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "        result += value"
+          },
+          {
+            "path": "main.py",
+            "line": 5,
+            "quote": "    return result"
+          }
+        ],
+        "teaching": {
+          "summary": "result 在循环前已初始化为整数 0。",
+          "root_cause": "当前循环逐项执行 result += value，累加器的作用域与初始化没有发现问题。",
+          "mechanism": "整数起始值可以和常见数值相加。若第一个元素是字符串，0 与字符串相加会引发 TypeError。",
+          "example": "静态推断：total([1, 2]) 得到 3，total([]) 得到 0，total([\"a\"]) 引发 TypeError。",
+          "alternatives": [],
+          "prevention": "用普通数值列表和空列表核对调用约定。",
+          "uncertainty": "允许的元素类型取决于调用方约定。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "b52a438205671212b8338d3bcdb399afe015d95a038152c28709546e9745f102",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "teaching_source": "local-static-rule"
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "clean-offset",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：当前提供的 3 行代码在静态层面没有可确认的语法或逻辑问题。函数 offset 接收参数 n，返回 n + 3，随后用 4 调用并打印结果；按 Python 的整数加法规则，静态推断输出为 7。本地解析器状态为 syntax-ok，且 local_issues 为空，说明没有已确定的语法错误需要解释。需要注意：test_status 为 not-run，因此“输出 7”只是基于代码的静态推断，并非实际执行证据；本次也没有工具返回匹配 buffer_hash 的执行结果，不能声称已运行或测试通过。若原需求是“对输入加 3”，现有实现与需求一致，无需修改。",
+        "hints": [
+          "先直接运行 python main.py，确认输出是否为 7；这是验证当前行为的最小步骤。",
+          "若需求是“加 3”，保持现有代码不变；不要为了产生修改而改动正确代码。",
+          "若需求实际是其他偏移量或需要处理非数字输入，请先明确需求，再调整 return n + 3 或增加类型校验。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def offset(n):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return n + 3"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "print(offset(4))"
+          }
+        ],
+        "teaching": {
+          "summary": "这段代码定义了一个把参数加 3 的函数，并用 4 调用它后打印结果。静态看没有语法错误，也没有可确认的逻辑缺陷；按整数加法推断结果应为 7，但尚未实际运行验证。",
+          "root_cause": "没有可确认的问题。local_status 为 syntax-ok，local_issues 为空，说明本地解析器未发现语法错误；三行代码结构完整：函数定义、返回表达式和调用打印均齐全。",
+          "mechanism": "Python 用 def 定义函数，函数体通过 return 把表达式 n + 3 的值交回调用处。调用 offset(4) 时，形参 n 绑定为整数 4，4 + 3 按整数加法得到 7，print 再把这个值输出。这里没有隐式类型转换问题，因为传入的是整数；若传入字符串，n + 3 会因类型不匹配而报错，但这不属于当前代码展示的调用情形。",
+          "example": "静态推断的最小例子：offset(4) 中 n 为 4，return n + 3 计算 4 + 3，结果为 7，因此 print 预期输出 7。该结论来自对提供行的静态分析，不是运行结果；当前 test_status 为 not-run，也没有匹配 buffer_hash 的工具执行证据。",
+          "alternatives": [
+            "保持现状：适用于需求就是“输入加 3”，无需任何修改。",
+            "把常量 3 改为参数：适用于偏移量需要由调用者决定，例如 def offset(n, delta): return n + delta，但需同步修改调用处。",
+            "增加输入类型检查：适用于需要明确拒绝非数字输入的场景，但会改变函数对异常输入的行为，应先确认需求。"
+          ],
+          "prevention": "修改前先明确函数契约：输入类型、偏移量和期望输出。用 python main.py 或针对 offset 的简单断言验证，例如确认 offset(4) 为 7；若扩展为参数化偏移量，再补充 offset(4, 5) 等用例。不要把静态推断当成测试通过。",
+          "uncertainty": "只提供了 main.py 的 3 行且已完整覆盖，无法判断项目其他文件是否依赖 offset 的签名或行为；需求中的“原有功能”具体指什么也未进一步说明。若后续要改签名，需要先确认所有调用点。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "f514ef66f13ef8c82c295299303783355919f97257671d9d821c64592c89249e",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "clean-empty",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：这段代码语法正确，本地解析器也未报告问题；从静态阅读看，first([]) 会返回 9，而不是空列表的“第一个元素”。这可能是刻意设定的默认值，也可能是逻辑缺陷，但仅凭这 5 行无法确认需求。位置在 main.py 第 2–4 行：xs 为空时跳过 if 分支，直接执行 return 9。第 5 行打印该返回值。由于 test_status 为 not-run，且没有工具返回匹配当前 buffer_hash 的执行证据，以下均为静态推断，不代表实际运行结果。",
+        "hints": [
+          "先明确空列表的期望行为：若希望返回 None，可把第 4 行改为 `    return None`，然后运行 `print(first([]))` 验证输出。",
+          "若 9 是业务约定的默认值，则无需修改；可补充注释说明空输入返回 9 的原因，并用 `print(first([0]))` 与 `print(first([]))` 对比确认非空分支正常。",
+          "若空列表应报错，可在第 4 行前改为 `    raise ValueError(\"xs 不能为空\")`，并验证 `first([])` 抛出异常、`first([3])` 返回 3。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def first(xs):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    if xs:"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "        return xs[0]"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "    return 9"
+          },
+          {
+            "path": "main.py",
+            "line": 5,
+            "quote": "print(first([]))"
+          }
+        ],
+        "teaching": {
+          "summary": "函数 first 接收一个序列 xs：非空时返回第一个元素，空时返回 9。代码本身没有语法错误，问题只在于“空列表返回 9”是否符合你的需求。",
+          "root_cause": "第 2 行 `if xs:` 在空列表时判定为假，因此不进入第 3 行，直接落到第 4 行 `return 9`。第 5 行传入空列表，所以静态推断输出为 9。这是控制流与默认返回值的组合结果，不是语法错误。",
+          "mechanism": "Python 中空列表、空字符串、0、None 等在布尔上下文中为假，非空列表为真。`if xs:` 利用这一规则判断序列是否非空；为真时 `xs[0]` 取首元素，为假时执行函数体末尾的 return。函数一旦执行 return 就结束，因此两条路径互斥。第 5 行调用 first([])，按此规则走空分支。",
+          "example": "静态推断的最小反例：`first([])` 得到 9，而“第一个元素”的直觉期望可能是 None 或异常。对照 `first([0])`：列表非空，返回 0，说明 0 作为元素不会被误判为空。以上是阅读代码得出的推断，未实际执行。",
+          "alternatives": [
+            "返回 None：适用于调用方用 None 表示“没有元素”，把第 4 行改为 `    return None`。",
+            "保留 9：适用于 9 是明确的业务默认值，此时无需改代码，建议加注释说明约定。",
+            "抛出异常：适用于空输入属于调用错误，把第 4 行改为 `    raise ValueError(\"xs 不能为空\")`，调用方需处理异常。"
+          ],
+          "prevention": "修改前先写清空输入的预期：返回默认值、返回 None 还是报错。用 `print(first([]))`、`print(first([0]))`、`print(first([1,2]))` 三个输入分别验证空、含假值元素、普通非空三种情况，确认非空分支未被破坏。",
+          "uncertainty": "没有需求文档说明空列表应返回什么，也没有实际运行结果；9 是否为有意默认值无法确认。因此不提供改变语义的补丁，需先确认空输入约定。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "a936bb2b9558a03f028f68f5dd1b688689ad27594756f3d72f3a57f9b0ec1d3f",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "clean-text",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：当前给出的 3 行代码在静态层面没有可确认的语法或逻辑问题。`label` 接收参数 `s`，返回 `s + \"!\"`，随后用字符串 `\"hi\"` 调用并打印，类型匹配，功能是给字符串追加感叹号。本地解析器状态为 syntax-ok 且 local_issues 为空，这与代码表面一致。需要说明的是，这只说明语法解析通过，不代表运行结果或完整项目测试通过；test_status 为 not-run，且没有工具返回匹配当前 buffer_hash 的执行证据，因此不能声称输出一定是 `hi!`，只能静态推断。若后续传入非字符串（如数字），`+` 会因类型不匹配而报错，这是潜在使用约束，不是当前代码已确认的缺陷。",
+        "hints": [
+          "先直接运行 `python main.py` 验证输出是否为 `hi!`，这是最小验证步骤。",
+          "若希望 `label` 对任意类型都安全，可在函数内显式转换：`return str(s) + \"!\"`；仅在确实需要接受非字符串时采用。",
+          "若需求是只处理字符串，可保留现状，并在调用处确保传入字符串，例如 `label(\"hi\")`。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def label(s):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return s + \"!\""
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "print(label(\"hi\"))"
+          }
+        ],
+        "teaching": {
+          "summary": "这段代码定义了一个给字符串末尾加感叹号的函数，并用 \"hi\" 调用打印。静态检查没有发现语法错误，也没有可确认的逻辑错误。真正要确认的是运行输出，以及函数是否只打算接收字符串。",
+          "root_cause": "没有可确认的根因：local_status 为 syntax-ok，local_issues 为空，三行代码在语法和当前调用的类型上都自洽。`s + \"!\"` 在 `s` 为字符串时是合法的字符串拼接。",
+          "mechanism": "Python 中 `+` 对两个字符串执行拼接，对字符串和数字等不同类型则抛出 TypeError，不会自动把数字转成字符串。函数参数 `s` 没有类型标注，因此函数本身不限制传入类型，限制来自 `+` 运算符。当前调用传入字符串字面量 `\"hi\"`，所以静态推断类型匹配。",
+          "example": "静态推断：`label(\"hi\")` 返回 `\"hi!\"`，`print` 输出 `hi!`。这是根据第 2 行字符串拼接规则推断的，不是实际执行证据。潜在反例（待验证）：若调用 `label(1)`，第 2 行会因 `int + str` 类型不匹配报错。",
+          "alternatives": [
+            "保持现状：适用于函数只处理字符串的明确需求，无需修改。",
+            "在函数内转换：`return str(s) + \"!\"`，适用于需要接受任意类型并统一转成文本的场景，但会改变非字符串输入的行为语义。",
+            "在调用处保证类型：只传字符串，适用于希望函数保持简单、由调用方负责类型约束的设计。"
+          ],
+          "prevention": "修改后运行 `python main.py` 观察输出；若函数需要接受多种类型，补充针对数字等输入的测试，确认是报错还是转换符合预期。不要仅凭语法检查通过就认为功能正确。",
+          "uncertainty": "没有实际执行结果，也没有完整项目上下文；无法确认 `label` 是否还会被其他文件以非字符串参数调用，也无法确认业务上是否要求支持非字符串输入。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "5aa2243d81ec5bfeb19302f7659653a8a6b86e3f6a7a0de91d00d94063f9abf3",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "missing-colon",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：第 1 行函数定义头部 `def triple(n)` 末尾缺少冒号，Python 解析器在列 14 报 `expected ':'`，因此整个文件在解析阶段就被拒绝，第 2 行的 `return n * 3` 不会被执行。修复只需在头部补 `:`，保留参数 `n` 和乘法逻辑，功能不变。",
+        "hints": [
+          "在第 1 行末尾补冒号：`def triple(n):`，第 2 行保持 4 空格缩进。",
+          "修改后重新运行解析/执行，确认 `triple(2)` 返回 `6`，验证原有功能未被改变。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def triple(n)"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return n * 3"
+          }
+        ],
+        "teaching": {
+          "summary": "函数定义那一行少了结尾的冒号，Python 读到行尾时无法判断后面的缩进代码属于这个函数，于是直接报语法错误。补一个冒号即可，函数名、参数和 `n * 3` 的返回值都不用动。",
+          "root_cause": "`def` 语句属于复合语句，语法要求头部以冒号结尾。第 1 行 `def triple(n)` 没有冒号，解析器在列 14（行尾）期待 `:`，报 `expected ':'`，文件在解析阶段被拒绝，未进入执行。",
+          "mechanism": "Python 用缩进表示代码块，而冒号是“块开始”的标记：解析器看到 `def 名字(参数):` 后，才知道接下来缩进的一行或多行是函数体。缺少冒号时，解析器无法把第 2 行的 `return` 绑定到函数上，只能报错。这是纯语法层面的规则，与 `n * 3` 的语义无关。",
+          "example": "静态推断：把第 1 行改为 `def triple(n):` 后，第 2 行 `    return n * 3` 成为函数体，调用 `triple(2)` 应得到 `6`。这是基于语法的推断，本次没有实际执行证据，`test_status` 为 `not-run`。",
+          "alternatives": [
+            "直接补冒号：适用于保持现有函数定义与实现，最小改动。",
+            "若本意是别的结构（如条件或循环），需先确认需求再改头部关键字；当前证据只支持函数定义，不建议改动。",
+            "若希望函数体为空占位，可加 `pass`，但这会改变返回值语义，仅在需求明确时采用。"
+          ],
+          "prevention": "修改函数、条件、循环等复合语句头部后，先运行一次解析（如 `python -m py_compile main.py`）确认无语法错误，再执行小样例验证返回值；同时检查函数体缩进一致。",
+          "uncertainty": "仅提供了两行且文件已完整，无法判断该函数在项目中的调用方式与预期输入类型；若传入非数值类型，`n * 3` 的行为需另行验证。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "before": "def triple(n)",
+            "after": "def triple(n):",
+            "reason": "复合语句头部需以冒号结束，补上后函数体归属明确，计算逻辑不变。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "6da0b852beb7ef4757f42038652c121d9e1f3adb1d13fdc9c9d3154a336658b4",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "patch_check": {
+        "status": "review-required",
+        "reason": "observed-error-removed",
+        "before": "runtime-error",
+        "after": "passed"
+      }
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "bad-indent",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：这是缩进语法错误，不是逻辑错误。第 1 行 `def value():` 以冒号结束，声明了一个函数体；第 2 行 `return 8` 必须比 `def` 行缩进一级，才能被解析为函数体。当前第 2 行从第 1 列开始，与 `def` 同级，解析器因此报“expected an indented block after function definition on line 1”。由于解析阶段就失败，程序没有执行，也没有任何运行输出；`return 8` 是否满足业务需求无法从这两行判断，只能确认它原本被期望作为 `value()` 的返回值。",
+        "hints": [
+          "把第 2 行缩进一级（通常 4 个空格），使其成为函数体：\n    return 8\n验证：重新运行解析/执行，确认不再出现缩进错误。",
+          "检查该行使用的是空格还是 Tab，并与文件其他部分保持一致；不要用 Tab 和空格混排。",
+          "缩进修正后，再确认 `return 8` 是否符合 `value()` 的预期返回值；若需求是其他值，应单独修改，而不是为消除报错而保留 8。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def value():"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "return 8"
+          }
+        ],
+        "teaching": {
+          "summary": "函数定义行以冒号结尾后，下一行必须缩进，表示它属于这个函数。现在 `return 8` 顶格写，Python 认为函数体是空的，于是直接报语法错误。把这一行缩进一级即可让代码通过解析。",
+          "root_cause": "第 1 行 `def value():` 开启了函数代码块，第 2 行 `return 8` 位于第 1 列，没有形成更深的缩进层级。解析器在期待函数体缩进块时遇到同级语句，因此报 `expected an indented block after function definition on line 1`。这是语法层面的确定问题，与 `return 8` 的数值是否正确无关。",
+          "mechanism": "Python 不使用花括号界定代码块，而用缩进表达语句的归属层级。`def`、`if`、`for`、`while` 等以冒号结尾的头部语句之后，必须跟一个缩进更深的代码块。缩进通常用 4 个空格，同一代码块内必须对齐；Tab 与空格混用也可能导致缩进不一致。当前文件只有两行且已完整提供，因此不存在未展示的缩进代码块。",
+          "example": "静态推断的最小修正：\ndef value():\n    return 8\n这样 `return 8` 属于 `value()` 的函数体。此处是依据解析器报错和源码作出的静态推断，不是实际执行结果；修正后仍需重新运行才能确认程序行为。",
+          "alternatives": [
+            "将第 2 行缩进 4 个空格：适用于 `return 8` 确实是 `value()` 的返回值这一原意。",
+            "若 `return 8` 本应位于其他代码块，则需先补充该代码块的头部语句并按其层级缩进：适用于需求中还存在未展示的控制结构，但当前完整文件不支持这种假设。"
+          ],
+          "prevention": "修改后重新运行解析器或程序，确认缩进错误消失；在编辑器中开启显示空白字符，统一使用空格缩进，避免 Tab 与空格混用。语法通过后，再单独核对 `value()` 的返回值是否符合需求。",
+          "uncertainty": "仅凭两行代码无法确认 `8` 是否是业务上期望的返回值，也无法确认该函数是否还有其他调用约束。可以确定的是缩进错误本身；修正缩进只恢复原代码结构，不证明返回值语义正确。"
+        },
+        "patches": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "before": "return 8",
+            "after": "    return 8",
+            "reason": "将 return 语句缩进为函数体，修复解析器报告的缺少缩进代码块问题；不改变返回值语义。"
+          }
+        ]
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "5a9694cb14fad4e82ba0d5a7033877bcbf40a1e41db9b0f774014df18a25cf86",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "patch_check": {
+        "status": "review-required",
+        "reason": "observed-error-removed",
+        "before": "runtime-error",
+        "after": "passed"
+      }
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "exclusive-end",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：语法本身没有问题，但第 2 行存在可静态确认的越界风险。Python 列表下标从 0 开始，长度为 2 的 [3, 8] 合法下标只有 0 和 1，而 len(xs) 等于 2，因此 xs[len(xs)] 会访问不存在的第 3 个元素并抛出 IndexError。函数名 last 和调用方式表明意图是取最后一个元素，正确下标应为 len(xs) - 1。这里只是静态推断，测试状态为 not-run，没有实际执行证据。",
+        "hints": [
+          "把下标改为 len(xs) - 1：return xs[len(xs) - 1]，然后运行 print(last([3, 8])) 验证输出 8。",
+          "若还需支持空列表，先明确空列表应返回什么或抛什么异常，再在函数开头加条件判断，不要擅自改变语义。",
+          "验证时再补一个单元素用例，如 last([5]) 应返回 5，确认边界下标正确。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def last(xs):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return xs[len(xs)]"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "print(last([3, 8]))"
+          }
+        ],
+        "teaching": {
+          "summary": "函数想取列表最后一个元素，但写成了 xs[len(xs)]。len(xs) 是元素个数，不是最后一个元素的下标，所以会越界。改成 len(xs) - 1 即可保留原功能。",
+          "root_cause": "Python 序列下标从 0 开始，长度为 n 的列表合法下标是 0 到 n-1。对 [3, 8]，len(xs) 为 2，而 xs[2] 超出范围，运行时会抛 IndexError。语法检查通过不代表下标合法，local_issues 为空只说明解析器未发现语法错误。",
+          "mechanism": "len(xs) 返回元素数量；索引运算 xs[i] 要求 0 <= i < len(xs)。因此“最后一个元素”的位置是 len(xs) - 1。也可以用负下标 xs[-1]，它在非空列表上表示倒数第一个元素。两种写法在空列表上都会失败，只是异常类型和位置不同，需要根据需求决定是否处理空列表。",
+          "example": "静态推断的最小反例：last([3, 8]) 中 len(xs) 为 2，xs[2] 越界，预期抛 IndexError；改为 xs[len(xs) - 1] 后应返回 8。该结论来自代码阅读，未实际运行，test_status 为 not-run。",
+          "alternatives": [
+            "使用负下标：return xs[-1]，适用于非空列表且希望写法简洁的场景。",
+            "显式判断空列表：在函数开头加 if not xs: 并按需求返回或抛异常，适用于需要明确空输入行为的场景。",
+            "使用切片：return xs[-1:] 会返回列表而非元素，仅适用于调用方期望得到列表的场景，会改变返回类型，需谨慎。"
+          ],
+          "prevention": "修改后运行现有调用 print(last([3, 8]))，确认输出 8；再补测 last([5]) 和空列表用例，分别验证单元素与空输入行为。检查下标表达式时，明确区分“元素个数”和“最后下标”。",
+          "uncertainty": "未提供空列表的预期行为，因此补丁只修正非空列表取末元素，不添加空列表处理。没有实际执行记录，IndexError 属于静态推断；若 xs 不是支持 len 和下标的对象，还需另行确认类型。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "c2d3176ad24dfd49d8b10642c80e712dcb7831f6042381d10f20eaa166148449",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "patch_check": {
+        "status": "unknown",
+        "reason": "unsupported",
+        "before": "unsupported",
+        "after": "unsupported"
+      }
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "zero-divisor",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：语法没有问题，但第 3 行用空列表调用 mean，第 2 行会执行 sum([])/len([])，即 0/0，触发 ZeroDivisionError。位置在 main.py 第 2 行的除法与第 3 行的调用组合。根因是空序列没有平均值定义，而函数未处理空输入。可能意图是演示空列表求均值，或希望函数对空输入有明确行为；但需求未说明空列表应返回什么，因此不能擅自改成返回 0 或 None。静态推断：sum([]) 为 0，len([]) 为 0，除法报错；这是语言规则推断，未实际运行。",
+        "hints": [
+          "先确认空列表的期望语义：若应报错，可在函数开头显式检查并抛出带说明的异常，例如 if not xs: raise ValueError(\"xs 不能为空\")，再运行 print(mean([])) 观察。",
+          "若业务上允许空输入，需要明确返回值（如 None），并同步修改调用处处理该返回值；不要仅为消除异常而返回 0，因为 0 不是空集合的平均值。",
+          "用非空样例验证原功能仍正确，例如 print(mean([1, 2, 3])) 应输出 2.0。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def mean(xs):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return sum(xs) / len(xs)"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "print(mean([]))"
+          }
+        ],
+        "teaching": {
+          "summary": "代码定义了一个求平均值的函数，并用空列表调用它。空列表的长度为 0，除法时分母为 0，因此会抛出 ZeroDivisionError。语法本身正确，问题在于没有定义空输入时的行为。",
+          "root_cause": "第 2 行先计算 sum(xs)，对空列表得到 0；再计算 len(xs)，得到 0；随后执行 0 / 0。Python 中整数或浮点数除以 0 都会抛出 ZeroDivisionError。第 3 行传入 [] 正好触发这一路径。",
+          "mechanism": "平均值公式是总和除以元素个数。该公式隐含前提是元素个数大于 0。空序列没有元素，平均值在数学上未定义，程序必须选择一种策略：抛出异常、返回特殊值，或由调用方保证不传空序列。Python 的除法运算符 / 在分母为 0 时不会返回无穷大或 0，而是直接报错。",
+          "example": "静态推断的最小反例：mean([]) 中 sum([]) 为 0，len([]) 为 0，执行 0 / 0 触发 ZeroDivisionError。这不是实际运行结果，test_status 为 not-run，也没有工具执行证据。对照非空输入 mean([1, 2, 3])，sum 为 6，len 为 3，结果为 2.0，原功能正常。",
+          "alternatives": [
+            "显式拒绝空输入：在函数开头加 if not xs: raise ValueError(\"xs 不能为空\")，适用于空输入属于调用错误的情况。",
+            "返回 None 表示无平均值：在函数开头加 if not xs: return None，适用于调用方愿意检查 None 的情况，同时需调整第 3 行的打印或后续处理。",
+            "由调用方保证非空：保留函数不变，把第 3 行改为非空列表调用，适用于空输入本就不在需求范围内的情况。"
+          ],
+          "prevention": "修改前先明确空输入的期望行为，再写一个覆盖空列表和非空列表的测试。验证时分别运行 mean([]) 与 mean([1, 2, 3])，确认前者按约定报错或返回约定值，后者仍为 2.0。不要用返回固定值掩盖未定义的语义。",
+          "uncertainty": "需求只说保留原有功能，没有说明空列表应报错、返回 None 还是其他值，因此不能确定唯一正确改法。当前没有实际执行证据，ZeroDivisionError 是基于 Python 除法规则的静态推断；也未运行测试确认其他输入的行为。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "4471fd87709f0e2c715f7c4b6bab38376ff1a926577eb453644f2dba14f15243",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "branch-local",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：语法检查通过，但存在一个可静态确认的运行时风险——当 flag 为假时，第 3 行的 amount = 6 不会执行，第 4 行 return amount 会引用一个从未赋值的局部变量，触发 UnboundLocalError。第 5 行传入 False，正好走到这条路径，因此按静态推断该调用会抛异常。注意这只是静态推断，本次没有执行代码，test_status 为 not-run，不能声称已运行验证。另外，函数在 flag 为真时返回 6，在 flag 为假时应当返回什么，从给出的 5 行代码中无法确定，这属于需要确认的需求条件，不能擅自补一个固定值。",
+        "hints": [
+          "先明确 flag 为假时的业务语义：是返回 0、返回 None，还是走另一套价格逻辑。确认后再在 if 之前或 else 分支中给 amount 赋值，例如在函数开头写 amount = 0（仅当 0 是约定的默认价时才这样做）。",
+          "若希望两种分支都显式返回，可改为 if flag: return 6 后接 else 分支的返回值，避免依赖变量在分支外可见。",
+          "验证方式：分别调用 price(True) 和 price(False)，确认两者都返回符合预期的值，而不是只让程序不报错。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    if flag:"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "        amount = 6"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "    return amount"
+          },
+          {
+            "path": "main.py",
+            "line": 5,
+            "quote": "print(price(False))"
+          }
+        ],
+        "teaching": {
+          "summary": "函数里 amount 只在 if 成立时才被赋值，但 return 在 if 外面，所以条件不成立时没有任何值可返回。第 5 行用 False 调用，按静态分析会走到这条没有赋值的路径。语法本身没问题，问题在于变量的赋值路径不完整。",
+          "root_cause": "Python 在执行函数时，只要函数体内出现对某个名字的赋值，该名字就被视为局部变量。第 3 行的 amount = 6 使 amount 成为 price 的局部变量；当 flag 为假时这一行被跳过，第 4 行读取 amount 时该局部变量尚未绑定任何对象，于是抛出 UnboundLocalError。这不是语法错误，所以 local_status 为 syntax-ok、local_issues 为空是合理的。",
+          "mechanism": "Python 的局部变量在函数调用时创建，但不会像某些语言那样自动初始化为 0 或 None。名字只有在执行到赋值语句时才真正绑定值。控制流跳过赋值语句后，名字处于“已声明为局部但未绑定”的状态，读取它就会报错。判断依据是编译期扫描函数体中的赋值目标，而不是运行到哪一行。因此把赋值放在条件分支内、把读取放在分支外，是典型的路径不完整问题。",
+          "example": "静态推断的最小反例就是现有代码本身：price(False) 时第 2 行条件为假，第 3 行不执行，第 4 行读取未绑定的 amount。本次未执行代码，test_status 为 not-run，所以这是基于语言规则的推断而非运行证据。若需要运行证据，应实际调用 price(False) 观察异常类型。",
+          "alternatives": [
+            "在 if 之前给 amount 设默认值，例如 amount = 0，适用于 0 就是约定的默认价格；若默认价不是 0，则不能这样改。",
+            "改成 if flag: return 6，并在 else 分支写明另一种价格，适用于两种情形都有明确返回值且希望提前返回。",
+            "保留 amount 变量但在 else 中赋值，适用于后续还要对 amount 做统一处理（如打折）的场景。"
+          ],
+          "prevention": "修改前先列出函数所有可能的输入分支，检查每个分支是否都为返回值所依赖的变量赋了值。改完后分别用 True 和 False 调用，确认返回值符合业务预期，而不只是确认不抛异常。若项目有测试，应补充覆盖两个分支的用例。",
+          "uncertainty": "flag 为假时应该返回什么，从给出的 5 行代码无法确定，因此不提供改变业务语义的补丁。amount 是否还应在别处使用、6 是否代表某种价格规则，也缺少上下文。所有结论均为静态推断，未经执行验证。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "b3ce887c12579387832d74414b8f9e40da72259cf09c716ae8fba852013a326a",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "builtin-mask",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：这段代码语法能通过，但第 2 行把内置函数名 len 覆盖成了整数 4，于是第 3 行调用 len(xs) 时实际是在“调用整数”，运行时会报 TypeError（'int' object is not callable）。位置在 main.py 第 2 行赋值、第 3 行调用。根因是变量名与内置函数同名，遮蔽了内置 len。可能意图是统计列表长度，但用了一个叫 len 的局部变量，具体意图需确认。静态推断：第 2 行后 len 指向 4；第 3 行 len(xs) 对整数做调用，必然失败。这只是静态推断，未实际运行，test_status 为 not-run，不能声称测试通过。",
+        "hints": [
+          "把第 2 行的变量名改成不与内置函数冲突的名字，例如 `n = 4`，保留第 3 行 `return len(xs)` 不变；验证：运行 `print(count([1, 2]))` 应输出 2。",
+          "若第 2 行的 4 本意是参与计算，需先确认需求再改，例如 `n = 4` 后明确如何使用 n，不要仅为消除异常而删除它。",
+          "避免用 len、list、sum 等内置名作变量名；可用编辑器或 linter 检查名称遮蔽。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    len = 4"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    return len(xs)"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "print(count([1, 2]))"
+          }
+        ],
+        "teaching": {
+          "summary": "函数里把变量命名为 len，覆盖了 Python 内置的 len 函数，导致后面 len(xs) 变成调用一个整数，运行时报错。改个变量名即可恢复统计列表长度的功能。",
+          "root_cause": "第 2 行 `len = 4` 在函数局部作用域创建了名为 len 的变量，遮蔽了内置函数 len。第 3 行 `len(xs)` 此时解析到的是整数 4，对整数加括号调用会抛 TypeError。",
+          "mechanism": "Python 名称查找遵循 LEGB：局部作用域优先于内置作用域。函数内一旦给 len 赋值，整个函数体内 len 都指向该局部变量，内置 len 不再可见。调用表达式 `f(x)` 要求 f 可调用，整数不可调用，因此运行失败。语法检查不检查名称是否可调用，所以 local_status 为 syntax-ok。",
+          "example": "静态推断的最小反例：`len = 4` 后执行 `len([1,2])` 会得到 TypeError: 'int' object is not callable。此处为静态推断，未实际运行；test_status 为 not-run。",
+          "alternatives": [
+            "把变量改名为 n 等非内置名，保留 `return len(xs)`：适用于第 2 行的 4 只是占位或无关值。",
+            "若 4 有业务含义，先确认它应如何参与计算，再决定变量名与用法：适用于需求尚不明确时。",
+            "直接删除第 2 行：仅当确认该赋值无用途时适用，否则会改变原有逻辑。"
+          ],
+          "prevention": "改后运行 `print(count([1, 2]))`，预期输出 2；再用 linter 检查内置名遮蔽。不要用 len、sum、list 等作变量名。",
+          "uncertainty": "第 2 行 `len = 4` 的业务意图不明：4 是否应参与计算无法从片段判断，因此补丁仅做改名，不改变其存在。未实际执行代码，运行结果均为静态推断。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "11aa4e399f3651a7a46c3de08375ce3fb9591cb4caeb9827463956ea6cce5359",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "patch_check": {
+        "status": "unknown",
+        "reason": "unsupported",
+        "before": "unsupported",
+        "after": "unsupported"
+      }
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "missing-branch-return",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：这段代码语法没有问题，但存在一个可确认的逻辑缺口——当 flag 为 False 时，discount 函数没有 return 语句，会隐式返回 None，于是第 4 行执行 None + 5 会抛出 TypeError。位置在第 2–3 行的 if 分支只覆盖了 flag 为真的情况，缺少 else 或函数末尾的默认返回。可能意图是：flag 为真时折扣为 2，为假时折扣为某个默认值（例如 0 或 1），但具体默认值从给出的代码无法确定，需要你确认业务含义。静态推断：discount(False) 返回 None，None + 5 报错；这是基于 Python 隐式返回 None 的规则推断，并未实际运行。",
+        "hints": [
+          "在函数中补上 flag 为假时的返回分支，例如：\n    if flag:\n        return 2\n    return 0\n默认值需按业务确认，0 只是占位示例。",
+          "验证方式：先单独打印 print(discount(False))，确认它当前输出 None，再补分支后确认返回的是数值，最后运行 print(discount(False) + 5)。",
+          "避免方式：让函数所有路径都有明确 return，或在函数签名/注释中写清默认折扣值，防止隐式 None 参与算术运算。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def discount(flag):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    if flag:"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "        return 2"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "print(discount(False) + 5)"
+          }
+        ],
+        "teaching": {
+          "summary": "函数 discount 只在 flag 为真时返回 2，flag 为假时没有返回值，Python 会当作返回 None。第 4 行用 discount(False) 的结果加 5，就变成 None + 5，会报类型错误。语法本身没问题，问题在于分支不完整。",
+          "root_cause": "discount 函数体只有 if flag: return 2 这一条返回路径。当 flag 为 False 时，if 块被跳过，函数执行到末尾没有 return，Python 规定此时返回 None。随后 print(discount(False) + 5) 对 None 做加法，触发 TypeError。",
+          "mechanism": "Python 中函数如果没有显式 return，或 return 后没有值，调用结果就是 None。None 是特殊空值，不支持与整数相加，所以 None + 5 会报 unsupported operand type(s)。要保留原有功能，需要为 flag 为假的情况补一个明确的数值返回，使所有调用路径都返回可参与运算的类型。",
+          "example": "静态推断的最小反例：discount(False) 走完函数体后隐式返回 None，表达式变为 None + 5，抛出 TypeError。这不是实际运行结果，而是依据 Python 隐式返回 None 规则得出的推断；当前 test_status 为 not-run，没有执行证据。",
+          "alternatives": [
+            "在函数末尾补 return 0：适用于 flag 为假时折扣为 0 的业务含义。",
+            "在函数末尾补 return 1：适用于 flag 为假时折扣为 1（不打折）的业务含义。",
+            "在调用处判断返回值是否为 None 再决定是否相加：适用于调用方需要区分“无折扣”和“折扣为 0”的场景，但会让调用逻辑变复杂。"
+          ],
+          "prevention": "先单独调用 print(discount(False)) 观察返回值，确认是否为 None；补上分支后再运行 print(discount(False) + 5) 验证不再报错。写函数时检查每条分支是否都有 return，或在函数末尾统一给默认返回值。",
+          "uncertainty": "flag 为假时应该返回什么值，代码中没有体现，0 和 1 都只是可能方案，需要你确认业务规则。当前没有实际运行结果，报错类型是基于 Python 语义的静态推断。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "0a26eb7b3eed5ef8fc8b204fffe8a479f8b3eae2243c53549b8015d15b34f315",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "patch_check": {
+        "status": "unknown",
+        "reason": "return-contract-unconfirmed"
+      }
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "mutator-result",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：语法没有问题，但第 2 行 `return xs.sort()` 返回的是 `None`，而第 3 行又对返回值取 `[0]`，运行时会报 `TypeError: 'NoneType' object is not subscriptable`。这是静态可确认的语义问题，不是语法错误。函数名 `sorted_items` 暗示意图是“得到排好序的列表”，但 `list.sort()` 是原地排序、返回 `None`；若想返回新列表应使用 `sorted(xs)`。第 3 行取 `[0]` 的意图不明确：是想打印最小值，还是想验证返回列表？需确认。",
+        "hints": [
+          "把第 2 行改为 `return sorted(xs)`，返回排序后的新列表，保持第 3 行不变即可打印最小值：`print(sorted_items([8, 2])[0])`。",
+          "若确实要原地排序并返回列表，可写 `xs.sort()` 后 `return xs`，但这会修改调用者传入的列表，需确认是否可接受副作用。",
+          "验证：运行 `python main.py`，预期输出 `2`；再检查传入列表是否被修改以确认副作用。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def sorted_items(xs):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return xs.sort()"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "print(sorted_items([8, 2])[0])"
+          }
+        ],
+        "teaching": {
+          "summary": "函数想返回排好序的列表，但用了原地排序方法 `sort()`，它返回 `None`；随后对 `None` 取下标就会崩溃。改成 `sorted(xs)` 即可返回新列表。",
+          "root_cause": "`list.sort()` 的返回值是 `None`，排序结果写回原列表本身。因此 `sorted_items([8, 2])` 得到 `None`，第 3 行的 `[0]` 对 `None` 取下标触发 `TypeError`。",
+          "mechanism": "Python 中可变序列的原地方法（如 `list.sort()`、`list.append()`）通常返回 `None`，用于强调“就地修改、无新对象”。而内置函数 `sorted(iterable)` 返回一个新的已排序列表，不改变原对象。两者语义不同：前者有副作用，后者无副作用。第 3 行对返回值取 `[0]`，要求返回值是可下标对象，`None` 不满足。",
+          "example": "静态推断的最小反例：`sorted_items([8, 2])` 返回 `None`，`None[0]` 抛 `TypeError`。未运行代码，此为基于 Python 语义的推断，非工具执行证据。",
+          "alternatives": [
+            "改为 `return sorted(xs)`：适用于希望返回新列表、不修改入参的场景。",
+            "改为 `xs.sort()` 后 `return xs`：适用于允许原地修改入参并返回同一列表的场景。",
+            "若第 3 行只想取最小值，可改为 `print(min([8, 2]))`：适用于目标其实是求最小值而非排序的场景，但需确认需求。"
+          ],
+          "prevention": "运行 `python main.py` 观察是否输出 `2`；对返回 `None` 的原地方法保持警惕，检查调用链是否对返回值继续操作；用 `type()` 或断言确认返回值类型。",
+          "uncertainty": "第 3 行取 `[0]` 的真实意图（取最小值还是验证返回列表）未明确；是否允许修改传入列表也不确定，因此补丁采用无副作用的 `sorted(xs)` 方案，若需原地排序应另行确认。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "99438bb6471a37de4483e3d4a9d51e15a56404671fc74a27e7b36d8fd30599a4",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "patch_check": {
+        "status": "unknown",
+        "reason": "unsupported",
+        "before": "unsupported",
+        "after": "unsupported"
+      }
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "aliased-call",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：语法检查通过，但按代码字面推断存在类型问题。main.py 第2行把字符串 \"8\" 传给 charge，fees.py 第2行执行 amount + 2，即字符串加整数，Python 会抛出 TypeError，而不是得到 10。若业务意图是“金额加 2 元手续费”，应在边界处把输入转成数值，或让 fee 明确接收数值。当前没有执行证据，test_status 为 not-run，因此这只是静态推断，不是已确认的运行结果。",
+        "hints": [
+          "在调用处把字符串转成数值：print(charge(float(\"8\"))) 或 print(charge(int(\"8\")))，然后运行确认输出为 10.0 或 10。",
+          "若希望 fee 兼容字符串输入，可在 fees.py 内转换：amount = float(amount)，但需确认是否允许小数金额。",
+          "验证方式：分别用 charge(8) 和 charge(\"8\") 测试，确认前者正常、后者在未转换时抛 TypeError，从而定位问题在类型而非语法。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "from fees import fee as charge"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(charge(\"8\"))"
+          },
+          {
+            "path": "fees.py",
+            "line": 1,
+            "quote": "def fee(amount):"
+          },
+          {
+            "path": "fees.py",
+            "line": 2,
+            "quote": "    return amount + 2"
+          }
+        ],
+        "teaching": {
+          "summary": "代码能通过语法检查，但把字符串 \"8\" 传进 fee 后执行 amount + 2，静态推断会因字符串与整数不能相加而报 TypeError。需要先确认金额的数据类型，再在调用处或函数内做转换。",
+          "root_cause": "fees.py 第2行 return amount + 2 要求 amount 是数值类型；main.py 第2行传入的是字符串 \"8\"，因此 + 运算的两个操作数类型不匹配。Python 不会把 \"8\" 自动转成 8 再相加。",
+          "mechanism": "Python 的 + 运算符按操作数类型分派：两个数字执行算术加法，两个字符串执行拼接，字符串与整数之间没有隐式转换，会抛出 TypeError。函数参数没有类型标注，调用者传入什么类型，函数体就按什么类型运算。因此问题不在语法，而在运行时类型契约。",
+          "example": "静态推断的最小反例：charge(\"8\") 进入 fee 后执行 \"8\" + 2，触发 TypeError；而 charge(8) 会得到 10。当前 test_status 为 not-run，没有工具执行证据，以上为基于所给源码的推断。",
+          "alternatives": [
+            "在调用处转换：print(charge(float(\"8\")))；适用于输入来自文本、业务允许小数金额。",
+            "在调用处转换：print(charge(int(\"8\")))；适用于金额必须为整数。",
+            "在 fees.py 内转换：amount = float(amount) 后再加 2；适用于希望 fee 对外兼容字符串输入，但需确认是否接受小数及非法输入如何处理。"
+          ],
+          "prevention": "先明确金额的数据类型契约，再在输入边界统一转换；用 charge(8) 与 charge(\"8\") 分别测试，确认类型错误是否消除，并检查输出是否符合“加 2”的业务含义。",
+          "uncertainty": "未提供需求说明金额是整数还是小数，也未提供运行结果；无法确认应使用 int 还是 float，也无法确认是否需要在函数内做输入校验。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "9cf0450899a8c47e6f38aad9b92d1eec00c0b079f184f9790ccc50f002bb3ffa",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "patch_check": {
+        "status": "unknown",
+        "reason": "unsupported",
+        "before": "unsupported",
+        "after": "unsupported"
+      }
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "relative-call",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "目前能确认的静态事实只有：main.py 第 2 行调用 run([])，pkg/service.py 第 2 行定义 run(xs)，第 3 行返回 head(xs)。本地解析器报告 syntax-ok 且无 local_issues，因此没有可确认的语法错误。真正的问题在语义层面：run 把参数 xs 直接传给 head，而 head 在给出的片段中既未导入也未定义；同时传入的是空列表 []，若 head 取首元素，空列表会触发索引错误。但 pkg/service.py 的 source_coverage.complete=false，只提供了 3 行中的部分内容，无法确认 head 是否在未展示的行中定义或导入，也无法确认 run 的预期语义。因此这些只能作为待验证的推断，不能断言运行必然失败。test_status 为 not-run，没有任何执行证据。",
+        "hints": [
+          "先补全 pkg/service.py 的完整源码再判断：用 get_current_file 读取 pkg/service.py，确认 head 是否已定义或导入，以及 run 是否应处理空列表。",
+          "若 head 确实缺失，最小方向是补上定义或导入，例如在 pkg/service.py 顶部加入 from pkg.util import head（需确认该模块与函数真实存在），而不是改动 run 的调用语义。",
+          "用非空与空列表分别验证：print(run([1])) 与 print(run([]))，确认空输入应返回什么（如 None 或抛异常），据此决定是否在 run 中显式处理空列表。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "from pkg.service import run"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(run([]))"
+          },
+          {
+            "path": "pkg/service.py",
+            "line": 2,
+            "quote": "def run(xs):"
+          },
+          {
+            "path": "pkg/service.py",
+            "line": 3,
+            "quote": "    return head(xs)"
+          }
+        ],
+        "teaching": {
+          "summary": "代码语法没问题，但 run 依赖一个在已给片段里看不到的 head 函数，而且调用方传了空列表。需要先看全 pkg/service.py，确认 head 是否存在、空列表该返回什么，再决定改哪里。",
+          "root_cause": "run(xs) 直接 return head(xs)，把参数原样交给 head。已提供的 3 行片段中没有 head 的定义或导入语句，因此 head 的来源无法确认；若确实不存在，调用时会抛 NameError。另一方面 main.py 传入 []，若 head 语义是取第一个元素，空列表会抛 IndexError。两者都属待验证推断，因为 pkg/service.py 未完整提供，且测试未运行。",
+          "mechanism": "Python 在函数体内引用名字时，先查局部作用域，再查闭包、模块全局，最后是内置名字。head 若既未在模块顶层赋值/导入，也不是内置函数，执行到该行就会抛 NameError。列表索引 xs[0] 在空列表上会抛 IndexError，因为空序列没有第 0 个元素。语法检查只验证词法与语法结构，不检查名字是否存在、类型是否匹配，所以 syntax-ok 与运行期错误可以同时成立。",
+          "example": "推断的最小反例（未执行）：若 pkg/service.py 中确实没有 head 的定义或导入，则 run([]) 在求值 head(xs) 时抛 NameError；若 head 定义为 return xs[0]，则 run([]) 抛 IndexError。实际工具证据仅为：local_status=syntax-ok、local_issues 为空、test_status=not-run，没有任何运行结果。",
+          "alternatives": [
+            "补全并确认 head 的来源：适用于 head 本应存在于其他模块的情况，在 pkg/service.py 增加对应 import。",
+            "在 run 中显式处理空列表：适用于业务上空输入应有确定返回值的情况，例如 if not xs: return None，但需先确认需求。",
+            "保持现状仅补充测试：适用于 head 实际已在未展示行中定义的情况，只需用非空和空列表各跑一次验证行为。"
+          ],
+          "prevention": "先读取完整文件确认符号来源，再运行最小用例（非空列表、空列表）观察实际异常类型；用静态检查工具（如 pyflakes）可提前发现未定义名字。修改后分别验证正常路径与边界输入，避免只测一种情况。",
+          "uncertainty": "pkg/service.py 仅提供 3 行中的部分内容，complete=false，无法确认 head 是否在未展示行中定义或导入，也无法确认 run 对空列表的预期语义；测试未运行，所有运行期结论均为推断。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "e87488d3edc19d50fbee6794556acc81322ecf1204a43532b4ae75aa32ce2fa5",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "wrong-arity",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：语法本身没有问题，但调用处与函数定义在参数数量上不匹配。mathlib.py 第 1 行定义的 delta 需要两个参数 a 和 b，而 main.py 第 2 行只传入了 9 一个实参，因此运行到该调用时会抛出 TypeError（缺少参数 b）。这是静态可确认的接口不一致，不是语法错误，所以本地解析器报告 syntax-ok 是合理的。需要确认的是：delta(9) 的原始意图究竟是“计算 9 与某个固定值的差”，还是“只对一个数做某种变换”。在意图明确前，不应擅自补一个默认值或改函数体，否则会改变业务语义。",
+        "hints": [
+          "先确认 delta(9) 的语义：若本意是“9 减去某个已知数”，在调用处补第二个实参，例如 print(delta(9, 3))，并核对期望结果。",
+          "若本意是“delta 只接收一个数”，则需修改 mathlib.py 的函数签名与函数体，例如 def delta(a): return a - 0 这类写法只有在业务上确实如此时才成立，不能仅为消除异常。",
+          "验证方式：在补齐参数后单独运行 main.py，观察输出是否等于按需求手算的结果；不要以“没有报错”作为唯一通过标准。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "from mathlib import delta"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(delta(9))"
+          },
+          {
+            "path": "mathlib.py",
+            "line": 1,
+            "quote": "def delta(a, b):"
+          },
+          {
+            "path": "mathlib.py",
+            "line": 2,
+            "quote": "    return a - b"
+          }
+        ],
+        "teaching": {
+          "summary": "代码能通过语法检查，但 main.py 调用 delta 时只给了一个参数，而 mathlib.py 里的 delta 定义要求两个参数。运行时会因为缺少 b 而报错。要修好它，得先弄清 delta(9) 到底想算什么。",
+          "root_cause": "函数定义 def delta(a, b) 声明了两个必填位置参数，调用 delta(9) 只提供了一个位置实参，因此 b 没有对应值。Python 在调用时按位置绑定参数，缺少必填参数会直接抛出 TypeError，函数体 return a - b 根本不会执行。",
+          "mechanism": "Python 函数调用时，实参按位置依次绑定到形参。形参 a、b 都没有默认值，属于必填参数；只传一个实参时，a 得到 9，b 无值可绑，调用在进入函数体前就失败。这与语法无关：解析器只检查代码结构是否合法，参数个数是否匹配属于调用期的语义检查。另外，即使补齐参数，也要保证两个操作数类型可做减法，例如数字减字符串同样会报错。",
+          "example": "静态推断的最小反例：按现有代码执行 print(delta(9))，会在调用处因缺少 b 抛出 TypeError。这是基于所给四行代码的推断，本次未实际运行，test_status 为 not-run，因此不能声称已观察到具体报错文本或完整项目测试结果。",
+          "alternatives": [
+            "在调用处补第二个实参，如 print(delta(9, 3))：适用于业务上确实是“9 与某数求差”，且该数已知。",
+            "给 b 设默认值，如 def delta(a, b=0):：适用于“省略第二个参数时按 0 处理”是明确业务规则的情况。",
+            "把 delta 改为单参数函数并相应调整函数体：适用于需求本身就是单参数变换，但必须重新定义清楚运算含义，不能仅为消除异常而返回固定值。"
+          ],
+          "prevention": "修改前先写下每个函数的参数契约（参数个数、类型、含义），调用处逐一对照；改完后运行 main.py 并核对输出数值是否符合手算预期，而不只是看是否报错。若项目有测试，应补充覆盖 delta 正常调用与缺参调用的用例。",
+          "uncertainty": "缺少需求说明，无法确定 delta(9) 期望的第二个操作数或期望输出，因此不提供改变语义的补丁。也未实际执行代码，报错类型为静态推断；未提供其他调用点，无法判断修改函数签名是否会影响别处。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "de57cd697a52ce824a8ca7347d94985cf7a9f365e8b1675b2065934fdfaed0f5",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "preserve-nonempty",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "当前代码在非空列表时能返回首项，但空列表会因 xs[0] 越界而抛出 IndexError，不会返回 0。需求明确：空列表返回 0，非空返回首项，因此需要在取首项前判断列表是否为空。本地解析器显示语法正常，未运行测试，所以这只是静态推断，实际执行结果尚未验证。",
+        "hints": [
+          "在 return xs[0] 前加空列表判断，例如：if not xs: return 0，然后保留 return xs[0]。",
+          "修改后分别用 choose([]) 和 choose([7]) 验证，期望得到 0 和 7。",
+          "注意不要写成 return xs[0] if xs else 0 之外的改变语义写法；条件判断要覆盖空列表这一种情况。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def choose(xs):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    return xs[0]"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "print(choose([7]))"
+          }
+        ],
+        "teaching": {
+          "summary": "函数 choose 直接取列表第一个元素。列表非空时没问题，但空列表没有第一个元素，会报错。需求要求空列表返回 0，所以应先判断列表是否为空。",
+          "root_cause": "xs[0] 要求列表至少有一个元素；当 xs 为空时索引 0 越界，触发 IndexError，而不是返回 0。",
+          "mechanism": "Python 列表索引从 0 开始，合法索引范围是 0 到长度减 1。空列表长度为 0，因此索引 0 不合法。要满足“空列表返回 0”，需要在索引前用条件分支处理空列表。",
+          "example": "静态推断：choose([]) 会执行 return xs[0]，此时 xs 为空，索引 0 越界；choose([7]) 返回 7。该结论来自代码结构，未实际运行。",
+          "alternatives": [
+            "使用条件表达式：return xs[0] if xs else 0，适用于希望保持单行返回的场景。",
+            "使用显式 if 分支：if not xs: return 0，然后 return xs[0]，适用于希望逻辑更直观的场景。"
+          ],
+          "prevention": "修改后至少验证空列表和非空列表两种情况：choose([]) 应为 0，choose([7]) 应为 7；若项目有测试，再运行相关测试确认没有改变其他行为。",
+          "uncertainty": "未提供测试运行结果，无法确认实际执行行为；也未说明 xs 是否可能为 None 或其他非列表类型，当前只按列表处理。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "4f5d77be3f89f4e10a152047f29bcf3f90fed5441bf0c34aeb24652c3ee0937e",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "patch_check": {
+        "status": "unknown",
+        "reason": "unsupported",
+        "before": "passed",
+        "after": "unsupported"
+      }
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "correct-sum-types",
+    "group": "holdout",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "value 在循环前已初始化为整数 0。当前循环逐项执行 value += x，累加器的作用域与初始化没有发现问题。整数起始值可以和常见数值相加。若第一个元素是字符串，0 与字符串相加会引发 TypeError。",
+        "hints": [
+          "如果调用方约定传入数值，保留当前累加方式。只有需求明确接受其他类型时才需要调整。",
+          "用普通数值列表和空列表核对调用约定。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def total(xs):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    value = 0"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    for x in xs:"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "        value += x"
+          },
+          {
+            "path": "main.py",
+            "line": 5,
+            "quote": "    return value"
+          },
+          {
+            "path": "main.py",
+            "line": 6,
+            "quote": "print(total([2, 6]))"
+          }
+        ],
+        "teaching": {
+          "summary": "value 在循环前已初始化为整数 0。",
+          "root_cause": "当前循环逐项执行 value += x，累加器的作用域与初始化没有发现问题。",
+          "mechanism": "整数起始值可以和常见数值相加。若第一个元素是字符串，0 与字符串相加会引发 TypeError。",
+          "example": "静态推断：total([1, 2]) 得到 3，total([]) 得到 0，total([\"a\"]) 引发 TypeError。",
+          "alternatives": [],
+          "prevention": "用普通数值列表和空列表核对调用约定。",
+          "uncertainty": "允许的元素类型取决于调用方约定。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "9da3365c16b3baee1e4252967f5509cf305cbf04de49519d362094d9d3252f81",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "teaching_source": "local-static-rule"
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "aliased-call",
+    "group": "holdout-tools",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：语法没有问题，但按静态类型推断，main.py 第2行把字符串 \"8\" 传给 fee，而 fees.py 第2行执行 amount + 2，字符串与整数相加会触发 TypeError，因此这行很可能在运行时失败。位置：main.py:2 的调用点与 fees.py:2 的加法。根因：参数类型与函数内部运算不匹配——fee 的形参 amount 被当作数值使用，但调用方传入的是字符串。可能意图：调用方想计算“8 加 2 的费用”，即期望数值 10；也可能 fee 本意是处理字符串金额（如拼接或格式化），但当前实现没有做任何转换，两种意图无法从这两行代码确定。不确定性：没有类型注解、没有测试、未执行，所以这只是静态推断，不是已确认的运行错误；若 fee 被别处以数值调用，则问题只在 main.py 这一处。静态推断与实际执行的区别：local_status 为 syntax-ok 只说明解析通过，test_status 为 not-run 说明没有任何执行证据，不能声称“已复现报错”。",
+        "hints": [
+          "在调用处传入数值：把 main.py 第2行改为 print(charge(8))，适用于“金额本来就是数字”的场景；改完运行 python main.py，应输出 10。",
+          "若必须保留字符串输入，则在函数内显式转换：fees.py 第2行改为 return float(amount) + 2（或 int(amount)），适用于调用方确实传字符串的场景；验证时分别用 \"8\" 和 8 调用，确认结果一致。",
+          "给 fee 加类型注解（如 def fee(amount: float) -> float:）并配合一次真实运行，让类型不匹配在编码阶段就暴露，避免只靠肉眼检查。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "from fees import fee as charge"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(charge(\"8\"))"
+          },
+          {
+            "path": "fees.py",
+            "line": 1,
+            "quote": "def fee(amount):"
+          },
+          {
+            "path": "fees.py",
+            "line": 2,
+            "quote": "    return amount + 2"
+          }
+        ],
+        "teaching": {
+          "summary": "代码能通过语法解析，但类型上对不上：main.py 把字符串 \"8\" 交给 fee，fee 里却拿它和整数 2 相加。Python 不会把字符串自动变成数字，所以这行大概率在运行时抛 TypeError。要么调用时传数字，要么函数里先转换。",
+          "root_cause": "fees.py 第2行 return amount + 2 要求 amount 是数值类型；main.py 第2行传入的是字符串字面量 \"8\"。Python 的 + 对 str 与 int 没有定义混合运算，会抛 TypeError: can only concatenate str (not \"int\") to str（或 unsupported operand type(s)）。这是参数类型与函数内部运算约定不一致，而非语法错误。",
+          "mechanism": "Python 是动态类型语言，函数定义时不检查参数类型，类型错误只在真正执行到该运算时才暴露。+ 运算符按操作数类型分派：两个 str 是拼接，两个数值是算术相加，str 与 int 混合则没有对应实现，直接报错。因此“看起来像数字的字符串”仍然是字符串，不会隐式转换。要修复，必须在边界处明确类型：调用方传数值，或函数内用 int()/float() 显式转换（并考虑非法输入如 \"abc\" 会抛 ValueError）。",
+          "example": "静态推断的最小反例：charge(\"8\") 进入 fee 后执行 \"8\" + 2，按 Python 语义会抛 TypeError；若改为 charge(8)，则 8 + 2 得到 10。以上均为基于所给两行的推断，本次没有任何执行结果或测试证据，不能声称已实际复现。",
+          "alternatives": [
+            "在调用处传数值 charge(8)：适用于金额本身是数字、字符串只是书写习惯的情况，改动最小。",
+            "在函数内转换 return float(amount) + 2：适用于外部输入（如命令行、文件）天然是字符串的场景，但需处理非法输入。",
+            "统一约定并加类型注解与测试：适用于该函数会被多处调用、需要长期维护的情况，成本略高但能防止同类问题。"
+          ],
+          "prevention": "改完后实际运行一次 python main.py，确认输出为 10；再补一个最小测试，分别用 8 和 \"8\" 调用，明确哪种输入是合法契约。给函数加类型注解，并在提交前跑一次测试，而不是只依赖语法检查通过。",
+          "uncertainty": "没有类型注解、没有测试、未执行，无法确认运行时是否真的报错，也无法确认 fee 是否还被其他文件以数值方式调用；若存在其他调用点，问题范围可能只在 main.py。此外“金额应为数字还是字符串”属于业务约定，需要用户确认后才能决定改调用处还是改函数内部。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "9cf0450899a8c47e6f38aad9b92d1eec00c0b079f184f9790ccc50f002bb3ffa",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "patch_check": {
+        "status": "unknown",
+        "reason": "unsupported",
+        "before": "unsupported",
+        "after": "passed"
+      }
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "relative-call",
+    "group": "holdout-tools",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：静态语法没有问题，但按现有代码，main.py 第 2 行调用 run([]) 时，pkg/read.py 的 head 会执行 xs[0]，对空列表取下标会抛出 IndexError。另外，受限执行器在 pkg/service.py 第 1 行的相对导入处停止，因此这次执行没有真正跑到 head，不能据此判断运行结果。位置：main.py:2 传入空列表；pkg/service.py:3 把参数原样交给 head；pkg/read.py:2 直接取第一个元素。根因是 head 没有处理空序列的分支。需求“保留原有功能”意味着非空列表仍应返回首元素，因此不能简单改成返回固定值。空列表应返回什么（None、抛出自定义异常，还是由调用方保证非空）需要确认。",
+        "hints": [
+          "先确认空列表的期望语义：若允许返回 None，可在 pkg/read.py 的 head 中加空判断，例如 `if not xs:` 后 `return None`，非空时仍 `return xs[0]`；验证时分别调用 head([1]) 与 head([])。",
+          "若空输入应视为错误，可在 head 中显式抛出带说明的异常（如 ValueError），并在 main.py 中捕获或改为传入非空示例；这属于行为变更，需先确认需求。",
+          "相对导入报错来自受限执行器而非语法：可在项目根目录用 `python -m main` 方式验证真实导入，或确认运行入口；不要据此修改 import 语句。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "from pkg.service import run"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(run([]))"
+          },
+          {
+            "path": "pkg/service.py",
+            "line": 1,
+            "quote": "from .read import head"
+          },
+          {
+            "path": "pkg/service.py",
+            "line": 2,
+            "quote": "def run(xs):"
+          },
+          {
+            "path": "pkg/service.py",
+            "line": 3,
+            "quote": "    return head(xs)"
+          },
+          {
+            "path": "pkg/read.py",
+            "line": 1,
+            "quote": "def head(xs):"
+          },
+          {
+            "path": "pkg/read.py",
+            "line": 2,
+            "quote": "    return xs[0]"
+          }
+        ],
+        "teaching": {
+          "summary": "代码能通过语法检查，但 main.py 用空列表调用 run，最终会走到 head 里的 xs[0]，对空列表取下标会报 IndexError。需要先确定空列表应该返回什么，再决定怎么改；非空列表返回首元素的原有功能应保留。",
+          "root_cause": "调用链是 main.py:2 的 run([]) → pkg/service.py:3 的 head(xs) → pkg/read.py:2 的 xs[0]。head 没有任何空序列判断，空列表没有下标 0，因此运行时必然抛出 IndexError。这是逻辑/边界问题，不是语法问题，local_issues 为空也符合这一点。",
+          "mechanism": "Python 列表下标从 0 开始，xs[0] 要求序列至少有一个元素；空列表长度为 0，访问下标 0 会触发 IndexError。函数本身不检查输入长度，错误会沿调用栈向上传播到 main.py 的 print 调用处。另外，pkg/service.py 使用相对导入 `from .read import head`，它要求 pkg 作为包被导入；受限执行器明确报告“暂不支持相对导入执行”，所以那次受限执行在导入阶段就停止了，没有覆盖 head 的实际行为。",
+          "example": "静态推断的最小反例：run([]) → head([]) → [][0]，抛出 IndexError。实际工具证据：受限执行器返回 status=unsupported，错误位置 pkg/service.py:1，消息为“暂不支持相对导入执行”，trace 显示 main.py:1 与 pkg/service.py:1 的 ImportFrom；该结果只说明执行器边界，不等于完整 CPython 运行结果，也没有验证 IndexError 是否真的发生。",
+          "alternatives": [
+            "空列表返回 None：在 head 中先判断 `if not xs: return None`，非空仍返回 xs[0]；适用于“无首元素”可表示为 None 的场景。",
+            "空列表抛出自定义异常：在 head 中显式 `raise ValueError(...)`，让调用方明确处理；适用于空输入属于非法参数、需要尽早失败的设计。",
+            "由调用方保证非空：保留 head 不变，在 run 或 main 中校验并给出提示；适用于空输入不应到达 head 的约定，但需要同步修改调用方。\n\n调整运行方式：在项目根目录用 `python -m main` 验证相对导入；适用于确认导入本身是否正常，不改变业务逻辑。"
+          ],
+          "prevention": "修改前先明确空输入的契约，并为 head 补充边界用例：head([1]) 应返回 1，head([]) 按约定返回 None 或抛异常。验证时从项目根目录运行 `python -m main`，避免把受限执行器的“不支持相对导入”误判为代码错误。修改后同时检查非空路径未受影响。",
+          "uncertainty": "需求没有说明空列表的期望结果，因此不能确定应返回 None、抛异常还是由调用方保证非空；main.py 打印空输入结果也可能只是演示。受限执行器未真正执行到 head，IndexError 属于静态推断而非已观测运行结果；完整项目测试未运行。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "e87488d3edc19d50fbee6794556acc81322ecf1204a43532b4ae75aa32ce2fa5",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1
+    }
+  },
+  {
+    "source_run": "live-01",
+    "case_id": "wrong-arity",
+    "group": "holdout-tools",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "核心结论：语法层面没有问题（local_status 为 syntax-ok，local_issues 为空），但调用处与函数定义在参数个数上不匹配：mathlib.py 第1行定义的 delta 需要两个参数 a、b，而 main.py 第2行只传了一个参数 9。这属于运行期才会暴露的 TypeError（缺少位置参数），静态解析器不会报错。另外，从函数体 return a - b 看，delta 的语义是“求差”，只传一个数时“差”没有第二个操作数，因此不能简单地把 b 补成 0 或某个固定值来消除异常——那会改变业务含义。需要确认的是：你原本想算的是 9 与某个数的差，还是想算别的量（例如单参数的变化量/增量）。在需求明确前，只给条件化建议，不提供改变语义的补丁。",
+        "hints": [
+          "先确认 delta 的第二个操作数：如果本意是 9 与某数 x 的差，就在调用处补上实参，例如 print(delta(9, x))，其中 x 由你的业务决定。",
+          "如果本意是“单参数求增量”，则应在 mathlib.py 中新增或改名一个单参数函数（如 def delta1(a): ...），而不是给 delta 的 b 填默认值来掩盖参数不匹配。",
+          "验证方式：修改后重新运行 main.py，观察是否仍出现缺少位置参数的 TypeError；注意本次未执行任何代码，test_status 为 not-run，不能据此认为已通过。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "from mathlib import delta"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "print(delta(9))"
+          },
+          {
+            "path": "mathlib.py",
+            "line": 1,
+            "quote": "def delta(a, b):"
+          },
+          {
+            "path": "mathlib.py",
+            "line": 2,
+            "quote": "    return a - b"
+          }
+        ],
+        "teaching": {
+          "summary": "代码能通过语法检查，但调用 delta(9) 时只给了一个参数，而 delta 定义要求两个参数 a 和 b，运行时会因缺少参数报错。由于函数体是 a - b（求差），单参数调用在语义上也不完整，需要你先确认第二个数从哪来。",
+          "root_cause": "直接原因是实参与形参数量不一致：mathlib.py 第1行 def delta(a, b): 声明了两个必填位置参数，main.py 第2行 print(delta(9)) 只提供了一个位置实参。Python 在调用时按位置绑定参数，缺少的 b 没有默认值，因此调用会失败。这是运行期错误，不是语法错误，所以本地解析器给出 syntax-ok 且 local_issues 为空。",
+          "mechanism": "Python 函数定义中的参数若没有默认值，就是必填位置参数。调用时实参按顺序绑定到形参：9 绑定给 a，b 没有对应实参，于是抛出 TypeError（missing 1 required positional argument: 'b'）。语法分析只检查代码结构是否合法，不检查调用点与定义点的参数个数是否匹配，因此这类问题只能靠运行、类型检查工具或人工核对发现。此外，函数体 return a - b 表明该函数语义是二元减法，单参数调用即使补默认值也未必符合原意。",
+          "example": "推断的最小反例（未实际运行）：把 main.py 第2行改为 print(delta(9, 3))，则 a=9、b=3，返回 6，参数个数匹配。反之保持 print(delta(9)) 不变，调用时 b 缺失，会触发缺少位置参数的 TypeError。以上为基于所给四行代码的静态推断，本次没有任何执行证据（test_status 为 not-run）。",
+          "alternatives": [
+            "在调用处补齐第二个实参：适用于你确实想求两个数的差，且第二个数已知或可计算，例如 print(delta(9, x))。",
+            "新增一个单参数函数表达“单值变化量”：适用于业务上只需要一个输入，例如在 mathlib.py 中定义 def delta1(a): 并实现具体逻辑，再在 main.py 中导入调用。",
+            "给 b 设默认值：仅适用于“缺省时用某个有业务含义的基准值”这一需求被明确确认的情况，例如 def delta(a, b=0):；若只是为消除报错而随意设默认值，会改变语义，不建议。"
+          ],
+          "prevention": "修改后重新运行 main.py，确认不再出现缺少位置参数的 TypeError，并检查输出数值是否符合预期业务含义；对导入的函数，先看定义处的参数列表再写调用；可借助类型检查或 IDE 的参数提示提前发现数量不匹配。注意语法检查通过不等于调用正确。",
+          "uncertainty": "未提供 delta 的调用意图、第二个操作数的来源，也未提供任何执行结果，因此无法判断应补哪个实参，也无法确认修复后输出是否正确；是否存在其他调用点同样未知（source_coverage 显示两个文件均已完整提供，仅这四行非空代码）。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "de57cd697a52ce824a8ca7347d94985cf7a9f365e8b1675b2065934fdfaed0f5",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1
+    }
+  },
+  {
+    "source_run": "live-02",
+    "case_id": "scope-shadow",
+    "group": "development-regression",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "第 2 行的局部变量 sum 遮蔽了内置求和函数。第 3 行的 sum(values) 试图调用整数，会引发 TypeError。函数内赋值让同名标识符成为局部变量，后面的调用使用该局部绑定。",
+        "hints": [
+          "若目标是求和，删除遮蔽赋值并保留 sum(values)。也可以逐项累加后返回。",
+          "用 total([]) 和 total([1, 2]) 核对求和预期 0 和 3。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def total(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    sum = 0"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    return sum(values)"
+          }
+        ],
+        "teaching": {
+          "summary": "第 2 行的局部变量 sum 遮蔽了内置求和函数。",
+          "root_cause": "第 3 行的 sum(values) 试图调用整数，会引发 TypeError。",
+          "mechanism": "函数内赋值让同名标识符成为局部变量，后面的调用使用该局部绑定。",
+          "example": "静态推断：total([1, 2]) 会在调用局部整数时抛出 TypeError。",
+          "alternatives": [],
+          "prevention": "用 total([]) 和 total([1, 2]) 核对求和预期 0 和 3。",
+          "uncertainty": "输入元素类型和空输入的业务约定仍需结合调用方确认。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "3928e3c315e7e30d95a5a709a6c6376e40f2b2480cdfc4833220a891d88e1568",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "teaching_source": "local-static-rule"
+    }
+  },
+  {
+    "source_run": "live-02",
+    "case_id": "return-none",
+    "group": "development-regression",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "positive 在 x <= 0 时会隐式返回 None。第 3 行的条件为假时，控制流直接到达函数末尾，违背布尔返回约定。Python 函数走到末尾时会隐式返回 None。文档和类型标注不会替函数补上返回值。",
+        "hints": [
+          "若约定为判断正数，在分支后显式返回 False，也可直接返回 x > 0。",
+          "用负数、0、正数测试三个输入，并检查结果是否为 True 或 False。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    \"\"\"Return a bool for every integer x.\"\"\""
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    if x > 0:"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "        return True"
+          }
+        ],
+        "teaching": {
+          "summary": "positive 在 x <= 0 时会隐式返回 None。",
+          "root_cause": "第 3 行的条件为假时，控制流直接到达函数末尾，违背布尔返回约定。",
+          "mechanism": "Python 函数走到末尾时会隐式返回 None。文档和类型标注不会替函数补上返回值。",
+          "example": "静态推断：positive(0) 和 positive(-1) 返回 None，positive(1) 返回 True。",
+          "alternatives": [],
+          "prevention": "用负数、0、正数测试三个输入，并检查结果是否为 True 或 False。",
+          "uncertainty": "非正数应映射到哪个布尔值仍由需求决定。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "67ee5ff1e9635cb745d5a89fe777cee97c16e94dbe0d9696c459ee74655510f3",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "teaching_source": "local-static-rule",
+      "patch_check": {
+        "status": "unknown",
+        "reason": "return-contract-unconfirmed"
+      }
+    }
+  },
+  {
+    "source_run": "live-02",
+    "case_id": "correct-scope",
+    "group": "development-regression",
+    "provenance": "offline-final-response-replay",
+    "network_requests": 0,
+    "result": {
+      "status": "accepted",
+      "mode": "simulated",
+      "review": {
+        "explanation": "result 在循环前已初始化为整数 0。当前循环逐项执行 result += value，累加器的作用域与初始化没有发现问题。整数起始值可以和常见数值相加。若第一个元素是字符串，0 与字符串相加会引发 TypeError。",
+        "hints": [
+          "如果调用方约定传入数值，保留当前累加方式。只有需求明确接受其他类型时才需要调整。",
+          "用普通数值列表和空列表核对调用约定。"
+        ],
+        "citations": [
+          {
+            "path": "main.py",
+            "line": 1,
+            "quote": "def total(values):"
+          },
+          {
+            "path": "main.py",
+            "line": 2,
+            "quote": "    result = 0"
+          },
+          {
+            "path": "main.py",
+            "line": 3,
+            "quote": "    for value in values:"
+          },
+          {
+            "path": "main.py",
+            "line": 4,
+            "quote": "        result += value"
+          },
+          {
+            "path": "main.py",
+            "line": 5,
+            "quote": "    return result"
+          }
+        ],
+        "teaching": {
+          "summary": "result 在循环前已初始化为整数 0。",
+          "root_cause": "当前循环逐项执行 result += value，累加器的作用域与初始化没有发现问题。",
+          "mechanism": "整数起始值可以和常见数值相加。若第一个元素是字符串，0 与字符串相加会引发 TypeError。",
+          "example": "静态推断：total([1, 2]) 得到 3，total([]) 得到 0，total([\"a\"]) 引发 TypeError。",
+          "alternatives": [],
+          "prevention": "用普通数值列表和空列表核对调用约定。",
+          "uncertainty": "允许的元素类型取决于调用方约定。"
+        },
+        "patches": []
+      },
+      "claim_status": "unverified",
+      "buffer_hash": "b52a438205671212b8338d3bcdb399afe015d95a038152c28709546e9745f102",
+      "workflow_mode": "direct-review",
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "model_turns": 1,
+      "teaching_source": "local-static-rule"
+    }
+  }
+]

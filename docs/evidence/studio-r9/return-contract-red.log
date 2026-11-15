@@ -1,0 +1,74 @@
+D:\codex\2026-11-11\codementor-studio-ai-web-2026-ai\outputs\CodeMentor-Studio\.venv\Lib\site-packages\pytest_asyncio\plugin.py:300: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the "fixture" caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+FFF                                                                      [100%]
+================================== FAILURES ===================================
+___ test_removing_none_error_does_not_establish_missing_return_contract[0] ____
+
+default = '0'
+
+    @pytest.mark.parametrize('default', ['0', '1', 'False'])
+    def test_removing_none_error_does_not_establish_missing_return_contract(default):
+        files = {'main.py': 'def price(flag):\n    if flag:\n        return 2\nprint(price(False) + 5)\n'}
+        response = {
+            'explanation': '�ٷ�֧��ʽ���� None��Ĭ��ֵ��Ҫȷ�ϡ�', 'hints': ['ȷ��ҵ��Ĭ��ֵ��'],
+            'citations': [{'path': 'main.py', 'line': 3, 'quote': '        return 2'}],
+            'patches': [{'path': 'main.py', 'line': 3, 'before': '        return 2',
+                         'after': f'        return 2\n    return {default}', 'reason': '��ѡĬ��ֵ'}],
+        }
+        result = review({'files': files, 'path': 'main.py', 'revision': 0}, response)
+>       assert result['patch_check']['reason'] == 'return-contract-unconfirmed'
+E       AssertionError: assert 'observed-error-removed' == 'return-contract-unconfirmed'
+E         
+E         - return-contract-unconfirmed
+E         + observed-error-removed
+
+tests\test_r9_review_quality.py:342: AssertionError
+___ test_removing_none_error_does_not_establish_missing_return_contract[1] ____
+
+default = '1'
+
+    @pytest.mark.parametrize('default', ['0', '1', 'False'])
+    def test_removing_none_error_does_not_establish_missing_return_contract(default):
+        files = {'main.py': 'def price(flag):\n    if flag:\n        return 2\nprint(price(False) + 5)\n'}
+        response = {
+            'explanation': '�ٷ�֧��ʽ���� None��Ĭ��ֵ��Ҫȷ�ϡ�', 'hints': ['ȷ��ҵ��Ĭ��ֵ��'],
+            'citations': [{'path': 'main.py', 'line': 3, 'quote': '        return 2'}],
+            'patches': [{'path': 'main.py', 'line': 3, 'before': '        return 2',
+                         'after': f'        return 2\n    return {default}', 'reason': '��ѡĬ��ֵ'}],
+        }
+        result = review({'files': files, 'path': 'main.py', 'revision': 0}, response)
+>       assert result['patch_check']['reason'] == 'return-contract-unconfirmed'
+E       AssertionError: assert 'observed-error-removed' == 'return-contract-unconfirmed'
+E         
+E         - return-contract-unconfirmed
+E         + observed-error-removed
+
+tests\test_r9_review_quality.py:342: AssertionError
+_ test_removing_none_error_does_not_establish_missing_return_contract[False] __
+
+default = 'False'
+
+    @pytest.mark.parametrize('default', ['0', '1', 'False'])
+    def test_removing_none_error_does_not_establish_missing_return_contract(default):
+        files = {'main.py': 'def price(flag):\n    if flag:\n        return 2\nprint(price(False) + 5)\n'}
+        response = {
+            'explanation': '�ٷ�֧��ʽ���� None��Ĭ��ֵ��Ҫȷ�ϡ�', 'hints': ['ȷ��ҵ��Ĭ��ֵ��'],
+            'citations': [{'path': 'main.py', 'line': 3, 'quote': '        return 2'}],
+            'patches': [{'path': 'main.py', 'line': 3, 'before': '        return 2',
+                         'after': f'        return 2\n    return {default}', 'reason': '��ѡĬ��ֵ'}],
+        }
+        result = review({'files': files, 'path': 'main.py', 'revision': 0}, response)
+>       assert result['patch_check']['reason'] == 'return-contract-unconfirmed'
+E       AssertionError: assert 'unsupported' == 'return-contract-unconfirmed'
+E         
+E         - return-contract-unconfirmed
+E         + unsupported
+
+tests\test_r9_review_quality.py:342: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_r9_review_quality.py::test_removing_none_error_does_not_establish_missing_return_contract[0]
+FAILED tests/test_r9_review_quality.py::test_removing_none_error_does_not_establish_missing_return_contract[1]
+FAILED tests/test_r9_review_quality.py::test_removing_none_error_does_not_establish_missing_return_contract[False]
+3 failed, 20 deselected in 1.24s

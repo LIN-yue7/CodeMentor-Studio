@@ -1,0 +1,827 @@
+{
+  "review_type": "developer-agent independent assessment; not human or external blind review",
+  "scope": "live-01 only",
+  "definitions": {
+    "layer": "All scores shown apply independently to provider final JSON and delivered live-01 review under the stated categories. Delivered differences documented per case.",
+    "repair": "Formal patches denominator only. Partial patches remove current exception but introduce or select unconfirmed contract behavior; all four are counted as bad repair on a preservation criterion. Prose options are reviewed but unsubmitted patches do not enter that denominator.",
+    "location": "Fixture-declared file and line, with latent requirement-change case omitted from the fixed-location denominator.",
+    "false_alarm": "5 correct controls exclude the explicit new requirement case. Merely conditional caveats are not false alarms.",
+    "cross_file": "Accurate relevant citations, diagnosed cross-file chain and adequate response to the requested review. Repair scored separately.",
+    "root_cause": "Correct controls count as pass if accepted without a fabricated defect; requirement-change case counts if boundary mismatch is explained.",
+    "whole_answer": "Accuracy of explanation, all hints, teaching and proposed patches per job. Count concrete technical misstatements, fixture-relevant omissions, and advice or patches incompatible with established or unconfirmed contracts. Pure format and wording issues do not reduce the score."
+  },
+  "aggregate": {
+    "provider_final": {
+      "attempted_jobs": 22,
+      "actual_provider_requests": 24,
+      "groups": {
+        "development_regression": 3,
+        "holdout_direct": 16,
+        "holdout_tools": 3
+      },
+      "protocol_acceptance": [
+        22,
+        22
+      ],
+      "location_accuracy": [
+        15,
+        16
+      ],
+      "root_cause_pass_all": [
+        21,
+        22
+      ],
+      "root_cause_pass_evaluable": [
+        21,
+        22
+      ],
+      "root_cause_partial": 1,
+      "formal_repair_effectiveness": [
+        6,
+        10
+      ],
+      "formal_bad_repair": [
+        4,
+        10
+      ],
+      "correct_code_false_alarm": [
+        0,
+        5
+      ],
+      "cross_file_completion": [
+        5,
+        6
+      ],
+      "cross_file_direct_completion": [
+        2,
+        3
+      ],
+      "cross_file_tool_enabled_completion": [
+        3,
+        3
+      ],
+      "genuine_tool_use": [
+        1,
+        3
+      ],
+      "genuine_tool_job_completion": [
+        1,
+        1
+      ],
+      "local_static_rule_replacement": [
+        4,
+        22
+      ],
+      "unavailable": 0,
+      "whole_answer_accuracy": [
+        8,
+        22
+      ],
+      "holdout_only": {
+        "attempted_jobs": 16,
+        "protocol_acceptance": [
+          16,
+          16
+        ],
+        "location_accuracy": [
+          10,
+          11
+        ],
+        "root_cause_pass": [
+          15,
+          16
+        ],
+        "whole_answer_accuracy": [
+          6,
+          16
+        ],
+        "formal_repair_effectiveness": [
+          5,
+          8
+        ],
+        "formal_bad_repair": [
+          3,
+          8
+        ],
+        "correct_code_false_alarm": [
+          0,
+          4
+        ],
+        "cross_file_completion": [
+          2,
+          3
+        ]
+      }
+    },
+    "delivered": {
+      "attempted_jobs": 22,
+      "actual_provider_requests": 24,
+      "groups": {
+        "development_regression": 3,
+        "holdout_direct": 16,
+        "holdout_tools": 3
+      },
+      "protocol_acceptance": [
+        22,
+        22
+      ],
+      "location_accuracy": [
+        15,
+        16
+      ],
+      "root_cause_pass_all": [
+        21,
+        22
+      ],
+      "root_cause_pass_evaluable": [
+        21,
+        22
+      ],
+      "root_cause_partial": 1,
+      "formal_repair_effectiveness": [
+        6,
+        10
+      ],
+      "formal_bad_repair": [
+        4,
+        10
+      ],
+      "correct_code_false_alarm": [
+        0,
+        5
+      ],
+      "cross_file_completion": [
+        5,
+        6
+      ],
+      "cross_file_direct_completion": [
+        2,
+        3
+      ],
+      "cross_file_tool_enabled_completion": [
+        3,
+        3
+      ],
+      "genuine_tool_use": [
+        1,
+        3
+      ],
+      "genuine_tool_job_completion": [
+        1,
+        1
+      ],
+      "local_static_rule_replacement": [
+        4,
+        22
+      ],
+      "unavailable": 0,
+      "whole_answer_accuracy": [
+        10,
+        22
+      ],
+      "holdout_only": {
+        "attempted_jobs": 16,
+        "protocol_acceptance": [
+          16,
+          16
+        ],
+        "location_accuracy": [
+          10,
+          11
+        ],
+        "root_cause_pass": [
+          15,
+          16
+        ],
+        "whole_answer_accuracy": [
+          7,
+          16
+        ],
+        "formal_repair_effectiveness": [
+          5,
+          8
+        ],
+        "formal_bad_repair": [
+          3,
+          8
+        ],
+        "correct_code_false_alarm": [
+          0,
+          4
+        ],
+        "cross_file_completion": [
+          2,
+          3
+        ]
+      }
+    }
+  },
+  "cases": [
+    {
+      "case_id": "scope-shadow",
+      "group": "development-regression",
+      "request_indices": [
+        1
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "局部 sum=0 遮蔽内置函数；调用点 main.py:3 对整数求调用。原始提示明确要真正累加，删除遮蔽赋值或完整循环都保留求和；无返回常数 0 的补丁。",
+      "delivered_change": "原始答复被本地规则替换；保留两种修复方向与空、非空测试，教学更短。",
+      "local_static_rule": true,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "pass",
+        "delivered": "pass"
+      },
+      "whole_answer_issue": {
+        "provider_final": null,
+        "delivered": null
+      }
+    },
+    {
+      "case_id": "return-none",
+      "group": "development-regression",
+      "request_indices": [
+        2
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "pass",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "main.py:3 条件为假导致完整函数落到末尾隐式返回 None；补充 return False 保留正数 True，满足所有整数返回 bool。True/False 的含义依函数名与现有正分支推得。",
+      "delivered_change": "本地规则替换讲解与提示，仍说明业务含义待确认，保留模型的同一补丁。",
+      "local_static_rule": true,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "pass",
+        "delivered": "pass"
+      },
+      "whole_answer_issue": {
+        "provider_final": null,
+        "delivered": null
+      }
+    },
+    {
+      "case_id": "correct-scope",
+      "group": "development-regression",
+      "request_indices": [
+        3
+      ],
+      "protocol": "accepted",
+      "location": "na",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": false,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "初始化、循环累加与空输入是正确的；对字符串 TypeError 的解释正确。原始提示中的 assert/all 只接受 int/float，可能拒绝其他合法数值并消耗迭代器；不宜作为通用输入校验，未提出可应用补丁。",
+      "delivered_change": "本地规则移除该校验建议，明确普通数值和空序列的静态结果，正确解释字符串 TypeError。",
+      "local_static_rule": true,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "pass"
+      },
+      "whole_answer_issue": {
+        "provider_final": "assert/all 会消耗一次性迭代器，也可能拒绝 Decimal 等兼容数值。",
+        "delivered": null
+      }
+    },
+    {
+      "case_id": "clean-offset",
+      "group": "holdout",
+      "request_indices": [
+        4
+      ],
+      "protocol": "accepted",
+      "location": "na",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": false,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "识别 4+3=7，现有调用无确定问题；提示保留代码、运行核对。参数化及类型控制列为需求变化的条件选项。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "pass",
+        "delivered": "pass"
+      },
+      "whole_answer_issue": {
+        "provider_final": null,
+        "delivered": null
+      }
+    },
+    {
+      "case_id": "clean-empty",
+      "group": "holdout",
+      "request_indices": [
+        5
+      ],
+      "protocol": "accepted",
+      "location": "na",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": false,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "准确说明 first([]) 返回 9、first([0]) 返回 0。把 9 视作待确认的默认值，None 与异常是条件选项，无错误断言或补丁。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "pass",
+        "delivered": "pass"
+      },
+      "whole_answer_issue": {
+        "provider_final": null,
+        "delivered": null
+      }
+    },
+    {
+      "case_id": "clean-text",
+      "group": "holdout",
+      "request_indices": [
+        6
+      ],
+      "protocol": "accepted",
+      "location": "na",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": false,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "说明字符串拼接产出 hi!，非字符串仅为条件性输入约束；建议使用 str(s) 的前提是扩展契约。‘任意类型都安全’过宽，自定义转换可失败。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "把 str(s) 描述为安全接受任意类型，忽略自定义字符串转换可能失败。",
+        "delivered": "把 str(s) 描述为安全接受任意类型，忽略自定义字符串转换可能失败。"
+      }
+    },
+    {
+      "case_id": "missing-colon",
+      "group": "holdout",
+      "request_indices": [
+        7
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "pass",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "main.py:1 缺冒号，解析器未开始执行；补丁只添加冒号，保留 n*3。提示验证 triple(2)=6。pass 和更换头部均明确限于不同需求。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "pass",
+        "delivered": "pass"
+      },
+      "whole_answer_issue": {
+        "provider_final": null,
+        "delivered": null
+      }
+    },
+    {
+      "case_id": "bad-indent",
+      "group": "holdout",
+      "request_indices": [
+        8
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "pass",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "main.py:2 未缩进，解析器在 def 后无有效块；给 return 补缩进，保持 value() 返回 8。教学泛称冒号后必须换行缩进，省略了合法单行 suite，本例修复仍正确。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "把本例的缩进规则泛化到任意冒号后，遗漏合法的行内简单语句套件。",
+        "delivered": "把本例的缩进规则泛化到任意冒号后，遗漏合法的行内简单语句套件。"
+      }
+    },
+    {
+      "case_id": "exclusive-end",
+      "group": "holdout",
+      "request_indices": [
+        9
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "pass",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "main.py:2 使用 len(xs) 越界，补丁支持原有非空输入和单元素，空列表保留索引异常。教学错误地说 len(xs)-1 和 -1 在空列表上的异常类型与位置不同；两者在该行都为 IndexError。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "误称 len(xs)-1 和 -1 对空列表的异常类型和位置不同。",
+        "delivered": "误称 len(xs)-1 和 -1 对空列表的异常类型和位置不同。"
+      }
+    },
+    {
+      "case_id": "zero-divisor",
+      "group": "holdout",
+      "request_indices": [
+        10
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "main.py:2 对空列表除以 0。正确区分非空均值和空输入约定，显式拒绝、特殊返回值、调用者保证非空均说明前提，无擅自返回 0。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "pass",
+        "delivered": "pass"
+      },
+      "whole_answer_issue": {
+        "provider_final": null,
+        "delivered": null
+      }
+    },
+    {
+      "case_id": "branch-local",
+      "group": "holdout",
+      "request_indices": [
+        11
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "main.py:4 在 False 路径读取局部未绑定 amount。各提示先明确假分支业务，保留 True 返回 6。‘分支外可见’措辞不精确，实质是函数作用域内条件执行导致未绑定。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "把确保返回前覆盖所有赋值路径说成避免依赖分支外可见性，混淆作用域和绑定。",
+        "delivered": "把确保返回前覆盖所有赋值路径说成避免依赖分支外可见性，混淆作用域和绑定。"
+      }
+    },
+    {
+      "case_id": "builtin-mask",
+      "group": "holdout",
+      "request_indices": [
+        12
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "pass",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "main.py:3 把局部整数 len 当函数。改名为 n 后仍调用内置 len，输入列表与空列表求长度正常。保留了无用变量；删除这一常数字面量绑定对给定完整函数功能等效。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "pass",
+        "delivered": "pass"
+      },
+      "whole_answer_issue": {
+        "provider_final": null,
+        "delivered": null
+      }
+    },
+    {
+      "case_id": "missing-branch-return",
+      "group": "holdout",
+      "request_indices": [
+        13
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "partial",
+      "bad_repair": true,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "准确定位 main.py:4 的 None+5，并解释 False 路径缺返回。可应用补丁硬加 return 0，消除异常且保留 True，False 输出却取决于未确认的折扣契约；解释与补丁矛盾。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [
+        "unconfirmed-patch-semantics"
+      ],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "承认折扣默认值未定，却仍给可应用补丁指定 0。",
+        "delivered": "承认折扣默认值未定，却仍给可应用补丁指定 0。"
+      }
+    },
+    {
+      "case_id": "mutator-result",
+      "group": "holdout",
+      "request_indices": [
+        14
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "partial",
+      "bad_repair": true,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "main.py:3 对 None 取下标，来源为 main.py:2 原地 sort()。sorted(xs) 能输出 2，却移除既有对入参的原地修改。提示中的 sort() 后 return xs 保留该副作用；业务未确认前应条件化两方案。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [
+        "unconfirmed-patch-semantics"
+      ],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "承认是否需要原地修改尚未确定，却给出移除现有副作用的补丁。",
+        "delivered": "承认是否需要原地修改尚未确定，却给出移除现有副作用的补丁。"
+      }
+    },
+    {
+      "case_id": "aliased-call",
+      "group": "holdout",
+      "request_indices": [
+        15
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "partial",
+      "bad_repair": true,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": true,
+      "native_tool_calls": 0,
+      "provider_reason": "引用导入及 fees.py:2，正确追踪 str+int。float 方案修复示例并得到 10.0，但金额类型和输出格式未确认。文字给出 int/float 的适用条件仍提供了固定选择的可应用补丁。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [
+        "unconfirmed-patch-semantics"
+      ],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "承认金额类型未确认，却给预选 float 的可应用补丁。",
+        "delivered": "承认金额类型未确认，却给预选 float 的可应用补丁。"
+      }
+    },
+    {
+      "case_id": "relative-call",
+      "group": "holdout",
+      "request_indices": [
+        16
+      ],
+      "protocol": "accepted",
+      "location": "fail",
+      "root_cause": "partial",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": false,
+      "native_tool_calls": 0,
+      "provider_reason": "源码覆盖不足时正确保持条件性，指出可能是空索引并请求读全；没有恢复 .read.head 调用链，也没有定位 pkg/read.py:2。建议验证后再导入，但 pkg.util 只是未提供源码的假设，不应给虚构模块示例。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [
+        "incomplete-retrieval"
+      ],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "因源码覆盖缺失未确认真正调用链，给出无所供源码支持的示例模块。",
+        "delivered": "因源码覆盖缺失未确认真正调用链，给出无所供源码支持的示例模块。"
+      }
+    },
+    {
+      "case_id": "wrong-arity",
+      "group": "holdout",
+      "request_indices": [
+        17
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": true,
+      "native_tool_calls": 0,
+      "provider_reason": "交叉引用 main.py:2 和 mathlib.py:1，解释在进入函数体前缺 b；不擅自写固定值补丁。仅在另有契约时考虑默认值或改单参数函数。原始教学把无默认参数概括为位置参数，精确说这里是必需的位置或关键字参数。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "把两个可用关键字传递的参数概括为必填位置参数。",
+        "delivered": "把两个可用关键字传递的参数概括为必填位置参数。"
+      }
+    },
+    {
+      "case_id": "preserve-nonempty",
+      "group": "holdout",
+      "request_indices": [
+        18
+      ],
+      "protocol": "accepted",
+      "location": "na",
+      "root_cause": "pass",
+      "repair": "pass",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "正确指出现有 choose([7]) 可用，问题仅在新增空列表契约。补丁对空列表返回 0，其他列表保留首项，包括首项 0。第三条提示表述拗口，教学给出两个等价方案。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "pass",
+        "delivered": "pass"
+      },
+      "whole_answer_issue": {
+        "provider_final": null,
+        "delivered": null
+      }
+    },
+    {
+      "case_id": "correct-sum-types",
+      "group": "holdout",
+      "request_indices": [
+        19
+      ],
+      "protocol": "accepted",
+      "location": "na",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": false,
+      "cross_file_completion": null,
+      "native_tool_calls": 0,
+      "provider_reason": "准确推导源例 8，正确代码无补丁；没有实际解释字符串与整数相加为何失败，也误把原有调用说成未提供。原始 hints/alternatives 各 4 条，超提示约定。",
+      "delivered_change": "本地规则明确 0+字符串会报错，示例改为 total([1,2])=3、空列表=0，没有重述源例输出 8。",
+      "local_static_rule": true,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "pass"
+      },
+      "whole_answer_issue": {
+        "provider_final": "没有解释整数与字符串相加的具体结果，并忽略文件末尾的示例调用。",
+        "delivered": null
+      }
+    },
+    {
+      "case_id": "aliased-call",
+      "group": "holdout-tools",
+      "request_indices": [
+        20
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "partial",
+      "bad_repair": true,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": true,
+      "native_tool_calls": 0,
+      "provider_reason": "0 条工具调用；初始片段已足够确认费用调用与 fees.py:2 的 str+int。固定改为 charge(8) 输出 10，但属于未确认输入契约下的可应用补丁。类型注解本身不会检查运行时类型，提示应明确需要静态检查。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [
+        "unconfirmed-patch-semantics"
+      ],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "预选未确定的金额类型，且未明确注解需要配合静态检查才能暴露此类错误。",
+        "delivered": "预选未确定的金额类型，且未明确注解需要配合静态检查才能暴露此类错误。"
+      }
+    },
+    {
+      "case_id": "relative-call",
+      "group": "holdout-tools",
+      "request_indices": [
+        21,
+        22,
+        23
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": true,
+      "native_tool_calls": 4,
+      "provider_reason": "3 次模型请求、4 次真实工具调用，读全 service 和 read、查询诊断与保存的当前缓冲区执行结果。正确定位 pkg/read.py:2 并区分 CPython 可推得的 IndexError 与受限执行器停在 pkg/service.py:1。空输入建议均有前提。原始 alternatives 4 条，ValueError 是内置异常。",
+      "delivered_change": "交付将第 4 个方案合入第 3 个，未替换教学论证。",
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "把 ValueError 这类内置异常称为自定义异常。",
+        "delivered": "把 ValueError 这类内置异常称为自定义异常。"
+      }
+    },
+    {
+      "case_id": "wrong-arity",
+      "group": "holdout-tools",
+      "request_indices": [
+        24
+      ],
+      "protocol": "accepted",
+      "location": "pass",
+      "root_cause": "pass",
+      "repair": "not-proposed",
+      "bad_repair": false,
+      "correct_code_false_alarm": null,
+      "cross_file_completion": true,
+      "native_tool_calls": 0,
+      "provider_reason": "0 条工具调用；根据初始已存在的定义和调用证据定位 main.py:2 的缺参错误。不发补丁，条件建议保留二元减法约定。把无默认参数一概称为必填位置参数不够精确。",
+      "delivered_change": null,
+      "local_static_rule": false,
+      "failure_reasons": [],
+      "whole_answer": {
+        "provider_final": "partial",
+        "delivered": "partial"
+      },
+      "whole_answer_issue": {
+        "provider_final": "把无默认值的参数概括为必填位置参数，遗漏本例可用关键字绑定。",
+        "delivered": "把无默认值的参数概括为必填位置参数，遗漏本例可用关键字绑定。"
+      }
+    }
+  ]
+}

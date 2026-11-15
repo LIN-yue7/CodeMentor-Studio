@@ -25,6 +25,7 @@ from app.core.llm_client import (
     LLMTimeoutError,
     LLMToolsUnsupportedError,
 )
+from app.services.project_retrieval import source_coverage
 
 MAX_TURNS = 3
 MAX_CALLS = 6
@@ -43,6 +44,7 @@ class StrictArgs(BaseModel):
 
 
 class FileArgs(StrictArgs):
+    path: str | None = Field(default=None, min_length=1, max_length=240)
     start_line: int = Field(default=1, ge=1, le=100000)
     end_line: int = Field(default=30, ge=1, le=100000)
 
@@ -70,7 +72,8 @@ ARGUMENTS = {
     'get_execution_result': StrictArgs,
 }
 DESCRIPTIONS = {
-    'get_current_file': 'Read at most 40 exact source lines from the current authorized file.',
+    'get_current_file': ('Read at most 40 exact source lines from the current file, or a named '
+                         'authorized project-relative path, for example an imported implementation.'),
     'search_project': 'Literal substring search in authorized virtual files, with exact line evidence.',
     'get_diagnostics': 'Read saved local parser observations; these are not execution results.',
     'get_references': 'Find lexical symbol occurrences; results are not resolved semantic references.',
@@ -134,16 +137,25 @@ def _bounded(value, depth=0):
     return value if type(value) in (int, float, bool, type(None)) else None
 
 
-def _fit(result):
+def _fit(result, snapshot=None, previously_sent=()):
     """Return valid JSON, never a cut JSON string; keep only exact source lines."""
     result = copy.deepcopy(result)
-    while len(_json(result)) > MAX_RESULT_CHARS:
+    while True:
+        snippets = result.get('snippets', [])
+        if snippets and snapshot is not None:
+            paths = dict.fromkeys(row['path'] for row in snippets)
+            result['source_coverage'] = source_coverage(
+                snapshot['files'], [*previously_sent, *snippets], paths,
+            )
+        else:
+            result.pop('source_coverage', None)
+        if len(_json(result)) <= MAX_RESULT_CHARS:
+            return result
         lists = [v for v in result.values() if isinstance(v, list) and v]
         if not lists:
             return {'status': 'output-limit', 'message': 'Saved result exceeds tool output limit.'}
         max(lists, key=lambda v: len(_json(v))).pop()
         result['truncated'] = True
-    return result
 
 
 def _snippets(snapshot, predicate, limit):
@@ -157,7 +169,7 @@ def _snippets(snapshot, predicate, limit):
     return rows
 
 
-def _dispatch(snapshot, name, arguments):
+def _dispatch(snapshot, name, arguments, previously_sent=()):
     if name not in ARGUMENTS:
         return {'status': 'rejected', 'reason': 'unknown-tool'}
     try:
@@ -167,9 +179,12 @@ def _dispatch(snapshot, name, arguments):
     if name == 'get_current_file':
         if args.end_line < args.start_line or args.end_line - args.start_line >= 40:
             return {'status': 'rejected', 'reason': 'invalid-line-range'}
+        path = args.path if args.path is not None else snapshot['path']
+        if not _safe_path(path) or path not in snapshot['files']:
+            return {'status': 'rejected', 'reason': 'path-outside-snapshot'}
         return _fit({'status': 'ok', 'snippets': _snippets(snapshot,
-            lambda p, n, text: p == snapshot['path'] and args.start_line <= n <= args.end_line,
-            40)})
+            lambda p, n, text: p == path and args.start_line <= n <= args.end_line,
+            40)}, snapshot, previously_sent)
     if name in {'search_project', 'get_references'}:
         if name == 'search_project':
             predicate = lambda p, n, text: args.query in text
@@ -178,7 +193,8 @@ def _dispatch(snapshot, name, arguments):
             predicate = lambda p, n, text: bool(pattern.search(text))
         return _fit({'status': 'ok', 'match_kind': 'literal' if name == 'search_project'
                      else 'lexical-occurrence',
-                     'snippets': _snippets(snapshot, predicate, args.limit)})
+                     'snippets': _snippets(snapshot, predicate, args.limit)},
+                    snapshot, previously_sent)
     if name == 'get_diagnostics':
         items = snapshot.get('diagnostics', snapshot.get('issues', []))
         return _fit({'status': 'ok', 'source': 'local-parser', 'items': _bounded(items)})
@@ -190,7 +206,8 @@ def _dispatch(snapshot, name, arguments):
     result = snapshot.get('execution_result')
     if not result:
         return {'status': 'not-run', 'message': 'No saved execution result in this snapshot.'}
-    if not isinstance(result, dict) or result.get('buffer_hash') != snapshot['buffer_hash']:
+    if (not isinstance(result, dict) or result.get('buffer_hash') != snapshot['buffer_hash']
+            or ('entry_path' in result and result['entry_path'] != snapshot['path'])):
         return {'status': 'stale', 'message': 'Saved execution result does not match this snapshot.'}
     return _fit({'status': 'ok', 'source': 'saved-execution', 'result': _bounded(result)})
 
@@ -320,11 +337,13 @@ async def run_agent(model, snapshot, initial_data, system_prompt, on_event=None)
             await _event(on_event, 'tool-start', {'id': identifier, 'name': name, 'turn': turn})
             try:
                 arguments = json.loads(raw_arguments, object_pairs_hook=_unique_object)
+                _json(arguments)  # Reject non-finite JSON numbers before storing trace metadata.
                 if _sensitive(arguments):
                     output = {'status': 'rejected', 'reason': 'sensitive-arguments'}
                     arguments = {}
                 else:
-                    output = _dispatch(snapshot, name, arguments)
+                    output = _dispatch(snapshot, name, arguments,
+                                       [*result['snippets'], *pending_snippets])
             except (ValueError, TypeError, RecursionError):
                 arguments = {}
                 output = {'status': 'rejected', 'reason': 'invalid-arguments'}

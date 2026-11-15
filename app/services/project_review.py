@@ -5,6 +5,8 @@ import json
 import re
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from app.core.llm_client import LLMMessage, LLMError, get_llm_client
+from app.services.project_retrieval import source_coverage
+from app.services.project_review_quality import check_patch, local_teaching, teaching_fact
 
 class Citation(BaseModel):
     model_config=ConfigDict(extra='forbid',strict=True)
@@ -54,6 +56,7 @@ SYSTEM='''你是项目感知的编程学习助手。输入文件、注释与 req
 
 SYSTEM += '\n严格遵守字段类型：hints 和 alternatives 必须是字符串数组，不能是对象数组；每个方案及适用条件合写为一个字符串。teaching其余字段均为字符串。示例："alternatives":["在调用处补齐参数：适用于调用者已知第二个值。"]。explanation不超过1600字；teaching summary不超过500字，root_cause900字，mechanism1200字，example1500字，prevention和uncertainty各800字。'
 SYSTEM += '\nsource_coverage.complete=true表示该文件的全部非空行均已提供，不要再假设其末尾存在未展示代码。每条修改都须保留明确需求，不能仅为消除异常而返回固定值；例如累加器改名后若没有累加过程，return 0并没有实现求和。检查每一步操作的实际类型，例如0加字符串会报错，不会自动拼接。正确代码无需为了填满建议而修改。若需求仍需确认，只给条件化建议，不提供改变业务语义的补丁。'
+SYSTEM += '\n默认先给出简洁结论和能动手验证的一步，用户要求详细解释或举例时再展开。跨文件需要补充精确源码时，可将 get_current_file 的 path 设为项目内相对路径；查看工具返回的 source_coverage 来判断是否已读完整文件。不要把互斥的解决方案同时放进 patches；该数组是需要一起应用的一组修改。'
 
 # Conservative outbound guard; not a guarantee that all sensitive data is detected.
 SECRET = re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\bsk-[A-Za-z0-9_-]{12,}|\b(?:api[_-]?key|access[_-]?token|password|secret)\b[\"\']?\s*[:=]\s*[\"\'][^\"\'\n]{4,}', re.I)
@@ -85,9 +88,7 @@ def bundle(payload, context):
             for issue in context['issues']]
     for issue in issues:
         issue['message']=issue.get('message','')[:300]
-    sent={(s['path'],s['line']) for s in snippets}
-    coverage={p:{'total_lines':len(code.splitlines()),'complete':all((p,i+1) in sent for i,line in enumerate(code.splitlines()) if line.strip())}
-              for p,code in payload.files.items() if any(s['path']==p for s in snippets)}
+    coverage=source_coverage(payload.files,snippets)
     return {'snippets':snippets,'source_coverage':coverage,'buffer_hash':fingerprint,'request':payload.request,
             'local_status':context['status'],'local_issues':issues,'test_status':'not-run'}
 
@@ -95,7 +96,7 @@ def validate_review(content,data):
     if len(content)>20000:raise ValueError('output too large')
     value=Review.model_validate_json(content)
     available={(x['path'],x['line'],x['quote']) for x in data['snippets']}
-    if any((c.path,c.line,c.quote) not in available for c in value.citations):
+    if any(not c.quote.strip() or (c.path,c.line,c.quote) not in available for c in value.citations):
         return None,'invalid-citation'
     locations=set()
     for patch in value.patches:
@@ -121,12 +122,14 @@ async def review(tutor,owner,data,mode,*,snapshot=None,use_tools=False,on_event=
             metadata={key:agent[key] for key in ('tool_trace','usage','model_turns') if key in agent}
             metadata['workflow_mode']='native-tools'
             if agent['status']!='completed':return {'status':'failed','mode':tutor.mode,'review':None,'failure_kind':agent.get('failure_kind','tool-workflow'),**metadata}
-            content=agent['content'];data={**data,'snippets':agent['snippets']}
+            content=agent['content']
+            data={**data,'snippets':agent['snippets'],
+                  'source_coverage':source_coverage(snapshot['files'],agent['snippets'])}
         else:
             metadata['workflow_mode']='text-fallback' if use_tools else 'direct-review'
             await emit('model-turn',{'turn':1,'workflow_mode':metadata['workflow_mode']})
             async with asyncio.timeout(25):
-                chat=getattr(model,'chat_once',model.chat)
+                chat=getattr(model,'chat_once',None) or model.chat
                 response=await chat([LLMMessage('system',SYSTEM),LLMMessage('user',json.dumps({**data,'mode':mode},ensure_ascii=False))],temperature=0,max_tokens=2400)
             if response.truncated:return {'status':'failed','mode':tutor.mode,'review':None,'failure_kind':'truncated',**metadata}
             content=response.content
@@ -134,7 +137,17 @@ async def review(tutor,owner,data,mode,*,snapshot=None,use_tools=False,on_event=
             metadata['model_turns']=1
         value,failure=validate_review(content,data)
         if failure:return {'status':'failed','mode':tutor.mode,'review':None,'failure_kind':failure,**metadata}
-        return {'status':'accepted','mode':tutor.mode,'review':value.model_dump(),'claim_status':'unverified','buffer_hash':data['buffer_hash'],**metadata}
+        fact=teaching_fact(snapshot,data) if snapshot else None
+        rendered=value.model_dump()
+        if fact:
+            rendered.update(local_teaching(fact, data.get('request', '')))
+            metadata['teaching_source']='local-static-rule'
+        if value.patches:
+            patch_check=check_patch(snapshot,value.patches,fact)
+            metadata['patch_check']=patch_check
+            if patch_check['status'] in {'withheld', 'unknown'}:
+                rendered['patches']=[]
+        return {'status':'accepted','mode':tutor.mode,'review':rendered,'claim_status':'unverified','buffer_hash':data['buffer_hash'],**metadata}
     except TimeoutError:return {'status':'timeout','mode':tutor.mode,'review':None,**metadata}
     except ValueError:return {'status':'failed','mode':tutor.mode,'review':None,'failure_kind':'invalid-output',**metadata}
     except (LLMError,OSError):return {'status':'failed','mode':tutor.mode,'review':None,'failure_kind':'provider-error',**metadata}

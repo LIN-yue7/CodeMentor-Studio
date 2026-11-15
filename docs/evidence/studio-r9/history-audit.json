@@ -1,0 +1,323 @@
+{
+  "scope": "All objects reachable from all local refs, including historical blobs",
+  "commits": 48,
+  "blobs": 883,
+  "findings": [
+    {
+      "object": "09701cada8e50de1325cf840c6c89daf5c08f3f7",
+      "path": "app/api/v1/endpoints/auth.py",
+      "rule": "assigned-credential",
+      "sha256": "b676f59bef1750893a614a7d0efcab92e1aefb138394cb29ed0869c052633a8f",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "0d34708f1d8f844d623fc896b80b86a81bf71ce0",
+      "path": "app/api/v1/endpoints/check.py",
+      "rule": "assigned-credential",
+      "sha256": "a636aa13f4f906e8b0dfd745489245105679a16e032ca3a974a945976558025d",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "f754d75d57e1e88c32cfeaf40c4266281a5792e7",
+      "path": "app/api/v1/endpoints/comment.py",
+      "rule": "assigned-credential",
+      "sha256": "a4eb9aebca6ac52e77383939613c4b7de5e7972d1f8ac31db54d9d749ffc38b4",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "c679f5b2c2540645c9ecef1f29576656f5ab5014",
+      "path": "app/api/v1/endpoints/fix.py",
+      "rule": "assigned-credential",
+      "sha256": "6ac67eb2288d722d981a615407bbf3d5c25b47cd0057b43ea09c1f3f468f884a",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "8a9460a2f528d2f0ac5fcbc869a8bf356a8af8f1",
+      "path": "app/core/api_key_manager.py",
+      "rule": "assigned-credential",
+      "sha256": "e2394f9b0fc86323832732750ade875c3c5500d07734ed0af4718938be7b8253",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "e1e6e802ea92fb8675177ab6afb5e782e092a58e",
+      "path": "app/core/config.py",
+      "rule": "assigned-credential",
+      "sha256": "6350381840c3e985c9f2dbd677b0d56c21777739488c7d0a8347eee89ef93289",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "d0589bc57e7a5c4e3f96b0d3c764c45ceace920a",
+      "path": "app/core/llm_client.py",
+      "rule": "assigned-credential",
+      "sha256": "078e021943e0e5030f0b73928aa350a413c22773d610daa54b3405c80d372b25",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "9afcaf99e974ac4e08db5663edb32c1e9ad2c066",
+      "path": "app/services/code_checker.py",
+      "rule": "assigned-credential",
+      "sha256": "b2a3f67297174927bfbbe05565c5a28a85ae5bc374b11b07b8f936eec65bf404",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "5d8743a69b36d6c70044b3e3bec07887cf9140a3",
+      "path": "app/services/code_fixer.py",
+      "rule": "assigned-credential",
+      "sha256": "8792850c806a17d76af7f5d11e6aa854c39b80e39e00f46c45a51fb5b695ba20",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "8cf130844b90c3e8b63a9b1343cee0bf727b8476",
+      "path": "app/services/comment_generator.py",
+      "rule": "assigned-credential",
+      "sha256": "814de181c3d4c6a047ba88f1b7f01781e194a52785ac068663d68907623fa75a",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "e4fd45db40c60f184f6c8eee095d11e6691309ec",
+      "path": "config/deepseek.env.example",
+      "rule": "assigned-credential",
+      "sha256": "3eb3a633f3b19cf33370ca5131f87b6a256ee7918cebb1fc13ece79b935c6e1a",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "aeb43b816919f0e27d2379648526f4d39da1cd56",
+      "path": "tests/test_api_key_manager.py",
+      "rule": "provider-key",
+      "sha256": "3494c96d634f43da69fe97df4dda4538358f3afcb3eb9cc3aa45e1b5c52ed928",
+      "disposition": "synthetic test credential"
+    },
+    {
+      "object": "705e456e0291def847ea6fecc2084eba3302a751",
+      "path": "tests/test_dynamic_api_key.py",
+      "rule": "provider-key",
+      "sha256": "5e08f836281d5d00c18cc316d4c7f70601cdf754997c3cd0c717133b9bca55ff",
+      "disposition": "synthetic test credential"
+    },
+    {
+      "object": "604475683803d74b63627099bc89102b4172fcfd",
+      "path": "tests/test_generic_llm_client.py",
+      "rule": "assigned-credential",
+      "sha256": "723ec8432997a23d88c8461f47a97a794a0e7e25da71b8391dfd7312fe06e3a8",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "fdc327dd6197014e7df8b310197cf155415218a1",
+      "path": "tests/test_llm_models.py",
+      "rule": "assigned-credential",
+      "sha256": "c91625612b6602b53edebbb72e63fad5ddcb1750d7d9cddef56d37936cf77a5c",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "b7468bf22c8fb4a71a35b512111eb6f76b1029c6",
+      "path": "tests/test_project_agent_tools.py",
+      "rule": "assigned-credential",
+      "sha256": "03d72392bedbff2110638d0939f3e47e677f621f979abf04151f3d9b5b48d4e1",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "8ff34a38182e7fa714553d974337ac4acdce168a",
+      "path": "tools/verify_llm_client_real.py",
+      "rule": "provider-key",
+      "sha256": "da97cd2cd32858253b3b58b367714d6925dfb7bc0316c758feaad37ccc4931ba",
+      "disposition": "synthetic test credential"
+    },
+    {
+      "object": "8ff34a38182e7fa714553d974337ac4acdce168a",
+      "path": "tools/verify_llm_client_real.py",
+      "rule": "assigned-credential",
+      "sha256": "da97cd2cd32858253b3b58b367714d6925dfb7bc0316c758feaad37ccc4931ba",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "f705266106d0a5023f611e1cce47ebd38266c3fc",
+      "path": "tools/verify_model_switch.py",
+      "rule": "provider-key",
+      "sha256": "bede8a5672da4dd95530380f893f8cc04a476f8680dd763fbf2d7965f8f235b4",
+      "disposition": "synthetic test credential"
+    },
+    {
+      "object": "ec1d757ff5e3de65905caa8634081e726c925adf",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "76302dfece5a9b06376f8186acde663b12d6d811aeeaf9994a0ab9ad57a7fe33",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "2ba1a188390032b3f40eee38a1d5bfe28ceb1fd4",
+      "path": "app/core/llm_client.py",
+      "rule": "assigned-credential",
+      "sha256": "fe6cb7ef257b585d96af0a7e908beeeed4f2cfbb740b66114cfb83ece8586ba4",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "e6675730c9c8a51f475bdb77d61ee68691b094c0",
+      "path": "app/core/config.py",
+      "rule": "assigned-credential",
+      "sha256": "12cf1290bf3be6a8b4ea63f57dca75722fae01543e61b57f0f481053bd91205b",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "2567dc541fb43a06c817480616507ce2a7c61d34",
+      "path": "app/core/llm_client.py",
+      "rule": "assigned-credential",
+      "sha256": "9c8bf975c0e09857a30cdcbca8427fb8d12d856b997c329e811aef4f87b334c5",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "2757401eadc93b61ea19cddedc841cd08d9c6fe1",
+      "path": "app/core/config.py",
+      "rule": "assigned-credential",
+      "sha256": "ca7a9ba0d26e72ff72e2710e2702dfff2e44db336d368f34483dd6bfb3ac74a6",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "eac4d9a2e949c95f33a911a8b86eea3a4a30f487",
+      "path": "tools/verify_model_switch.py",
+      "rule": "provider-key",
+      "sha256": "43fce94bd0a95028dbfab53b550d5a51d7ea0a34daffa33a39fa54a2285d5fc9",
+      "disposition": "synthetic test credential"
+    },
+    {
+      "object": "a9ede50c6acb5f1e49099ba4dbaeb986ef093c5b",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "6830e373072d8770f806234bda9f4f0bb1c3acb8b3890b811924e5855a3adc27",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "b3a4481d62665fc76738195a09539f1163fab0fe",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "5af2d393a0784a01f454458849dc2bd64dcd55dbba00a57c070e25de62e94552",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "baf99a5a4692982623138775b41436efe3d0d76d",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "7ff326bdb761374bee8401d7424a60343b88b69cf7a73c9f5f7a77088e42e853",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "9f6f1ce318ae2d9435225d48e42078ce34472c56",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "11b4b98829d462413a946e04f539ed5bf59f7229a5af97dccb571fe7cbcbf2eb",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "54726c560fc5ac307daa9384424c22a9941ace5c",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "7caec448d013dd01c2b5e31c1af847b7f14b49b4ba9c8589982a4a9fb7bf0403",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "3986a14f5abba2be5e088c67f2bf19d88ac800c3",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "488f5a6e898175ca23bcbe6f3501906c0f777fa12d81ee70a6027a1905cda6e6",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "354b3bf6e404a1d1926527fb0a18710cd2b7c121",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "06e049c6b6aa8a2f20b7bdbbdd49b3c0d0732441694ede15cfaa14e2e25073a0",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "35274bd59896b83f156e5e36b0bb7fc297d183a9",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "487ce2e91f44ead021d8dbf52bd613b08f84cc6aceb5e6b6732eee3811e4b222",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "842ad9f0486b90ae87146d2d401a9a9f9eb60d8f",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "cf79ad3bbb132c20a43a3a5dd2843c7f2a1b046d8d677f589ff38501f638576a",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "71d06c7fe7fe534e2d0656cb73853678a5217028",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "0710232b539cb0740053126dc913c9d2bf9e8232ff4172fb072babe3faad0dbc",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "7f52c17c4570051f6d363722c2ca05f7a2d6091e",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "f11f876038f9afdfff707291117da311a05ce337a0d5acd4d53348438de65658",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "efe1b7e9d85e4f264ba9418002ec94efc5e86c5f",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "0287f5952687f70e81188dce706b4c367efd92dfe1fe29684d362692bb10e83f",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "13249435c995ad774613cc74124ff263327c5ed8",
+      "path": "app/core/config.py",
+      "rule": "assigned-credential",
+      "sha256": "0e727c907a7fb0e895473e04705071ed468feed00edce05a6c3e4f384f90b8bb",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "168cd407f32cff10179a391c684a317cdedd2cb1",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "f5c84f4dc36f00e3223d7d99d3a40c153a1cba54b5a769249e728f0c5e7e7f2a",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "60119170b3cb8aa76311261af637e6ffa4c1c943",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "a51070f39524e6a4c5da678448b8a6e74c36ae185837667d24e51589688aac59",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "82474377956f357ac8570a6a79d9ffaca0f9b1fc",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "4704a4579c73f09a16a70a7f6067d38f83a93711d07c4d01566cac2b15e2182a",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "2c88039a503fb7a744da741fa652f96d7b6df879",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "88d5e1ee826a99313ce975d125ced3224da3dafae783e1bcda7c99665a53037e",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "7dd770d5b67730cc42cb852c3ba5823c2d42fdc4",
+      "path": "app/core/config.py",
+      "rule": "assigned-credential",
+      "sha256": "9aa7c7aef02ae529eae7c45dd7ef361f40e65705024db0a0c2ad2862bc07be61",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "3900910a9fa662b189aeefb17222e4f61b685d70",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "4f7279fad01ec893ea552a5127b9f646d847743669a657af0d33bc9795611d79",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    },
+    {
+      "object": "e187f5ba11f3c867b45475902f1396198060f3de",
+      "path": "使用教程.md",
+      "rule": "assigned-credential",
+      "sha256": "01be1213811f97665bdfcc7fc132a864aae5c05a78be19bb57bdfe580eee5d64",
+      "disposition": "reviewed code expression, blank template or synthetic test placeholder"
+    }
+  ],
+  "limits": "Pattern scan does not establish absence of all secrets or personal data. Findings need source review. Unreachable Git objects and private working files excluded."
+}

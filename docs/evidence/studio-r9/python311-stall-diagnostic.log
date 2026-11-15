@@ -1,0 +1,31 @@
+D:\codex\2026-11-13\codementor-r8-handoff\work\r9-python311\Lib\site-packages\pytest_asyncio\plugin.py:300: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the "fixture" caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to "function" scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.2.0, pluggy-1.7.0 -- D:\codex\2026-11-13\codementor-r8-handoff\work\r9-python311\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\codex\2026-11-11\codementor-studio-ai-web-2026-ai\outputs\CodeMentor-Studio
+configfile: pyproject.toml
+plugins: anyio-4.16.0, asyncio-1.4.1.post1
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 16 items
+
+tests/test_database.py::test_init_db_and_session_roundtrip PASSED        [  6%]
+tests/test_database.py::test_sqlite_file_is_created PASSED               [ 12%]
+tests/test_dependencies.py::test_greenlet_is_declared_explicitly PASSED  [ 18%]
+tests/test_dependencies.py::test_every_critical_import_is_declared PASSED [ 25%]
+tests/test_dependencies.py::test_requirements_and_pyproject_declare_the_same_packages PASSED [ 31%]
+tests/test_dependencies.py::test_parse_requirements_handles_extras_and_comments PASSED [ 37%]
+tests/test_dependencies.py::test_parse_requirements_on_a_synthetic_file PASSED [ 43%]
+tests/test_dependencies.py::test_candidate_modules_prefers_the_public_module PASSED [ 50%]
+tests/test_dependencies.py::test_check_imports_reports_missing_package PASSED [ 56%]
+tests/test_dependencies.py::test_check_imports_passes_for_installed_packages PASSED [ 62%]
+tests/test_dependencies.py::test_async_engine_smoke_test_passes_in_this_environment PASSED [ 68%]
+tests/test_dependencies.py::test_tree_sitter_smoke_test_passes_in_this_environment PASSED [ 75%]
+tests/test_dependencies.py::test_start_bat_uses_the_preflight_script_instead_of_a_hand_written_list PASSED [ 81%]
+tests/test_dependencies.py::test_preflight_script_is_shipped PASSED      [ 87%]
+tests/test_dependencies.py::test_generated_bat_exists[start.bat] PASSED  [ 93%]
+tests/test_dependencies.py::test_generated_bat_exists[stop.bat] PASSED   [100%]
+
+============================= 16 passed in 0.56s ==============================

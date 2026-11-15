@@ -1,0 +1,146 @@
+[
+  {
+    "case_id": "clean-offset",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 0,
+    "stdout": "7\n",
+    "stderr": "",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "clean-empty",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 0,
+    "stdout": "9\n",
+    "stderr": "",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "clean-text",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 0,
+    "stdout": "hi!\n",
+    "stderr": "",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "missing-colon",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-upxwhvd7\\main.py\", line 1\n    def triple(n)\n                 ^\nSyntaxError: expected ':'\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "bad-indent",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-bhq48one\\main.py\", line 2\n    return 8\n    ^^^^^^\nIndentationError: expected an indented block after function definition on line 1\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "exclusive-end",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-22ui627j\\main.py\", line 3, in <module>\n    print(last([3, 8]))\n          ~~~~^^^^^^^^\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-22ui627j\\main.py\", line 2, in last\n    return xs[len(xs)]\n           ~~^^^^^^^^^\nIndexError: list index out of range\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "zero-divisor",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-6ao2q7gb\\main.py\", line 3, in <module>\n    print(mean([]))\n          ~~~~^^^^\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-6ao2q7gb\\main.py\", line 2, in mean\n    return sum(xs) / len(xs)\n           ~~~~~~~~^~~~~~~~~\nZeroDivisionError: division by zero\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "branch-local",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-hrpbirwm\\main.py\", line 5, in <module>\n    print(price(False))\n          ~~~~~^^^^^^^\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-hrpbirwm\\main.py\", line 4, in price\n    return amount\n           ^^^^^^\nUnboundLocalError: cannot access local variable 'amount' where it is not associated with a value\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "builtin-mask",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-9gsk7ijm\\main.py\", line 4, in <module>\n    print(count([1, 2]))\n          ~~~~~^^^^^^^^\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-9gsk7ijm\\main.py\", line 3, in count\n    return len(xs)\nTypeError: 'int' object is not callable\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "missing-branch-return",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-55ekelbz\\main.py\", line 4, in <module>\n    print(discount(False) + 5)\n          ~~~~~~~~~~~~~~~~^~~\nTypeError: unsupported operand type(s) for +: 'NoneType' and 'int'\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "mutator-result",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-qfdyl9tf\\main.py\", line 3, in <module>\n    print(sorted_items([8, 2])[0])\n          ~~~~~~~~~~~~~~~~~~~~^^^\nTypeError: 'NoneType' object is not subscriptable\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "aliased-call",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-qcst5txd\\main.py\", line 2, in <module>\n    print(charge(\"8\"))\n          ~~~~~~^^^^^\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-qcst5txd\\fees.py\", line 2, in fee\n    return amount + 2\n           ~~~~~~~^~~\nTypeError: can only concatenate str (not \"int\") to str\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "relative-call",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-kjh5dhz2\\main.py\", line 2, in <module>\n    print(run([]))\n          ~~~^^^^\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-kjh5dhz2\\pkg\\service.py\", line 3, in run\n    return head(xs)\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-kjh5dhz2\\pkg\\read.py\", line 2, in head\n    return xs[0]\n           ~~^^^\nIndexError: list index out of range\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "wrong-arity",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\gmj\\AppData\\Local\\Temp\\codementor-reference-oaxqkem5\\main.py\", line 2, in <module>\n    print(delta(9))\n          ~~~~~^^^\nTypeError: delta() missing 1 required positional argument: 'b'\n",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "preserve-nonempty",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 0,
+    "stdout": "7\n",
+    "stderr": "",
+    "model_status": "not-run"
+  },
+  {
+    "case_id": "correct-sum-types",
+    "provenance": "deterministic-reference-cpython",
+    "reference_matches": true,
+    "returncode": 0,
+    "stdout": "8\n",
+    "stderr": "",
+    "model_status": "not-run"
+  }
+]

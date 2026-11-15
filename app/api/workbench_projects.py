@@ -68,13 +68,21 @@ async def get_project(id:UUID,owner:Owner,db:DB):
 
 @router.post('/projects/{id}')
 async def save_project(id:UUID,payload:SaveProject,owner:Owner,db:DB):
-    await owned(db,owner,id)
+    original = await owned(db,owner,id)
+    previous_files = dict(original.files)
     values = {'files':payload.files,'revision':payload.revision+1}
     if payload.name is not None:
         values['name'] = payload.name.strip() or '未命名项目'
     r=await db.execute(update(Project).where(Project.owner==owner,Project.id==str(id),Project.revision==payload.revision).values(**values))
     if r.rowcount!=1:
         await db.rollback(); raise HTTPException(409,'保存版本冲突，请先导出草稿，再重新打开项目。')
+    if payload.revision > 0:
+        for path, code in payload.files.items():
+            if previous_files.get(path) != code:
+                await project_learning._event(
+                    db, owner, str(id), path, 'saved-modification', 'editing',
+                    '已保存一次代码修改；是否解决问题需查看复查与执行证据。',
+                    project_learning.code_hash(code), payload.revision + 1, source='user-save')
     results = {path:inspect_python(path,code) for path,code in payload.files.items()}
     await project_learning.observe(db,owner,str(id),payload.files,results,payload.revision+1,saved=True)
     await db.commit()
@@ -201,10 +209,13 @@ async def prepare_review(id,payload,owner,db):
     if not permissions['allow_external']:raise HTTPException(403,'项目未授权向外部模型发送代码。')
     context=await build_context(id,payload,owner,db,record=False)
     data=project_review.bundle(payload,context)
-    executions=(await db.scalars(select(ProjectExecution).where(ProjectExecution.owner==owner,ProjectExecution.project_id==str(id)))).all()
-    matching=[e.result for e in executions if e.result.get('buffer_hash')==data['buffer_hash']]
-    execution=next((r for r in matching if r.get('entry_path')==payload.path),matching[0] if matching else None)
+    saved_execution=await db.get(ProjectExecution,(owner,str(id),payload.path))
+    execution=saved_execution.result if saved_execution else None
+    if execution and (execution.get('buffer_hash')!=data['buffer_hash']
+                      or execution.get('entry_path')!=payload.path):
+        execution=None
     snapshot={'files':dict(payload.files),'path':payload.path,'buffer_hash':data['buffer_hash'],
+              'cursor_line':payload.cursor_line,'language':payload.language,
               'diagnostics':[issue for items in context['project_issues'].values() for issue in items],
               'learning_history':context['learning']['items'],'execution_result':execution}
     return data,snapshot
@@ -250,6 +261,13 @@ async def project_verify(id:UUID,payload:ProjectContext,owner:Owner,db:DB):
     if payload.path not in payload.files: raise HTTPException(422,'当前文件不在项目中。')
     from app.services.project_verification import verify
     result={**verify(payload.files,payload.path),'entry_path':payload.path}
+    # Serialize the revision check with save_project before writing execution evidence.
+    guard=await db.execute(update(Project).where(
+        Project.owner==owner,Project.id==str(id),Project.revision==payload.revision
+    ).values(revision=Project.revision))
+    if guard.rowcount!=1:
+        await db.rollback()
+        raise HTTPException(409,'项目保存版本已变化，请重新打开项目后验证。')
     await db.merge(ProjectExecution(owner=owner,project_id=str(id),path=payload.path,result=result))
     await project_learning._event(db,owner,str(id),payload.path,'execution-'+result['status'],'restricted-execution',
         '受限 Python 执行：'+result['status']+'；'+result['boundary'],result['buffer_hash'],payload.revision,source='restricted-ast-interpreter')

@@ -1,0 +1,11 @@
+✔ full request identity changes for related file, revision, cursor and question (6.6224ms)
+✔ patch is atomic and undo rejects later manual changes anywhere in project (0.7851ms)
+✔ stream emits real events split across network chunks and requires completed (15.0138ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 111.3861

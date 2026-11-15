@@ -1,0 +1,51 @@
+{
+  "release_date": "2026-11-15",
+  "baseline": "00db306",
+  "branch": "studio-r9",
+  "status": "local-engineering-candidate-not-frozen",
+  "backend": {
+    "passed": 1022,
+    "skipped": 2,
+    "exit_code": 0,
+    "log": "backend-python311-traced.log",
+    "runtime": "Python 3.11.9",
+    "skip_reason": "symlink unavailable"
+  },
+  "frontend": {
+    "build": "passed",
+    "build_log": "frontend-freeze-check.log",
+    "logic_passed": 3,
+    "logic_log": "frontend-logic-release.log",
+    "browser_passed": 72,
+    "browser_log": "browser-python311-final.log",
+    "workers": 2
+  },
+  "live_model": {
+    "name": "deepseek-flash",
+    "thinking": "disabled",
+    "http_requests": 27,
+    "cap": 28,
+    "reserved_cny": 1.328859,
+    "cap_cny": 5,
+    "billing_statement_obtained": false
+  },
+  "replay": {
+    "responses": 25,
+    "network_requests": 0,
+    "log": "release-offline-replay.json",
+    "removed_risky_patches_from_live01": 4
+  },
+  "open_blockers": [
+    "Free-form teaching inaccuracies and omissions; strict independent first-pass delivery quality 7/16",
+    "Local teaching may replace specialized question content",
+    "No real student trial yet",
+    "No authorized formal hosted repository or judge-access check"
+  ],
+  "source_manifest": "release-source-manifest.json",
+  "clean_install_and_restart": {
+    "status": "passed",
+    "prepare_log": "release-clean-prepare.log",
+    "result": "release-startup-recovery.json",
+    "external_model_requests": 0
+  }
+}

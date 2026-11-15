@@ -1,0 +1,284 @@
+{
+  "kind": "synthetic-independent-candidate",
+  "policy": "Frozen before live evaluation; not used to tune prompts. Any case used for fixing must be reclassified as development. Human semantic adjudication required.",
+  "cases": [
+    {
+      "id": "clean-offset",
+      "category": "correct",
+      "files": {
+        "main.py": "def offset(n):\n    return n + 3\nprint(offset(4))\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "stdout": "7\n",
+        "location": null,
+        "root": "整数加法有效",
+        "repair": "无需修改"
+      }
+    },
+    {
+      "id": "clean-empty",
+      "category": "correct",
+      "files": {
+        "main.py": "def first(xs):\n    if xs:\n        return xs[0]\n    return 9\nprint(first([]))\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "stdout": "9\n",
+        "location": null,
+        "root": "空输入返回约定默认值",
+        "repair": "无需修改"
+      }
+    },
+    {
+      "id": "clean-text",
+      "category": "correct",
+      "files": {
+        "main.py": "def label(s):\n    return s + \"!\"\nprint(label(\"hi\"))\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "stdout": "hi!\n",
+        "location": null,
+        "root": "字符串与字符串拼接有效；受限执行器可能不支持",
+        "repair": "无需修改"
+      }
+    },
+    {
+      "id": "missing-colon",
+      "category": "syntax",
+      "files": {
+        "main.py": "def triple(n)\n    return n * 3\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "SyntaxError",
+        "location": [
+          "main.py",
+          1
+        ],
+        "root": "函数定义缺冒号",
+        "repair": "只补冒号"
+      }
+    },
+    {
+      "id": "bad-indent",
+      "category": "syntax",
+      "files": {
+        "main.py": "def value():\nreturn 8\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "IndentationError",
+        "location": [
+          "main.py",
+          2
+        ],
+        "root": "函数体需要缩进",
+        "repair": "缩进return"
+      }
+    },
+    {
+      "id": "exclusive-end",
+      "category": "boundary",
+      "files": {
+        "main.py": "def last(xs):\n    return xs[len(xs)]\nprint(last([3, 8]))\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "IndexError",
+        "location": [
+          "main.py",
+          2
+        ],
+        "root": "最后索引为长度减一；空列表还需需求",
+        "repair": "非空用len(xs)-1，空输入条件建议"
+      }
+    },
+    {
+      "id": "zero-divisor",
+      "category": "boundary",
+      "files": {
+        "main.py": "def mean(xs):\n    return sum(xs) / len(xs)\nprint(mean([]))\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "ZeroDivisionError",
+        "location": [
+          "main.py",
+          2
+        ],
+        "root": "空列表长度为0",
+        "repair": "确认空集合均值约定，不武断返回0"
+      }
+    },
+    {
+      "id": "branch-local",
+      "category": "scope",
+      "files": {
+        "main.py": "def price(flag):\n    if flag:\n        amount = 6\n    return amount\nprint(price(False))\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "UnboundLocalError",
+        "location": [
+          "main.py",
+          4
+        ],
+        "root": "分支未执行导致局部变量未绑定",
+        "repair": "先确认False分支需求"
+      }
+    },
+    {
+      "id": "builtin-mask",
+      "category": "scope",
+      "files": {
+        "main.py": "def count(xs):\n    len = 4\n    return len(xs)\nprint(count([1, 2]))\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "TypeError",
+        "location": [
+          "main.py",
+          3
+        ],
+        "root": "局部整数遮蔽内置len",
+        "repair": "删除无用遮蔽或重命名，保留计数行为"
+      }
+    },
+    {
+      "id": "missing-branch-return",
+      "category": "return",
+      "files": {
+        "main.py": "def discount(flag):\n    if flag:\n        return 2\nprint(discount(False) + 5)\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "TypeError",
+        "location": [
+          "main.py",
+          4
+        ],
+        "root": "完整函数False路径隐式返回None",
+        "repair": "确认无折扣是否为0"
+      }
+    },
+    {
+      "id": "mutator-result",
+      "category": "return",
+      "files": {
+        "main.py": "def sorted_items(xs):\n    return xs.sort()\nprint(sorted_items([8, 2])[0])\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "TypeError",
+        "location": [
+          "main.py",
+          3
+        ],
+        "root": "list.sort原地修改并返回None",
+        "repair": "返回排序后的列表并解释输入修改副作用"
+      }
+    },
+    {
+      "id": "aliased-call",
+      "category": "cross-file",
+      "files": {
+        "main.py": "from fees import fee as charge\nprint(charge(\"8\"))\n",
+        "fees.py": "def fee(amount):\n    return amount + 2\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "TypeError",
+        "location": [
+          "fees.py",
+          2
+        ],
+        "root": "别名指向费用函数，字符串金额与整数相加",
+        "repair": "按金额输入约定转换或拒绝"
+      }
+    },
+    {
+      "id": "relative-call",
+      "category": "cross-file",
+      "files": {
+        "main.py": "from pkg.service import run\nprint(run([]))\n",
+        "pkg/__init__.py": "",
+        "pkg/service.py": "from .read import head\ndef run(xs):\n    return head(xs)\n",
+        "pkg/read.py": "def head(xs):\n    return xs[0]\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "IndexError",
+        "location": [
+          "pkg/read.py",
+          2
+        ],
+        "root": "相对导入解析到read.head，空列表访问0",
+        "repair": "确认空输入约定"
+      }
+    },
+    {
+      "id": "wrong-arity",
+      "category": "cross-file",
+      "files": {
+        "main.py": "from mathlib import delta\nprint(delta(9))\n",
+        "mathlib.py": "def delta(a, b):\n    return a - b\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "error": "TypeError",
+        "location": [
+          "main.py",
+          2
+        ],
+        "root": "调用缺少第二个必需参数",
+        "repair": "按业务补足参数"
+      }
+    },
+    {
+      "id": "preserve-nonempty",
+      "category": "repair-quality",
+      "files": {
+        "main.py": "def choose(xs):\n    return xs[0]\nprint(choose([7]))\n"
+      },
+      "path": "main.py",
+      "request": "希望空列表时返回0，同时保持非空列表返回首项。",
+      "expected": {
+        "stdout": "7\n",
+        "location": null,
+        "root": "当前输入有效，空输入处理有待约定",
+        "repair": "不能用固定0破坏非空结果"
+      }
+    },
+    {
+      "id": "correct-sum-types",
+      "category": "explanation",
+      "files": {
+        "main.py": "def total(xs):\n    value = 0\n    for x in xs:\n        value += x\n    return value\nprint(total([2, 6]))\n"
+      },
+      "path": "main.py",
+      "request": "请分析可确认的问题，保留原有功能。",
+      "expected": {
+        "stdout": "8\n",
+        "location": null,
+        "root": "数值列表累加正确；含字符串时整数与字符串相加报TypeError",
+        "repair": "无需改正确的数值求和"
+      }
+    }
+  ]
+}

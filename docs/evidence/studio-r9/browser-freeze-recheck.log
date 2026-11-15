@@ -1,0 +1,193 @@
+
+> codementor-workbench@2.0.0 test:e2e
+> playwright test
+
+[WebServer] INFO:     Started server process [22884]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8766 (Press CTRL+C to quit)
+
+Running 72 tests using 12 workers
+
+(node:9472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4480) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6900) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4092) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:28452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+<--- Last few GCs --->
+
+[37756:000001C5D573D000]      556 ms: Mark-Compact 41.4 (70.8) -> 37.3 (73.8) MB, pooled: 0 MB, 2.89 / 0.00 ms  (+ 0.7 ms in 18 steps since start of marking, biggest step 0.1 ms, walltime since start of marking 53 ms) (average mu = 0.994, current mu = 0.9[37756:000001C5D573D000]     4229 ms: Scavenge 60.8 (82.8) -> 51.4 (82.1) MB, pooled: 2 MB, 8.85 / 0.04 ms  (average mu = 0.994, current mu = 0.994) task; 
+
+FATAL ERROR: Committing semi space failed. Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF61FF2AD5F 
+ 2: 00007FF620B732D7 
+ 3: 00007FF620973997 
+ 4: 00007FF62090C3BB 
+ 5: 00007FF62093472A 
+ 6: 00007FF620975D76 
+ 7: 00007FF6209753C6 
+ 8: 00007FF620986352 
+ 9: 00007FF620985E7B 
+10: 00007FF621DEE7ED 
+11: 00007FF620971460 
+12: 00007FF62096A5C4 
+13: 00007FF61FE7D10A 
+14: 00007FF61FE7B8F0 
+15: 00007FF620BDACBB 
+16: 00007FF620BDA82F 
+17: 00007FF62003D01F 
+18: 00007FF61FEB8DD2 
+19: 00007FF61FF84F6C 
+20: 00007FF620FA1B82 
+21: 00007FF621DF7EF4 
+22: 00007FF8E1B6E8D7 
+23: 00007FF8E327C34C 
+
+<--- Last few GCs --->
+
+[35868:0000024FDA169000]      627 ms: Mark-Compact 41.2 (70.3) -> 37.3 (73.3) MB, pooled: 0 MB, 7.94 / 0.00 ms  (+ 0.8 ms in 16 steps since start of marking, biggest step 0.1 ms, walltime since start of marking 61 ms) (average mu = 0.986, current mu = 0.9[35868:0000024FDA169000]     4220 ms: Scavenge 60.7 (83.0) -> 51.4 (82.4) MB, pooled: 4 MB, 18.49 / 0.04 ms  (average mu = 0.986, current mu = 0.986) task; 
+
+FATAL ERROR: Committing semi space failed. Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+  x   4 [desktop] › e2e\projects.spec.ts:3:1 › create real project, edit files, inspect syntax and persist (0ms)
+ 1: 00007FF61FF2AD5F 
+ 2: 00007FF620B732D7 
+ 3: 00007FF620973997 
+ 4: 00007FF62090C3BB 
+ 5: 00007FF62093472A 
+ 6: 00007FF620975D76 
+ 7: 00007FF6209753C6 
+ 8: 00007FF620986352 
+ 9: 00007FF620985E7B 
+10: 00007FF621DEE7ED 
+11: 00007FF620971460 
+12: 00007FF62096A5C4 
+13: 00007FF61FE7D10A 
+14: 00007FF61FE7B8F0 
+15: 00007FF620BDACBB 
+16: 00007FF620BDA82F 
+17: 00007FF62003D01F 
+18: 00007FF61FEB8DD2 
+19: 00007FF61FF84F6C 
+20: 00007FF620FA1B82 
+21: 00007FF621DF7EF4 
+22: 00007FF8E1B6E8D7 
+23: 00007FF8E327C34C 
+  x  12 [desktop] › e2e\r8-workflow.spec.ts:5:1 › R8 explicit approval, safe undo, structured explanation and real execution stay distinct (0ms)
+
+<--- Last few GCs --->
+
+[47752:00000174FF2C2000]      279 ms: Scavenge 20.0 (24.9) -> 18.2 (25.7) MB, pooled: 0 MB, 1.08 / 0.00 ms  (average mu = 1.000, current mu = 1.000) allocation failure; 
+[47752:00000174FF2C2000]      296 ms: Scavenge 20.9 (25.7) -> 19.8 (35.9) MB, pooled: 0 MB, 1.54 / 0.00 ms  (average mu = 1.000, current mu = 1.000) allocation failure; 
+[47752:00000174FF2C2000]      450 ms: Scavenge 38.3 (47.1) -> 34.3 (49.1) MB, pooled: 4 MB, 2.21 / 0.00 ms  (average mu = 1.000, current mu = 1.000) allocation failure; 
+
+FATAL ERROR: AlignedAlloc Allocation failed - process out of memory
+----- Native stack trace -----
+
+ 1: 00007FF61FF2AD5F 
+ 2: 00007FF620B732D7 
+ 3: 00007FF6204F0FBE 
+ 4: 00007FF62066B01B 
+ 5: 00007FF62066900C 
+ 6: 00007FF6209AE677 
+ 7: 00007FF620B698D1 
+ 8: 00007FF620B6A57B 
+ 9: 00007FF620616A37 
+10: 00007FF62061D386 
+11: 00007FF620615FFE 
+12: 00007FF620AEE0C0 
+13: 00007FF620AEEBAC 
+14: 00007FF62057225B 
+15: 00000174B927733A 
+  x  13 [desktop] › e2e\workbench.spec.ts:4:1 › diagnose, request hint, grade, and pass a new variant (0ms)
+  -  14 [desktop] › e2e\workbench.spec.ts:25:1 › cancel a pending request and retry the same submission
+  -  15 [desktop] › e2e\workbench.spec.ts:44:1 › a diagnosis during slow initial session creation keeps its exercise owner
+  -  16 [desktop] › e2e\workbench.spec.ts:59:1 › model output is rendered as text even if it contains markup
+  ok  1 [desktop] › e2e\navigation.spec.ts:4:1 › section navigation reaches practice and evidence link returns to editable code (4.1s)
+
+<--- Last few GCs --->
+
+[47652:00000224E3943000]      132 ms: Scavenge 16.0 (18.9) -> 15.2 (23.7) MB, pooled: 0 MB, 0.91 / 0.00 ms  (average mu = 1.000, current mu = 1.000) allocation failure; 
+[47652:00000224E3943000]      197 ms: Scavenge 20.0 (24.9) -> 18.3 (25.7) MB, pooled: 0 MB, 0.91 / 0.00 ms  (average mu = 1.000, current mu = 1.000) allocation failure; 
+[47652:00000224E3943000]      209 ms: Scavenge 20.9 (25.7) -> 19.8 (35.9) MB, pooled: 0 MB, 1.47 / 0.00 ms  (average mu = 1.000, current mu = 1.000) allocation failure; 
+
+FATAL ERROR: Zone Allocation failed - process out of memory
+----- Native stack trace -----
+
+ 1: 00007FF61FF2AD5F 
+ 2: 00007FF620B732D7 
+ 3: 00007FF6204EE076 
+ 4: 00007FF620B70E2E 
+ 5: 00007FF620617569 
+ 6: 00007FF62061C739 
+ 7: 00007FF62061DDCE 
+ 8: 00007FF62061D35A 
+ 9: 00007FF620615FFE 
+10: 00007FF620AEE0C0 
+11: 00007FF620AEEBAC 
+12: 00007FF62057225B 
+13: 000002249FE7733A 
+  x  18 [mobile] › e2e\project-review.spec.ts:3:1 › project code requires preview and explicit permission; local mode stays honest (0ms)
+  x  19 [mobile] › e2e\projects.spec.ts:3:1 › create real project, edit files, inspect syntax and persist (0ms)
+
+<--- Last few GCs --->
+
+[47540:0000022CD525B000]       53 ms: Mark-Compact (reduce) 4.8 (9.8) -> 4.5 (6.3) MB, pooled: 0 MB, 2.54 / 0.00 ms  (average mu = 0.950, current mu = 0.950) last resort; GC in old space requested
+[47540:0000022CD525B000]       55 ms: Mark-Compact (reduce) 4.5 (6.3) -> 4.5 (6.1) MB, pooled: 0 MB, 2.70 / 0.00 ms  (average mu = 0.903, current mu = 0.008) last resort; GC in old space requested
+
+FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+
+<--- Last few GCs --->
+
+[23740:000001C78199E000]      422 ms: Mark-Compact 59.4 (115.1) -> 46.0 (116.1) MB, pooled: 0 MB, 2.25 / 0.01 ms  (+ 0.6 ms in 23 steps since start of marking, biggest step 0.2 ms, walltime since start of marking 8 ms) (average mu = 0.993, current mu = 0.[23740:000001C78199E000]     8553 ms: Mark-Compact (reduce) 62.0 (117.1) -> 49.7 (52.1) MB, pooled: 0 MB, 28.50 / 0.04 ms  (+ 7.9 ms in 139 steps since start of marking, biggest step 0.4 ms, walltime since start of marking 38 ms) (average mu = 0.995, curr
+FATAL ERROR: Committing semi space failed. Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF61FF2AD5F 
+ 2: 00007FF620B732D7 
+ 3: 00007FF620973997 
+ 4: 00007FF62090C3BB 
+ 5: 00007FF62093472A 
+ 6: 00007FF620975D76 
+ 7: 00007FF6209753C6 
+ 8: 00007FF620986352 
+ 9: 00007FF620985E7B 
+10: 00007FF621DEE7ED 
+11: 00007FF620971460 
+12: 00007FF62096A5C4 
+13: 00007FF61FE7D10A 
+14: 00007FF61FE7B8F0 
+15: 00007FF620BDACBB 
+16: 00007FF620BDA82F 
+17: 00007FF62003D01F 
+18: 00007FF61FEB8DD2 
+19: 00007FF61FF84F6C 
+20: 00007FF620FA1B82 
+21: 00007FF621DF7EF4 
+22: 00007FF8E1B6E8D7 BaseThreadInitThunk+23
+23: 00007FF8E327C34C RtlUserThreadStart+44

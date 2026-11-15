@@ -7,6 +7,23 @@ import tokenize
 _DEFINITION = re.compile(r'^(?:async\s+)?(?:def|class)\s+([A-Za-z_]\w*)', re.M)
 
 
+def source_coverage(files, snippets, paths=None):
+    sent = {}
+    for row in snippets:
+        sent.setdefault(row['path'], set()).add(row['line'])
+    coverage = {}
+    for path in sent if paths is None else paths:
+        lines = files[path].splitlines()
+        coverage[path] = {
+            'total_lines': len(lines),
+            'complete': all(
+                number in sent.get(path, ()) for number, line in enumerate(lines, 1)
+                if line.strip()
+            ),
+        }
+    return coverage
+
+
 def _nodes(code):
     try:
         return list(ast.walk(ast.parse(code)))

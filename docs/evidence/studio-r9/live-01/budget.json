@@ -1,0 +1,7 @@
+{
+  "authorization": "User explicitly approved 28 new HTTP requests, CNY5, deepseek-flash non-thinking, 2400 output tokens, retries0",
+  "used": 24,
+  "reserved_cny": 1.1871570000000002,
+  "cap_cny": 5,
+  "pricing": "USD0.30/M input, USD1.20/M output; conservative CNY10/USD allowance; failures retain full reservation"
+}

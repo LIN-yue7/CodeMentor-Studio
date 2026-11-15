@@ -292,6 +292,13 @@ async def test_duplicate_json_argument_keys_are_rejected():
     result, requests = await run_with([reply(calls=[native_call]), reply('done')])
     assert result['tool_trace'][0]['status'] == 'rejected'
 
+async def test_nonstandard_json_number_does_not_survive_in_tool_trace():
+    native_call = call('search_project', {})
+    native_call['function']['arguments'] = '{"query":"return","limit":NaN}'
+    result, requests = await run_with([reply(calls=[native_call]), reply('done')])
+    assert json.loads(requests[1]['messages'][-1]['content'])['reason'] == 'invalid-arguments'
+    assert result['tool_trace'][0]['arguments'] == {}
+
 
 async def test_last_turn_requires_final_answer_without_more_tool_requests():
     result, requests = await run_with([

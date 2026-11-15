@@ -1,0 +1,10 @@
+{
+  "mode": "local",
+  "runtime": "Python 3.11.9",
+  "launcher": "Start-Studio.cmd",
+  "external_model_requests": 0,
+  "first_start": "passed",
+  "nonempty_two_file_execution": "7",
+  "restart_same_session_project_recovery": "passed",
+  "status": "passed"
+}

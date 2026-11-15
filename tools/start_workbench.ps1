@@ -16,7 +16,9 @@ try {
     try {
         $env:CODEMENTOR_AI_MODE = if ($Live) { "live" } else { "local" }
         if ($Live) { $env:LLM__MAX_RETRIES = "0" }
-        & $Python -m uvicorn app.workbench:app --host 127.0.0.1 --port $Port --limit-concurrency 32
+        $environmentArgs = @()
+        if (Test-Path -LiteralPath '.env') { $environmentArgs = @('--env-file', '.env') }
+        & $Python -m uvicorn app.workbench:app @environmentArgs --host 127.0.0.1 --port $Port --limit-concurrency 32
         if ($LASTEXITCODE -ne 0) { throw "CodeMentor failed to start." }
     } finally {
         $env:CODEMENTOR_AI_MODE = $previous

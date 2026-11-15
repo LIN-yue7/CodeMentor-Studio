@@ -1,0 +1,127 @@
+{
+  "scope": "Final tracked and unignored candidate working files; no secret values logged",
+  "files": 709,
+  "forbidden_paths": [],
+  "findings": [
+    {
+      "path": "app/api/v1/endpoints/auth.py",
+      "rule": "assigned-credential",
+      "sha256": "450d1b4a106a290d239f949280bba5ebc0278665e69834ce724a7451d2931c07",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "app/api/v1/endpoints/check.py",
+      "rule": "assigned-credential",
+      "sha256": "59f5c73a083c5302b0fcce761c87158430606d6bc82e4ed39036f57c4e37ee60",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "app/api/v1/endpoints/comment.py",
+      "rule": "assigned-credential",
+      "sha256": "82829dfb650718656f09cfd18e71a56d4991874a1cc482c3b427fa06939b0cd5",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "app/api/v1/endpoints/fix.py",
+      "rule": "assigned-credential",
+      "sha256": "6ef715ba9d8fa7748f78efd7ee229a35763679ff5b0902f6fd0c9cdb9509ad66",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "app/core/api_key_manager.py",
+      "rule": "assigned-credential",
+      "sha256": "5372426ba1b8948025260279812c7f3213605627c4f802f6c6949b5c250d7359",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "app/core/config.py",
+      "rule": "assigned-credential",
+      "sha256": "50d6c4dedc4204835d225aa0f2d787cfe2bcde7af044ad462046a714111ad0c3",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "app/core/llm_client.py",
+      "rule": "assigned-credential",
+      "sha256": "8aaa09b20317aee3617f78dd0ef713aaac259147a2b7484878643efec6467f70",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "app/services/code_checker.py",
+      "rule": "assigned-credential",
+      "sha256": "3420a97072fa71706ee9ab49434b5cf24a8e32a4bf00e748121b9499dfe2522d",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "app/services/code_fixer.py",
+      "rule": "assigned-credential",
+      "sha256": "2cc99d78c2c341b6548d24f7316faf80a199bbcd33494c56f458587eac750739",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "app/services/comment_generator.py",
+      "rule": "assigned-credential",
+      "sha256": "841b3914a50dc3fe26cc536f6ce2d40f5abdc5d1b05bd805c839a0f65519673e",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "config/deepseek.env.example",
+      "rule": "assigned-credential",
+      "sha256": "3002841b9661b27a59668afbd7caa14b5d2c79bceaa8b597c3d106323c12f04c",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "tests/test_api_key_manager.py",
+      "rule": "provider-key",
+      "sha256": "2f6b505e4e18527f19a8f30fefb5da85fa12874d2ebfee456980dfc99caa7eb6",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "tests/test_dynamic_api_key.py",
+      "rule": "provider-key",
+      "sha256": "214efc4f4f29087b4a4ef023f25ced314cb312ce9c976b4a26e7653f36bdbe5b",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "tests/test_generic_llm_client.py",
+      "rule": "assigned-credential",
+      "sha256": "78ced1d1d57baf111f7662631e0b9ea427d5916b0a00a61d8550c457948b4947",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "tests/test_llm_models.py",
+      "rule": "assigned-credential",
+      "sha256": "ac4d0eacedd63645170425ce9db1dfe4fee6d7a419caa37d7d90c07d5ee461c7",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "tests/test_project_agent_tools.py",
+      "rule": "assigned-credential",
+      "sha256": "53c0d90ca81cac34623dfc27b508872cac12c804d2388444dfd607ab9fedfe8f",
+      "disposition": "Changed file; all pattern hits identical to reviewed historical code expressions"
+    },
+    {
+      "path": "tools/verify_llm_client_real.py",
+      "rule": "provider-key",
+      "sha256": "3809f825cdd82b7a6da2b4f4e79d36690662dd6de3fca6bd7ec033d84b9a4297",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "tools/verify_llm_client_real.py",
+      "rule": "assigned-credential",
+      "sha256": "3809f825cdd82b7a6da2b4f4e79d36690662dd6de3fca6bd7ec033d84b9a4297",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "tools/verify_model_switch.py",
+      "rule": "provider-key",
+      "sha256": "6f077ad5dd61a99ac1fca570d91f251ea61179437e2e4af499f0aebf9d3a961d",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    },
+    {
+      "path": "\u4f7f\u7528\u6559\u7a0b.md",
+      "rule": "assigned-credential",
+      "sha256": "fcb8723251e1141b67151a5425ed12ae53c630c38e96a45e629b299f76a479e2",
+      "disposition": "Matches reviewed historical blob after newline normalization; no new credential value"
+    }
+  ]
+}
