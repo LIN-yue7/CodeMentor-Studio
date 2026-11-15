@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: codementor-studio-r9
+    runtime: docker
+    branch: review-demo-deploy
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: CODEMENTOR_AI_MODE
+        value: local
+      - key: CODEMENTOR_SESSION_SECRET
+        generateValue: true
+      - key: DATABASE__SQLITE_PATH
+        value: /srv/data/studio.db
+      - key: LLM__MAX_RETRIES
+        value: "0"

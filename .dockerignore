@@ -1,0 +1,17 @@
+**
+!Dockerfile
+!requirements-lock.txt
+!app/
+!app/**
+!examples/
+!examples/studio-r9/
+!examples/studio-r9/**
+!workbench-web/
+!workbench-web/**
+workbench-web/node_modules/
+workbench-web/dist/
+workbench-web/playwright-report/
+workbench-web/test-results/
+**/__pycache__/
+**/.env
+**/.env.*
